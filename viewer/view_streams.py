@@ -5,6 +5,7 @@ from viewer.plot_streams import plot_stream
 from muselsl.constants import LSL_SCAN_TIMEOUT
 from helper.plot_helper import run_vispy
 from PyQt5.QtCore import QTimer
+from multiprocessing import Process, Manager
 
 view_logger = logging.getLogger(__name__)
 
@@ -54,6 +55,19 @@ class ViewStreams:
 
         return streams.values()
 
+    def plot_stream_with_canvas(self, stream_type, i, canvases_statuses, duration = 60):
+        canvas = plot_stream(stream_type, i)
+        if canvas:
+            canvases_statuses.append(True)  # Just a simple flag indicating a canvas was created
+            run_vispy()
+
+            def close_plots():
+                canvas.stop()
+                canvas.close()
+
+            QTimer.singleShot(duration * 1000, close_plots)
+        else:
+            canvases_statuses.append(False)
 
     def start_viewing(self, choice, duration=60):
 
@@ -65,6 +79,12 @@ class ViewStreams:
             stream_type = 'BVP'
         elif choice == 4:
             stream_type = 'GSR'
+        elif choice == 5:
+            stream_type = 'PPG'
+        elif choice == 6:
+            stream_type = 'HR'
+        elif choice == 7:
+            stream_type = 'TEMP'
         else:
             print("Invalid choice.")
             return
@@ -78,22 +98,23 @@ class ViewStreams:
                     streams[stream.name()] = stream
             except:
                 pass
-        for i, stream in enumerate(streams):
-            canvas = plot_stream(stream.type(), i)
-            if canvas:
-                canvases.append(canvas)
-        run_vispy()
 
-        if canvases:
-            def close_plots():
-                for canvas in canvases:
-                    canvas.stop()
-                    canvas.close()
+        with Manager() as manager:
+            shared_canvases_statuses = manager.list()  # This will allow us to use the statuses across processes
 
-            def close_plots_wrapper():
-                QTimer.singleShot(duration * 1000, close_plots)  # QTimer uses milliseconds
+            processes = []
+            for i, stream in enumerate(streams):
+                # Start a separate process for each plot_stream_with_canvas call
+                process = Process(target=self.plot_stream_with_canvas, args=(stream.type(), i, shared_canvases_statuses))
+                processes.append(process)
+                process.start()
 
-            close_plots_wrapper()
+            # Wait for all processes to finish
+            for process in processes:
+                process.join()
+
+        # Now shared_canvases_statuses contains the statuses, and you can use them further in the main process if required.
+        print(f"Number of canvases created: {sum(shared_canvases_statuses)}")
 
 
 

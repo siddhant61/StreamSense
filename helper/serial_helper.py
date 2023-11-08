@@ -39,7 +39,15 @@ else:
                          BGAPIError, serial.serialutil.SerialException)
 
 
-log = logging.getLogger(__name__)
+# Setup logging
+logger = logging.getLogger("serial_helper.py")
+logger.setLevel(logging.CRITICAL)
+fh = logging.FileHandler("Logs/serial_helper.log")
+fh.setLevel(logging.CRITICAL)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
 
 BLED112_VENDOR_ID = 0x2458
 BLED112_PRODUCT_ID = 0x0001
@@ -127,7 +135,7 @@ class BGAPIBackend(BLEBackend):
             EventPacketType.sm_bond_status: self._ble_evt_sm_bond_status,
         }
 
-        log.info("Initialized new BGAPI backend")
+        logger.debug(f"BGAPIBackend initialized with serial_port={serial_port} and receive_queue_timeout={receive_queue_timeout}")
 
     def _detect_device_port(self):
         if self._serial_port:
@@ -139,15 +147,14 @@ class BGAPIBackend(BLEBackend):
                     "Unable to detect BLED112 serial port: {}.".format(
                         self._serial_port))
         else:
-            log.info("Auto-detecting serial port for BLED112")
+            logger.info("Auto-detecting serial port for BLED112")
             detected_devices = find_usb_serial_devices(
                 vendor_id=BLED112_VENDOR_ID,
                 product_id=BLED112_PRODUCT_ID)
             if len(detected_devices) == 0:
                 raise BGAPIError("Unable to auto-detect BLED112 serial port")
 
-            log.info("Found BLED112 on serial port %s",
-                     detected_devices[0].port_name)
+            logger.debug(f"Detected BLED112 device on port: {detected_devices[0].port_name}")
             return detected_devices[0].port_name
 
     def _open_serial_port(self,
@@ -164,21 +171,23 @@ class BGAPIBackend(BLEBackend):
         Raises a NotConnectedError if the device cannot connect after 10
         attempts, with a short pause in between each attempt.
         """
+        logger.debug(f"Attempting to open serial port with max attempts = {max_connection_attempts}")
         for attempt in range(max_connection_attempts):
-            log.debug("Opening connection to serial port (attempt %d)",
+
+            logger.debug("Opening connection to serial port (attempt %d)",
                       attempt + 1)
             try:
-                serial_port = self._serial_port #or self._detect_device_port()
+                serial_port = self._serial_port
                 self._ser = None
 
-                self._ser = serial.Serial(serial_port, baudrate=256000,
+                self._ser = serial.Serial(serial_port, baudrate=115200,
                                           timeout=0.25)
                 # Wait until we can actually read from the device
                 self._ser.read()
+                logger.debug(f"Successfully opened serial port on attempt {attempt + 1}.")
                 break
             except serial_exceptions:
-                log.debug("Failed to open serial port", exc_info=True)
-                print("Failed to open serial port")
+                logger.debug("Failed to open serial port", exc_info=True)
                 if self._ser:
                     self._ser.close()
                 elif attempt == (max_connection_attempts - 1):
@@ -190,18 +199,17 @@ class BGAPIBackend(BLEBackend):
             raise NotConnectedError("Unable to reconnect with USB "
                                     "device after rebooting")
 
-    def start(self, reset=False):
+    def start(self, reset=True):
         """
         Connect to the USB adapter, reset its state and start a background
         receiver thread.
 
         reset - Reset the device if True.
         """
+        logger.info("Starting BGAPIBackend with reset=%s", reset)
         if self._running and self._running.is_set():
             self.stop()
 
-        # Fail immediately if no device is attached
-        self._detect_device_port()
         # Blow everything away and start anew.
         # Only way to be sure is to burn it down and start again.
         # (Aka reset remote state machine)
@@ -209,31 +217,30 @@ class BGAPIBackend(BLEBackend):
         # The zero param just means we want to do a normal restart instead of
         # starting a firmware update restart.
         if reset:
-            log.info(
+            logger.info(
                 "Resetting and reconnecting to device for a clean environment")
             self._open_serial_port()
-            try:
-                self.send_command(CommandBuilder.system_reset(0))
-            except  Exception as e:
-                print(f"Error resetting serial port: {e}")
+            self.send_command(CommandBuilder.system_reset(0))
+            self._ser.flush()
             self._ser.close()
+
             # Wait before re-opening the port - required on at least Windows,
             # possibly OS X.
             time.sleep(5)
 
         self._open_serial_port()
-        print("port open")
         self._receiver = threading.Thread(target=self._receive)
         self._receiver.daemon = True
-        print("reciever thread initialized")
+
         self._running = threading.Event()
         self._running.set()
         self._receiver.start()
+
         self.disable_advertising()
         self.set_bondable(False)
 
         # Stop any ongoing procedure
-        log.debug("Stopping any outstanding GAP procedure")
+        logger.debug("Stopping any outstanding GAP procedure")
         self.send_command(CommandBuilder.gap_end_procedure())
         try:
             self.expect(ResponsePacketType.gap_end_procedure)
@@ -241,12 +248,13 @@ class BGAPIBackend(BLEBackend):
             # Ignore any errors if there was no GAP procedure running
             pass
 
-
     def get_mac(self):
+        logger.debug("Fetching MAC address")
         self.send_command(CommandBuilder.system_address_get())
         self.expect(ResponsePacketType.system_address_get)
 
     def stop(self):
+        logger.info("Stopping BGAPIBackend")
         for device in self._connections.values():
             try:
                 device.disconnect()
@@ -254,7 +262,7 @@ class BGAPIBackend(BLEBackend):
                 pass
         if self._running:
             if self._running.is_set():
-                log.info('Stopping')
+                logger.info('Stopping')
             self._running.clear()
 
         if self._receiver:
@@ -266,13 +274,14 @@ class BGAPIBackend(BLEBackend):
             self._ser = None
 
     def set_bondable(self, bondable):
+        logger.debug("Setting bondable to %s", bondable)
         self.send_command(
             CommandBuilder.sm_set_bondable_mode(
                 constants.bondable['yes' if bondable else 'no']))
         self.expect(ResponsePacketType.sm_set_bondable_mode)
 
     def disable_advertising(self):
-        log.info("Disabling advertising")
+        logger.debug("Disabling advertising")
         self.send_command(
             CommandBuilder.gap_set_mode(
                 constants.gap_discoverable_mode['non_discoverable'],
@@ -280,13 +289,15 @@ class BGAPIBackend(BLEBackend):
         self.expect(ResponsePacketType.gap_set_mode)
 
     def send_command(self, *args, **kwargs):
+        logger.debug("Sending command with args=%s, kwargs=%s", args, kwargs)
         with self._lock:
             if self._ser is None:
-                log.warn("Unexpectedly not connected to USB device")
+                logger.warn("Unexpectedly not connected to USB device")
                 raise NotConnectedError()
             return self._lib.send_command(self._ser, *args, **kwargs)
 
     def clear_bond(self, address=None):
+        logger.info("Clearing bonds for address=%s", address)
         """
         Delete the bonds stored on the adapter.
 
@@ -297,7 +308,7 @@ class BGAPIBackend(BLEBackend):
               device.
         """
         # Find bonds
-        log.info("Fetching existing bonds for devices")
+        logger.info("Fetching existing bonds for devices")
         self._stored_bonds = []
         self.send_command(CommandBuilder.sm_get_bonds())
 
@@ -313,7 +324,7 @@ class BGAPIBackend(BLEBackend):
             self.expect(EventPacketType.sm_bond_status)
 
         for b in reversed(self._stored_bonds):
-            log.info("Deleting bond %s", b)
+            logger.info("Deleting bond %s", b)
 
             self.send_command(CommandBuilder.sm_delete_bonding(b))
             self.expect(ResponsePacketType.sm_delete_bonding)
@@ -347,12 +358,12 @@ class BGAPIBackend(BLEBackend):
 
         self.expect(ResponsePacketType.gap_set_scan_parameters)
 
-        log.info("Starting an %s scan", "active" if active else "passive")
+        logger.info("Starting an %s scan", "active" if active else "passive")
         self.send_command(CommandBuilder.gap_discover(discover_mode))
 
         self.expect(ResponsePacketType.gap_discover)
 
-        log.info("Pausing for maximum %ds to allow scan to complete", timeout)
+        logger.info("Pausing for maximum %ds to allow scan to complete", timeout)
 
         self._evt.set()
         start_time = time.time()
@@ -366,7 +377,7 @@ class BGAPIBackend(BLEBackend):
             if _timed_out(start_time, timeout):
                 break
 
-        log.info("Stopping scan")
+        logger.info("Stopping scan")
         self.send_command(CommandBuilder.gap_end_procedure())
         self.expect(ResponsePacketType.gap_end_procedure)
 
@@ -378,7 +389,7 @@ class BGAPIBackend(BLEBackend):
                 'rssi': info.rssi,
                 'packet_data': info.packet_data
             })
-        log.info("Discovered %d devices: %s", len(devices), devices)
+        logger.info("Discovered %d devices: %s", len(devices), devices)
         self._devices_discovered = {}
         return devices
 
@@ -408,7 +419,7 @@ class BGAPIBackend(BLEBackend):
             if device._address == bgapi_address_to_hex(address_bytes):
                 return device
 
-        log.info("Connecting to device at address %s (timeout %ds)",
+        logger.info("Connecting to device at address %s (timeout %ds)",
                  address, timeout)
         self.set_bondable(False)
 
@@ -444,7 +455,7 @@ class BGAPIBackend(BLEBackend):
                         constants.connection_status_flag['encrypted']):
                     device.encrypted = True
                 self._connections[packet['connection_handle']] = device
-                log.info("Connected to %s", address)
+                logger.info("Connected to %s", address)
                 return device
         except ExpectedResponseTimeout:
             # If the connection doesn't occur because the device isn't there
@@ -461,7 +472,7 @@ class BGAPIBackend(BLEBackend):
     def discover_characteristics(self, connection_handle):
         att_handle_start = 0x0001  # first valid handle
         att_handle_end = 0xFFFF  # last valid handle
-        log.info("Fetching characteristics for connection %d",
+        logger.info("Fetching characteristics for connection %d",
                  connection_handle)
         self.send_command(
             CommandBuilder.attclient_find_information(
@@ -472,15 +483,15 @@ class BGAPIBackend(BLEBackend):
             self.expect(EventPacketType.attclient_procedure_completed,
                         timeout=30)
         except ExpectedResponseTimeout:
-            log.warn("Continuing even though discovery hasn't finished")
+            logger.warn("Continuing even though discovery hasn't finished")
 
         for char_uuid_str, char_obj in (
                 self._characteristics[connection_handle].items()):
-            log.info("Characteristic 0x%s is handle 0x%x",
+            logger.info("Characteristic 0x%s is handle 0x%x",
                      char_uuid_str, char_obj.handle)
             for desc_uuid_str, desc_handle in (
                     char_obj.descriptors.items()):
-                log.info("Characteristic descriptor 0x%s is handle 0x%x",
+                logger.info("Characteristic descriptor 0x%s is handle 0x%x",
                          desc_uuid_str, desc_handle)
         return self._characteristics[connection_handle]
 
@@ -517,7 +528,7 @@ class BGAPIBackend(BLEBackend):
         if uuid in constants.gatt_characteristic_type_uuid.values():
             return UUIDType.characteristic
 
-        log.warn("Unrecognized 4 byte UUID %s", hexlify(uuid))
+        logger.warn("Unrecognized 4 byte UUID %s", hexlify(uuid))
         return UUIDType.nonstandard
 
     def _scan_rsp_data(self, data):
@@ -559,7 +570,7 @@ class BGAPIBackend(BLEBackend):
                         try:
                             dev_name = bytearray(field_value).decode("utf-8")
                         except:
-                            log.debug("Failed to decode data as UTF8, "
+                            logger.debug("Failed to decode data as UTF8, "
                                       "returning verbatim")
                         else:
                             data_dict[field_name] = dev_name
@@ -574,7 +585,7 @@ class BGAPIBackend(BLEBackend):
                                         field_value[i * 16:i * 16 + 16]))
                                 data_dict[field_name].append(service_uuid)
                         else:
-                            log.warning("Expected a service class UUID of 16\
+                            logger.warning("Expected a service class UUID of 16\
                                         bytes. Instead received %d bytes",
                                         len(field_value))
                     else:
@@ -600,7 +611,7 @@ class BGAPIBackend(BLEBackend):
             not receiving withint the time limit.
         """
         timeout = timeout or 1
-        log.debug("Expecting a response of one of %s within %fs",
+        logger.debug("Expecting a response of one of %s within %fs",
                   expected_packet_choices, timeout or 0)
 
         start_time = None
@@ -627,11 +638,11 @@ class BGAPIBackend(BLEBackend):
             try:
                 packet_type, response = self._lib.decode_packet(packet)
             except bglib.UnknownMessageType:
-                log.warn("Ignoring message decode failure", exc_info=True)
+                logger.warn("Ignoring message decode failure", exc_info=True)
                 continue
 
             return_code = response.get('result', 0)
-            log.debug("Received a %s packet: %s",
+            logger.debug("Received a %s packet: %s",
                       packet_type, get_return_message(return_code))
 
             if packet_type in self._packet_handlers:
@@ -645,21 +656,21 @@ class BGAPIBackend(BLEBackend):
         Read bytes from serial and enqueue the packets if the packet is not a.
         Stops if the self._running event is not set.
         """
-        log.info("Running receiver")
+        logger.info("Running receiver")
         while self._running.is_set():
             packet = self._lib.parse_byte(self._ser.read())
             if packet is not None:
                 try:
                     packet_type, args = self._lib.decode_packet(packet)
                 except bglib.UnknownMessageType:
-                    log.warn("Ignoring message decode failure", exc_info=True)
+                    logger.warn("Ignoring message decode failure", exc_info=True)
                     continue
                 if packet_type == EventPacketType.attclient_attribute_value:
                     device = self._connections[args['connection_handle']]
                     device.receive_notification(args['atthandle'],
                                                 bytearray(args['value']))
                 self._receiver_queue.put(packet)
-        log.info("Stopping receiver")
+        logger.info("Stopping receiver")
 
     def _ble_evt_attclient_attribute_value(self, args):
         """
@@ -668,9 +679,9 @@ class BGAPIBackend(BLEBackend):
         args -- dictionary containing the attribute handle ('atthandle'),
         attribute type ('type'), and attribute value ('value')
         """
-        log.debug("attribute handle = %x", args['atthandle'])
-        log.debug("attribute type = %x", args['type'])
-        log.debug("attribute value = 0x%s", hexlify(bytearray(args['value'])))
+        logger.debug("attribute handle = %x", args['atthandle'])
+        logger.debug("attribute type = %x", args['type'])
+        logger.debug("attribute value = 0x%s", hexlify(bytearray(args['value'])))
 
     def _ble_evt_attclient_find_information_found(self, args):
         """
@@ -708,11 +719,11 @@ class BGAPIBackend(BLEBackend):
                 uuid_type == UUIDType.nonstandard or
                 uuid_type == UUIDType.characteristic):
             if uuid_type == UUIDType.custom:
-                log.info("Found custom characteristic %s" % uuid)
+                logger.info("Found custom characteristic %s" % uuid)
             elif uuid_type == UUIDType.characteristic:
-                log.info("Found approved characteristic %s" % uuid)
+                logger.info("Found approved characteristic %s" % uuid)
             elif uuid_type == UUIDType.nonstandard:
-                log.info("Found nonstandard 4-byte characteristic %s" % uuid)
+                logger.info("Found nonstandard 4-byte characteristic %s" % uuid)
             new_char = Characteristic(uuid, args['chrhandle'])
             self._current_characteristic = new_char
             self._characteristics[
@@ -741,7 +752,7 @@ class BGAPIBackend(BLEBackend):
             # Disconnected
             self._connections.pop(connection_handle, None)
 
-        log.info("Connection status: handle=0x%x, flags=%s, address=0x%s, "
+        logger.info("Connection status: handle=0x%x, flags=%s, address=0x%s, "
                  "connection interval=%fms, timeout=%d, "
                  "latency=%d intervals, bonding=0x%x",
                  connection_handle,
@@ -780,7 +791,7 @@ class BGAPIBackend(BLEBackend):
                 len(dev.packet_data[packet_type]) < len(data_dict)):
             dev.packet_data[packet_type] = data_dict
         dev.rssi = args['rssi']
-        log.debug("Received a scan response from %s with rssi=%d dBM "
+        logger.debug("Received a scan response from %s with rssi=%d dBM "
                   "and data=%s", address, args['rssi'], data_dict)
 
         if self._scan_cb is not None:
@@ -819,7 +830,7 @@ class BGAPIBackend(BLEBackend):
         args -- dictionary containing the number of stored bonds ('bonds'),
         """
         self._num_bonds = args['bonds']
-        log.debug("num bonds = %d", args['bonds'])
+        logger.debug("num bonds = %d", args['bonds'])
 
     def _ble_rsp_system_address_get(self, args):
         """
@@ -829,4 +840,4 @@ class BGAPIBackend(BLEBackend):
         args -- dictionary containing the mac address ('address'),
         """
         self.address = args['address']
-        log.debug("Adapter address = {0}".format(args['address']))
+        logger.debug("Adapter address = {0}".format(args['address']))

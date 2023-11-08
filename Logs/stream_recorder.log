@@ -1,0 +1,1412 @@
+2023-10-31 21:11:56,774 - stream_recorder.py - INFO - StreamRecorder initialized with root_output_folder: C:/Users/siddh/Documents/StreamSense/1698782528_645076
+2023-10-31 21:11:57,805 - stream_recorder.py - INFO - Stream Connected: 8413C6_TEMP
+2023-10-31 21:11:57,823 - stream_recorder.py - INFO - Stream Connected: A4880B_BVP
+2023-10-31 21:11:57,835 - stream_recorder.py - INFO - Stream Connected: 8413C6_GSR
+2023-10-31 21:11:57,847 - stream_recorder.py - INFO - Stream Connected: 8413C6_TAG
+2023-10-31 21:11:57,859 - stream_recorder.py - INFO - Stream Connected: A4880B_TAG
+2023-10-31 21:11:57,871 - stream_recorder.py - INFO - Stream Connected: 8413C6_BVP
+2023-10-31 21:11:57,878 - stream_recorder.py - INFO - Stream Connected: 8413C6_ACC
+2023-10-31 21:11:57,891 - stream_recorder.py - INFO - Stream Connected: A4880B_ACC
+2023-10-31 21:11:57,898 - stream_recorder.py - INFO - Stream Connected: A4880B_TEMP
+2023-10-31 21:11:57,911 - stream_recorder.py - INFO - Stream Connected: A4880B_GSR
+2023-10-31 21:12:28,319 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:12:28,324 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:12:28,324 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:12:28,652 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:28,656 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:29,108 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:29,544 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:29,551 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:29,993 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:30,426 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:30,444 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:30,831 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:12:30,902 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:31,022 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:12:31,341 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:31,349 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:31,798 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:32,223 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:32,242 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:32,687 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:33,158 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:33,172 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:33,343 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:12:33,612 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:33,721 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:12:34,059 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:34,074 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:34,512 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:34,968 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:34,984 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:35,440 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:35,854 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:12:35,877 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:35,886 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:36,853 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:36,874 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:37,855 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:37,866 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:38,889 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:38,901 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:39,367 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:12:39,549 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:12:39,871 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:39,886 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:40,938 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:40,951 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:41,931 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:41,939 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:42,875 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:12:43,040 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:43,702 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:12:44,041 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:44,050 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:45,057 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:45,064 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:46,034 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:46,042 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:46,388 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:12:46,696 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:12:47,030 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:47,037 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:48,028 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:48,034 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:49,031 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:49,042 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:49,897 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:12:50,122 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:50,794 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:12:51,151 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:51,167 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:52,148 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:52,157 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:53,144 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:53,162 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:53,412 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:12:53,818 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:12:54,154 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:54,164 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:55,172 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:55,183 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:55,844 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:12:56,166 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:56,172 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:56,621 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:56,920 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:12:57,189 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:57,633 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:57,740 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:12:58,064 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:58,073 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:58,520 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:58,970 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:58,976 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:12:59,426 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:12:59,873 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:12:59,885 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:00,333 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:00,428 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:00,453 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:00,768 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:00,787 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:01,240 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:01,667 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:01,675 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:02,136 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:02,248 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:13:02,594 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:02,608 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:02,956 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:02,963 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:03,378 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:03,385 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:03,715 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:03,721 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:03,939 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:13:04,166 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:04,176 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:04,532 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:05,068 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:05,083 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:05,430 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:05,971 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:05,979 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:06,311 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:06,448 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:13:06,851 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:06,869 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:07,863 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:07,873 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:08,900 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:08,910 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:09,900 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:09,921 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:09,957 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:10,616 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:10,970 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:10,981 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:11,960 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:11,967 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:12,951 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:12,968 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:13,479 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:13:13,629 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:13:13,960 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:13,967 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:14,992 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:15,003 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:15,987 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:15,996 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:16,992 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:16,993 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:17,761 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:18,095 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:18,105 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:19,104 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:19,120 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:20,109 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:20,129 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:20,511 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:13:20,815 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:13:21,170 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:21,181 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:22,166 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:22,176 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:23,161 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:23,180 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:24,026 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:24,174 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:24,951 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:25,296 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:25,303 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:26,259 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:26,267 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:27,284 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:27,296 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:27,552 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:13:27,961 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:13:28,299 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:28,306 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:28,957 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:13:29,270 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:29,289 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:29,622 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:30,166 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:30,175 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:30,525 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:31,061 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:31,083 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:31,529 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:31,742 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:32,065 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:32,087 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:32,440 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:33,015 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:33,027 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:33,375 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:33,904 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:33,925 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:34,273 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:13:34,572 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:13:34,838 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:34,844 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:35,832 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:35,843 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:36,854 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:36,874 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:37,867 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:37,878 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:38,082 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:13:38,557 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:13:38,907 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:38,923 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:39,873 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:39,892 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:40,923 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:40,937 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:41,591 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:41,611 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:41,947 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:41,957 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:42,591 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:13:42,929 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:42,947 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:43,397 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:43,830 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:43,841 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:44,284 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:44,758 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:44,772 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:45,105 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:13:45,223 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:45,345 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:13:45,656 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:45,666 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:46,122 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:46,599 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:46,610 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:47,059 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:47,497 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:47,505 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:47,965 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:48,408 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:48,429 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:48,631 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:48,869 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:48,982 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:49,324 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:49,335 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:49,775 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:50,194 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:50,203 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:50,655 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:51,119 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:51,133 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:51,585 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:13:51,638 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:13:52,536 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:52,550 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:53,530 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:53,538 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:54,555 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:54,572 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:55,146 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:13:55,241 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:13:55,562 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:55,569 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:56,574 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:56,584 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:57,576 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:57,583 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:58,575 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:58,583 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:13:58,663 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:13:59,229 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:13:59,550 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:13:59,558 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:00,237 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:14:00,577 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:00,596 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:00,945 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:01,498 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:01,504 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:01,836 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:02,173 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:02,378 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:02,844 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:03,079 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:03,405 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:03,412 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:03,744 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:04,291 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:04,303 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:04,644 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:05,185 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:05,201 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:05,548 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:05,685 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:14:06,083 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:06,091 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:07,091 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:07,101 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:08,073 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:08,092 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:09,107 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:09,121 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:09,192 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:09,767 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:10,101 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:10,108 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:11,115 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:11,121 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:12,108 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:12,119 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:12,703 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:12,766 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:13,116 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:13,127 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:14,124 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:14,147 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:15,188 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:15,205 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:16,207 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:16,217 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:16,218 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:16,873 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:17,205 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:17,220 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:18,185 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:18,194 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:19,198 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:19,210 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:19,724 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:19,873 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:20,192 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:20,203 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:21,231 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:21,247 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:22,242 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:22,248 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:23,225 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:23,232 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:23,237 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:23,885 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:24,207 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:24,214 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:25,245 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:25,255 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:25,910 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:14:26,232 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:26,252 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:26,261 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:27,122 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:27,348 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:27,672 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:27,680 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:28,022 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:28,596 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:28,602 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:28,942 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:29,478 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:29,486 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:29,768 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:29,814 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:30,041 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:30,364 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:30,382 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:30,743 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:31,310 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:31,324 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:31,662 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:32,192 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:32,202 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:32,556 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:33,123 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:33,140 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:33,279 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:14:34,128 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:34,139 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:35,150 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:35,170 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:36,160 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:36,166 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:36,802 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:36,826 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:37,167 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:37,174 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:38,147 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:38,162 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:39,187 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:39,196 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:40,193 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:40,205 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:40,313 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:40,848 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:41,188 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:41,207 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:42,197 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:42,203 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:43,225 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:43,238 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:43,840 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:43,901 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:44,210 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:44,215 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:45,215 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:45,225 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:46,208 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:46,217 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:47,236 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:47,259 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:47,352 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:47,928 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:48,250 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:48,256 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:49,274 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:49,288 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:50,242 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:50,262 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:50,864 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:50,914 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:51,250 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:51,260 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:52,260 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:52,271 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:52,931 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:14:53,270 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:53,284 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:53,618 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:54,149 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:54,157 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:54,382 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:14:54,508 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:54,726 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:14:55,079 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:55,091 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:55,441 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:55,969 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:55,990 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:56,348 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:56,896 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:56,905 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:57,245 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:57,767 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:57,774 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:57,892 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:14:58,125 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:58,351 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:14:58,677 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:58,683 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:59,037 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:14:59,567 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:14:59,574 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:14:59,903 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:15:00,455 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:00,462 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:00,805 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:15:01,371 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:01,393 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:01,408 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:15:02,372 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:02,394 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:03,407 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:03,424 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:04,415 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:04,421 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:04,934 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:05,086 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:05,407 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:05,433 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:06,426 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:06,440 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:07,440 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:07,458 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:08,451 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:08,454 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:09,236 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:09,565 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:09,572 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:10,598 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:10,609 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:11,593 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:11,601 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:11,966 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:12,268 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:12,599 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:12,605 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:13,610 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:13,620 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:14,623 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:14,637 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:15,475 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:15,614 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:16,387 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:16,747 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:16,763 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:17,750 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:17,756 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:18,741 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:18,764 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:18,989 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:19,431 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:19,751 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:19,759 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:20,775 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:20,785 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:21,736 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:21,744 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:22,498 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:22,764 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:23,530 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:23,846 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:23,853 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:24,831 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:24,848 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:25,827 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:25,836 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:26,009 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:26,519 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:26,875 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:26,886 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:27,875 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:27,882 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:28,897 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:28,907 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:29,538 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:29,591 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:29,907 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:29,915 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:30,921 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:30,931 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:31,930 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:31,937 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:32,965 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:32,978 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:33,048 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:33,650 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:33,969 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:33,976 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:34,958 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:34,964 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:35,602 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:15:35,919 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:35,929 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:36,388 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:15:36,563 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:36,815 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:37,391 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:15:37,503 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:37,821 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:37,829 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:38,274 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:15:38,737 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:38,747 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:39,196 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:15:39,632 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:39,640 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:40,087 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:15:40,643 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:40,655 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:41,633 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:41,641 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:42,634 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:42,641 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:43,601 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:43,751 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:44,415 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:44,774 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:44,783 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:45,741 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:45,746 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:46,771 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:46,781 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:47,115 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:47,443 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:47,765 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:47,771 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:48,774 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:48,792 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:49,766 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:49,773 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:50,623 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:50,892 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:51,546 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:51,858 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:51,865 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:52,889 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:52,898 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:53,886 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:53,893 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:54,132 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:15:54,558 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:15:54,888 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:54,905 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:55,897 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:55,903 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:56,927 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:56,936 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:57,652 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:15:58,007 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:15:58,688 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:15:59,040 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:15:59,052 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:00,047 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:00,056 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:01,018 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:01,024 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:01,160 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:01,681 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:01,991 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:01,997 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:02,650 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:16:02,981 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:02,987 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:03,437 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:03,856 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:03,863 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:04,307 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:04,667 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:16:04,855 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:05,301 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:05,409 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:16:05,725 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:05,733 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:06,174 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:06,609 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:06,616 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:07,060 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:07,496 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:07,502 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:07,940 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:08,176 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:08,371 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:08,902 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:09,019 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:09,345 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:09,355 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:09,802 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:10,236 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:10,242 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:10,681 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:11,122 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:11,139 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:11,612 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:11,684 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:16:12,043 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:12,049 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:13,037 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:13,046 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:14,009 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:14,016 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:14,978 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:14,986 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:15,194 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:15,623 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:15,944 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:15,951 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:16,935 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:16,942 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:17,908 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:17,916 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:18,702 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:16:18,981 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:19,693 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:16:20,010 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:20,016 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:21,029 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:21,041 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:22,025 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:22,032 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:22,209 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:22,700 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:23,037 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:23,044 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:24,053 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:24,059 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:25,037 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:25,043 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:25,702 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:16:25,717 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:16:26,117 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:26,464 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:26,678 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:16:27,015 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:27,029 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:27,390 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:27,911 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:27,917 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:28,259 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:28,818 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:28,832 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:29,172 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:29,225 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:29,388 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:29,739 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:29,746 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:30,076 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:30,611 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:30,627 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:30,970 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:31,515 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:31,533 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:31,872 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:32,406 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:32,421 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:32,734 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:16:33,405 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:33,414 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:34,416 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:34,426 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:35,372 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:35,377 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:36,246 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:16:36,458 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:37,108 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:16:37,439 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:37,450 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:38,428 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:38,434 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:39,382 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:39,387 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:39,753 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:40,044 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:40,383 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:40,398 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:41,380 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:41,398 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:42,059 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:16:42,400 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:42,415 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:42,862 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:43,266 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:16:43,413 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:43,870 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:43,977 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:16:44,303 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:44,318 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:44,778 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:45,232 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:45,240 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:45,686 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:46,112 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:46,119 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:46,581 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:16:46,775 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:16:47,011 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:47,027 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:48,025 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:48,031 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:49,022 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:49,032 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:50,024 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:50,032 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:50,284 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:50,689 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:51,032 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:51,043 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:52,024 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:52,032 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:52,690 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:16:53,028 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:53,035 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:53,396 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:53,792 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:16:54,036 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:54,389 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:54,604 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:16:54,933 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:54,955 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:55,310 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:55,864 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:55,874 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:56,208 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:56,760 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:56,768 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:57,116 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:57,301 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:16:57,328 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:16:57,648 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:57,662 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:57,998 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:58,564 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:58,576 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:58,913 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:16:59,452 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:16:59,463 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:16:59,804 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:00,357 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:00,367 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:00,724 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:00,811 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:17:01,277 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:01,283 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:02,246 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:02,267 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:03,278 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:03,284 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:04,272 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:04,280 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:04,321 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:04,942 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:05,271 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:05,292 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:05,946 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:17:06,282 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:06,302 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:06,763 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:07,214 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:07,226 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:07,686 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:07,831 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:08,112 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:08,668 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:08,785 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:09,119 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:09,129 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:09,608 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:10,046 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:10,053 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:10,505 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:10,943 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:10,964 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:11,347 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:17:11,965 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:11,971 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:12,956 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:12,972 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:13,965 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:13,972 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:14,855 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:15,060 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:15,737 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:16,053 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:16,060 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:17,049 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:17,059 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:18,049 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:18,056 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:18,364 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:18,709 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:19,060 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:19,068 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:20,072 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:20,079 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:20,723 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:17:21,076 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:21,087 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:21,437 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:21,872 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:22,074 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:22,417 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:22,651 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:22,974 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:22,990 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:23,347 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:23,896 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:23,903 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:24,233 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:24,775 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:24,794 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:25,142 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:17:25,384 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:17:25,681 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:25,687 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:26,664 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:26,675 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:27,639 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:27,661 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:28,648 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:28,658 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:28,897 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:29,323 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:29,654 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:29,668 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:30,654 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:30,669 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:31,669 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:31,680 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:32,412 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:32,779 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:33,440 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:33,764 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:33,776 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:34,786 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:34,793 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:35,799 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:35,807 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:35,924 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:36,451 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:36,772 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:36,791 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:37,800 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:37,807 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:38,823 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:38,835 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:39,433 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:39,488 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:39,797 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:39,806 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:40,811 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:40,818 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:41,816 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:41,822 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:42,790 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:42,805 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:42,942 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:43,468 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:43,806 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:43,814 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:44,811 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:44,818 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:45,781 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:45,799 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:46,451 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:46,451 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:46,777 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:46,786 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:47,760 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:47,767 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:48,946 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:48,953 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:49,968 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:49,976 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:49,998 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:50,632 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:50,633 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:17:50,971 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:50,982 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:51,452 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:51,882 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:51,890 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:52,328 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:52,759 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:52,765 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:53,198 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:53,506 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:17:53,732 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:54,175 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:54,284 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:17:54,628 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:54,636 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:55,090 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:55,536 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:55,541 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:55,984 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:56,408 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:56,425 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:56,874 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:57,015 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:17:57,308 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:57,870 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:57,978 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:17:58,303 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:58,309 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:58,766 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:17:59,195 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:17:59,214 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:17:59,678 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:00,115 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:00,123 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:00,523 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:18:01,121 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:01,136 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:02,112 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:02,119 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:03,117 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:03,128 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:04,031 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:04,115 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:04,885 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:05,218 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:05,224 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:06,217 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:06,223 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:07,228 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:07,241 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:07,543 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:07,891 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:18:07,891 - stream_recorder.py - INFO - Stream disconnected: A4880B_TEMP
+2023-10-31 21:18:08,203 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:08,210 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:08,543 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:09,093 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:09,101 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:09,440 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:09,968 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:09,975 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:10,307 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:10,853 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:10,859 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:11,054 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:11,200 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:11,419 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:11,736 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:11,742 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:12,073 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:12,617 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:12,627 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:12,963 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:13,511 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:13,521 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:13,856 - stream_recorder.py - DEBUG - A4880B_TEMP missing samples. Saving NA values.
+2023-10-31 21:18:14,385 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:14,391 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:14,560 - stream_recorder.py - INFO - Stream reconnected: A4880B_TEMP
+2023-10-31 21:18:15,377 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:15,386 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:16,379 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:16,392 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:17,337 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:17,344 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:18,074 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:18,419 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:19,081 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:18:19,415 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:19,420 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:20,395 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:20,411 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:21,393 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:21,407 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:21,586 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:22,094 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:22,417 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:22,423 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:23,375 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:23,381 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:24,048 - stream_recorder.py - INFO - Stream disconnected: A4880B_GSR
+2023-10-31 21:18:24,366 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:24,372 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:24,825 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:25,104 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:25,380 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:25,856 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:25,963 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:18:26,274 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:26,281 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:26,738 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:27,186 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:27,192 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:27,650 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:28,076 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:28,083 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:28,526 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:28,611 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:28,644 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:28,986 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:29,000 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:29,471 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:29,895 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:29,902 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:30,335 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:30,770 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:30,784 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:31,235 - stream_recorder.py - DEBUG - A4880B_GSR missing samples. Saving NA values.
+2023-10-31 21:18:31,696 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:31,707 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:32,120 - stream_recorder.py - INFO - Stream reconnected: A4880B_GSR
+2023-10-31 21:18:32,720 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:32,732 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:33,708 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:33,727 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:34,746 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:34,757 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:35,632 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:35,885 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:36,526 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:18:36,862 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:36,883 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:37,888 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:37,899 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:38,922 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:38,932 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:39,149 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:39,597 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:39,919 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:39,928 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:40,942 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:40,960 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:41,939 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:41,947 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:42,657 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:43,001 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:43,708 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:18:44,025 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:44,032 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:45,013 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:45,020 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:45,996 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:46,011 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:46,184 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:46,657 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:46,992 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:47,014 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:48,019 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:48,028 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:49,028 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:49,034 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:49,713 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:49,726 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:18:50,055 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:50,062 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:51,078 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:51,088 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:52,111 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:52,118 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:53,118 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:53,135 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:53,246 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:18:53,850 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:18:54,185 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:54,192 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:55,218 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:55,229 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:56,206 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:18:56,212 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:18:56,761 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:18:58,180 - stream_recorder.py - ERROR - Error processing 8413C6_ACC.h5: len(data) (10089) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (10089) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,236 - stream_recorder.py - ERROR - Error processing 8413C6_BVP.h5: len(data) (21918) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (21918) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,249 - stream_recorder.py - ERROR - Error processing 8413C6_GSR.h5: len(data) (1137) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (1137) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,264 - stream_recorder.py - ERROR - Error processing 8413C6_TAG.h5: sfreq must be positive. Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-46>", line 12, in create_info
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\meas_info.py", line 3160, in create_info
+    raise ValueError("sfreq must be positive")
+ValueError: sfreq must be positive
+
+2023-10-31 21:18:58,276 - stream_recorder.py - ERROR - Error processing 8413C6_TEMP.h5: len(data) (1166) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (1166) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,307 - stream_recorder.py - ERROR - Error processing A4880B_ACC.h5: len(data) (9583) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (9583) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,400 - stream_recorder.py - ERROR - Error processing A4880B_BVP.h5: len(data) (21601) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (21601) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,416 - stream_recorder.py - ERROR - Error processing A4880B_GSR.h5: len(data) (1054) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (1054) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,431 - stream_recorder.py - ERROR - Error processing A4880B_TAG.h5: sfreq must be positive. Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-46>", line 12, in create_info
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\meas_info.py", line 3160, in create_info
+    raise ValueError("sfreq must be positive")
+ValueError: sfreq must be positive
+
+2023-10-31 21:18:58,443 - stream_recorder.py - ERROR - Error processing A4880B_TEMP.h5: len(data) (1155) does not match len(info["ch_names"]) (4). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (1155) does not match len(info["ch_names"]) (4)
+
+2023-10-31 21:18:58,444 - stream_recorder.py - INFO - Finished saving combined datasets.
+2023-10-31 21:37:56,424 - stream_recorder.py - INFO - StreamRecorder initialized with root_output_folder: C:/Users/siddh/Documents/StreamSense/1698783802_866271
+2023-10-31 21:37:57,446 - stream_recorder.py - INFO - Stream Connected: A4880B_TAG
+2023-10-31 21:37:57,457 - stream_recorder.py - INFO - Stream Connected: A4880B_GSR
+2023-10-31 21:37:57,470 - stream_recorder.py - INFO - Stream Connected: 8413C6_TAG
+2023-10-31 21:37:57,481 - stream_recorder.py - INFO - Stream Connected: A4880B_TEMP
+2023-10-31 21:37:57,493 - stream_recorder.py - INFO - Stream Connected: A4880B_BVP
+2023-10-31 21:37:57,505 - stream_recorder.py - INFO - Stream Connected: 8413C6_TEMP
+2023-10-31 21:37:57,518 - stream_recorder.py - INFO - Stream Connected: 8413C6_BVP
+2023-10-31 21:37:57,530 - stream_recorder.py - INFO - Stream Connected: 8413C6_GSR
+2023-10-31 21:37:57,541 - stream_recorder.py - INFO - Stream Connected: A4880B_ACC
+2023-10-31 21:37:57,548 - stream_recorder.py - INFO - Stream Connected: 8413C6_ACC
+2023-10-31 21:38:41,848 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:38:41,879 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:38:41,879 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:41,997 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:42,894 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:43,028 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:43,969 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:44,111 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:44,422 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:38:45,030 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:38:45,031 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:45,154 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:46,073 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:46,205 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:46,967 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:38:47,161 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:38:47,161 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:47,302 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:48,237 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:48,345 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:49,248 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:49,383 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:50,313 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:50,445 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:50,501 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:38:51,387 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:38:51,387 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:51,496 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:52,417 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:52,532 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:53,400 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:53,515 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:53,521 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:38:54,904 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:38:54,905 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:55,022 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:55,915 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:56,037 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:56,901 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:57,041 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:38:57,043 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:57,914 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:38:57,914 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:58,041 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:58,914 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:38:59,020 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:38:59,933 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:00,049 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:00,055 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:39:01,557 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:39:01,557 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:01,692 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:02,617 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:02,731 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:03,563 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:39:03,598 - stream_recorder.py - INFO - Stream disconnected: A4880B_TAG
+2023-10-31 21:39:03,599 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:03,713 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:04,577 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:04,684 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:05,625 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:05,743 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:06,686 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:06,817 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:07,095 - stream_recorder.py - INFO - Stream reconnected: 8413C6_TAG
+2023-10-31 21:39:07,763 - stream_recorder.py - INFO - Stream disconnected: 8413C6_TAG
+2023-10-31 21:39:07,763 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:07,870 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:08,817 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:08,932 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:09,830 - stream_recorder.py - DEBUG - A4880B_TAG missing samples. Saving NA values.
+2023-10-31 21:39:09,954 - stream_recorder.py - DEBUG - 8413C6_TAG missing samples. Saving NA values.
+2023-10-31 21:39:10,627 - stream_recorder.py - INFO - Stream reconnected: A4880B_TAG
+2023-10-31 21:39:11,916 - stream_recorder.py - ERROR - Error processing 8413C6_ACC.h5: len(data) (1912) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (1912) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,934 - stream_recorder.py - ERROR - Error processing 8413C6_BVP.h5: len(data) (3912) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (3912) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,942 - stream_recorder.py - ERROR - Error processing 8413C6_GSR.h5: len(data) (224) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (224) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,948 - stream_recorder.py - ERROR - Error processing 8413C6_TAG.h5: sfreq must be positive. Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-46>", line 12, in create_info
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\meas_info.py", line 3160, in create_info
+    raise ValueError("sfreq must be positive")
+ValueError: sfreq must be positive
+
+2023-10-31 21:39:11,957 - stream_recorder.py - ERROR - Error processing 8413C6_TEMP.h5: len(data) (219) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (219) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,967 - stream_recorder.py - ERROR - Error processing A4880B_ACC.h5: len(data) (1791) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (1791) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,980 - stream_recorder.py - ERROR - Error processing A4880B_BVP.h5: len(data) (3858) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (3858) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,988 - stream_recorder.py - ERROR - Error processing A4880B_GSR.h5: len(data) (181) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (181) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:11,994 - stream_recorder.py - ERROR - Error processing A4880B_TAG.h5: sfreq must be positive. Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-46>", line 12, in create_info
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\meas_info.py", line 3160, in create_info
+    raise ValueError("sfreq must be positive")
+ValueError: sfreq must be positive
+
+2023-10-31 21:39:12,001 - stream_recorder.py - ERROR - Error processing A4880B_TEMP.h5: len(data) (200) does not match len(info["ch_names"]) (5). Traceback: Traceback (most recent call last):
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 118, in save_datasets
+    mne_data = self.convert_to_mne(data, sfreq)
+  File "C:\Users\siddh\PycharmProjects\StreamSense\recorder\stream_recorder.py", line 76, in convert_to_mne
+    raw = mne.io.RawArray(data, info=mne.create_info(ch_names=["AF7", "AF8", "TP9", "TP10", "R_AUX"],
+  File "<decorator-gen-245>", line 12, in __init__
+  File "C:\Users\siddh\PycharmProjects\StreamSense\venv\lib\site-packages\mne\io\array\array.py", line 68, in __init__
+    raise ValueError(
+ValueError: len(data) (200) does not match len(info["ch_names"]) (5)
+
+2023-10-31 21:39:12,002 - stream_recorder.py - INFO - Finished saving combined datasets.

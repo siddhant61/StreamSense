@@ -1,5 +1,7 @@
 from queue import Queue
 
+from helper.e4_helper import EmpaticaE4
+
 active_record = None
 active_e4 = []
 active_muse = []
@@ -13,7 +15,7 @@ root_output_folder = None
 root_output_folder_path= None
 global stop_signal
 stop_signal = False
-import multiprocessing
+import multiprocessing as mp
 import argparse
 from datetime import datetime
 from pathlib import Path
@@ -23,19 +25,6 @@ import userpaths
 import serial
 import wmi
 import logging
-from pylsl import local_clock
-
-synchronized_start_time = local_clock()
-
-# Setup logging
-logger = logging.getLogger("main.py")
-logger.setLevel(logging.CRITICAL)
-fh = logging.FileHandler("Logs/main.log")
-fh.setLevel(logging.CRITICAL)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
-
 from recorder.stream_recorder import StreamRecorder
 from helper.find_devices import FindDevices
 from streamer.stream_muse import StreamMuse
@@ -43,20 +32,48 @@ from streamer.stream_e4 import StreamE4
 from viewer.view_streams import ViewStreams
 from experiments.visual_oddball import VisualOddball
 import warnings
-import helper.e4_helper
 warnings.filterwarnings("ignore")
 
+main_logger = logging.getLogger(__name__)
+synchronized_start_time = time.time()
+
+def _setup_logger(root_output_folder):
+    """Set up logger to write logs to a file."""
+    log_file_path = root_output_folder / "Logs" / "main_logger.log"
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    main_logger = logging.getLogger("main_logger")
+    file_handler = logging.FileHandler(log_file_path)
+    formatter = logging.Formatter('[%(levelname)s]: %(message)s')
+    file_handler.setFormatter(formatter)
+    main_logger.addHandler(file_handler)
+    main_logger.setLevel(logging.DEBUG)
 
 def connect_muse_devices(root_output_folder):
     muse_reg = {}
     devices = FindDevices()
-    com_ports = devices.serial_ports()
+    ports = devices.serial_ports()
+    com_ports = []
 
-    print(f"{len(com_ports)} free serial port(s) detected: {com_ports}\n")
-    logger.info(f"{len(com_ports)} free serial port(s) detected.\n")
+    for port in ports:
+        try:
+            ser = serial.Serial(port)
+            if ser.isOpen():
+                com_ports.append(port)
+            ser.close()
+        except serial.serialutil.SerialException:
+            print(f"{port} is not available.\n")
+            main_logger.info(f"{port} is not available.\n")
+
+    print(f"{len(com_ports)} free serial port(s) detected.\n")
+    main_logger.info(f"{len(com_ports)} free serial port(s) detected.\n")
 
     if len(com_ports) != 0:
-        muses = devices.find_muse()
+        q1 = Queue()
+        t1 = threading.Thread(target=devices.find_muse, args=(q1,))
+        t1.start()
+        muses = q1.get()
+        t1.join()
         if len(com_ports) > len(muses):
             n = len(muses)
         else:
@@ -67,15 +84,15 @@ def connect_muse_devices(root_output_folder):
                 value = muses[i]['address']
                 muse_reg[key] = value
             print(f"{len(muse_reg)} Muse device(s) registered.\n")
-            logger.info(f"{len(muse_reg)} Muse device(s) registered.\n")
+            main_logger.info(f"{len(muse_reg)} Muse device(s) registered.\n")
         else:
             print("No Muse devices found.\n")
-            logger.info("No Muse devices found.\n")
+            main_logger.info("No Muse devices found.\n")
 
         if len(muse_reg) != 0:
             for i in range(len(muse_reg)):
                 key = f"muse_streamer_{i + 1}"
-                value = StreamMuse(list(muse_reg.keys())[i], list(muse_reg.values())[i], com_ports[n-i-1], root_output_folder, synchronized_start_time)
+                value = StreamMuse(list(muse_reg.keys())[i], list(muse_reg.values())[i], com_ports[i], root_output_folder,synchronized_start_time)
                 muse_streamers[key] = value
                 key = f"thread_{i + 1}"
                 value = threading.Thread(target=list(muse_streamers.values())[i].start_streaming)
@@ -85,84 +102,13 @@ def connect_muse_devices(root_output_folder):
                 for i in range(len(muse_threads)):
                     list(muse_threads.values())[i].start()
                     list(muse_streamers.values())[i].connected_event.wait()
-                    if i == 0:
-                        time.sleep(5)  # Delay for 5 seconds after the first device
 
                 print(f"{len(muse_threads)} Muse streaming thread(s) running.\n")
-                logger.info(f"{len(muse_threads)} Muse streaming thread(s) running.\n")
+                main_logger.info(f"{len(muse_threads)} Muse streaming thread(s) running.\n")
             else:
                 print("No Muse streaming threads running.\n")
-                logger.info("No Muse streaming threads running.\n")
+                main_logger.info("No Muse streaming threads running.\n")
     return muse_reg, muse_streamers, muse_threads
-
-def connect_e4_devices(root_output_folder):
-    e4_reg = {}
-    devices = FindDevices()
-
-    e4_server = False
-
-    while not (e4_server):
-        print('Checking for E4 Server Process.\n')
-        logger.info('Checking for E4 Server Process.\n')
-        f = wmi.WMI()
-
-        flag = 0
-
-        # Iterating through all the running processes
-        for process in f.Win32_Process():
-            if "EmpaticaBLEServer.exe" == process.Name:
-                print("E4 Server is running. Finding E4 devices.\n")
-                logger.info("E4 Server is running. Finding E4 devices.\n")
-                e4_server = True
-                flag = 1
-                break
-
-        if flag == 0:
-            e4_server = False
-            print("E4 Server is not running. Please start the server first.\n")
-            logger.info("E4 Server is not running. Please start the server first.\n")
-            time.sleep(10)
-
-    with helper.e4_helper.EmpaticaClient() as client:
-        q2 = Queue()
-        t2 = threading.Thread(target=devices.find_empatica, args=(q2, client))
-        t2.start()
-        e4s = q2.get()
-        t2.join()
-
-    if len(e4s) != 0:
-        for i in range(len(e4s)):
-            key = str(e4s[i])
-            value = str(e4s[i])
-            e4_reg[key] = value
-    else:
-        print("No E4 devices found.")
-        logger.info("No E4 devices found.")
-
-    if len(e4_reg) != 0:
-        for i in range(len(e4_reg)):
-            key = f"e4_streamer_{i + 1}"
-            value = StreamE4(list(e4_reg.values())[i], root_output_folder, synchronized_start_time)
-            e4_streamers[key] = value
-
-            key = f"thread_{i + 1}"
-            value = threading.Thread(target=list(e4_streamers.values())[i].start_streaming)
-            e4_threads[key] = value
-        print(f"{len(e4_reg)} E4 device(s) registered.\n")
-        logger.info(f"{len(e4_reg)} E4 device(s) registered.\n")
-
-        if len(e4_threads) != 0:
-            for i in range(len(e4_threads)):
-                list(e4_threads.values())[i].start()
-                list(e4_streamers.values())[i].connected_event.wait()
-
-        print(f"{len(e4_threads)} E4 streaming thread(s) running.\n")
-        logger.info(f"{len(e4_threads)} E4 streaming thread(s) running.\n")
-    else:
-        print("No E4 devices registered.\n")
-        print("No E4 streaming threads running.\n")
-        logger.info("No E4 streaming threads running.\n")
-    return e4_reg, e4_streamers, e4_threads
 
 def log_and_print(message, logger):
     """Log and print the given message."""
@@ -197,6 +143,14 @@ def display_streams_menu():
         """
     print(menu_options)
 
+
+def start_streaming_process(device_name, root_output_folder, synchronized_start_time, shared_queues):
+    # Create instances of EmpaticaE4 and StreamE4 within the child process
+    e4 = EmpaticaE4(device_name)
+    stream_e4 = StreamE4(e4, root_output_folder, synchronized_start_time, shared_queues)
+    stream_e4.start_streaming()
+
+
 # def get_user_choice():
 #     """Get a valid user choice from the menu."""
 #     while True:
@@ -211,7 +165,7 @@ def display_streams_menu():
 
 if __name__ == '__main__':
 
-    multiprocessing.freeze_support()
+    mp.freeze_support()
     flag = 1
     parser = argparse.ArgumentParser(description='Command-line options for the script.')
     parser.add_argument('command', choices=['menu', 'stream', 'view', 'record', 'oddball', 'stop'],
@@ -219,7 +173,10 @@ if __name__ == '__main__':
     parser.add_argument('--dev', choices=['muse', 'e4'], help='The device to stream. Used with the stream command.')
     parser.add_argument('--data', choices=['eeg', 'bvp', 'acc', 'gsr', 'ppg'],
                         help='The data stream to view. Used with the view command.')
+    data_recorder = StreamRecorder(root_output_folder)
     print("Type 'help' to display the command options or 'exit' to quit.")
+
+
 
     while True:
         try:
@@ -248,6 +205,7 @@ if __name__ == '__main__':
                                 root_output_folder_path = Path(root_output_folder)
                                 root_output_folder_path.mkdir(parents=True, exist_ok=True)
                                 if flag == 1:
+                                    _setup_logger(root_output_folder_path)
                                     flag = 0
 
                             muse_reg, muse_streamers, muse_threads = connect_muse_devices(root_output_folder)
@@ -279,12 +237,69 @@ if __name__ == '__main__':
                                 root_output_folder_path = Path(root_output_folder)
                                 root_output_folder_path.mkdir(parents=True, exist_ok=True)
                                 if flag == 1:
+                                    _setup_logger(root_output_folder_path)
                                     flag = 0
 
-                            e4_reg, e4_streamers, e4_threads = connect_e4_devices(root_output_folder_path)
-                            for thread in e4_threads.values():
-                                active_e4.append(thread)
-                            pass
+                            e4_reg = {}
+                            devices = FindDevices()
+                            e4_processes = []
+                            e4_server = False
+
+                            while not (e4_server):
+                                print('Checking for E4 Server Process.\n')
+                                main_logger.info('Checking for E4 Server Process.\n')
+                                f = wmi.WMI()
+
+                                flag = 0
+
+                                # Iterating through all the running processes
+                                for process in f.Win32_Process():
+                                    if "EmpaticaBLEServer.exe" == process.Name:
+                                        print("E4 Server is running. Finding E4 devices.\n")
+                                        main_logger.info("E4 Server is running. Finding E4 devices.\n")
+                                        e4_server = True
+                                        flag = 1
+                                        break
+
+                                if flag == 0:
+                                    e4_server = False
+                                    print("E4 Server is not running. Please start the server first.\n")
+                                    main_logger.info("E4 Server is not running. Please start the server first.\n")
+                                    time.sleep(10)
+
+                            q2 = Queue()
+                            t2 = threading.Thread(target=devices.find_empatica, args=(q2,))
+                            t2.start()
+                            e4s = q2.get()
+                            t2.join()
+
+                            print(e4s)
+
+                            if len(e4s) != 0:
+                                shared_queues_dict = {
+                                    e4: {
+                                        'acc': mp.Queue(),
+                                        'bvp': mp.Queue(),
+                                        'gsr': mp.Queue(),
+                                        'tmp': mp.Queue(),
+                                        'ibi': mp.Queue(),
+                                        'hr': mp.Queue(),
+                                        'tag': mp.Queue()
+                                    }
+                                    for e4 in e4s
+                                }
+                                for i in range(len(e4s)):
+
+                                    print(e4s[i], shared_queues_dict[e4s[i]])
+                                    p = mp.Process(target=start_streaming_process, args=(
+                                    e4s[i], root_output_folder, synchronized_start_time, shared_queues_dict[e4s[i]]))
+                                    p.start()
+                                    e4_processes.append(p)
+
+                            else:
+                                print("No E4 devices found.")
+                                main_logger.info("No E4 devices found.")
+
 
                         elif int(user_input) == 4:
                             # Create a root directory for saving data and oddball results only if not already created
@@ -294,11 +309,13 @@ if __name__ == '__main__':
                                 root_output_folder_path = Path(root_output_folder)
                                 root_output_folder_path.mkdir(parents=True, exist_ok=True)
                                 if flag == 1:
+                                    _setup_logger(root_output_folder_path)
                                     flag = 0
 
-                            data_recorder = StreamRecorder(root_output_folder)
+                            # Pass the data_queue to StreamRecorder
+                            data_recorder.root_output_folder = root_output_folder
                             save_data_thread = threading.Thread(
-                                target=data_recorder.record_streams)
+                                target=data_recorder.start_data_collection_and_writing)
                             save_data_thread.start()
                             time.sleep(5)
                             active_record = save_data_thread
@@ -313,6 +330,7 @@ if __name__ == '__main__':
                                 root_output_folder_path = Path(root_output_folder)
                                 root_output_folder_path.mkdir(parents=True, exist_ok=True)
                                 if flag == 1:
+                                    _setup_logger(root_output_folder_path)
                                     flag = 0
                             exp = VisualOddball(root_output_folder)
                             sequence = (10, 3)
@@ -322,7 +340,7 @@ if __name__ == '__main__':
                         elif int(user_input) == 6:
                             stop_signal = True
                             if active_record:
-                                logger.info("Current state saved.")
+                                main_logger.info("Current state saved.")
                                 data_recorder.stop()
                                 active_record.join()
 
@@ -354,6 +372,7 @@ if __name__ == '__main__':
                             root_output_folder_path = Path(root_output_folder)
                             root_output_folder_path.mkdir(parents=True, exist_ok=True)
                             if flag == 1:
+                                _setup_logger(root_output_folder_path)
                                 flag = 0
 
                         muse_reg, muse_streamers, muse_threads = connect_muse_devices(root_output_folder)
@@ -369,12 +388,64 @@ if __name__ == '__main__':
                             root_output_folder_path = Path(root_output_folder)
                             root_output_folder_path.mkdir(parents=True, exist_ok=True)
                             if flag == 1:
+                                _setup_logger(root_output_folder_path)
                                 flag = 0
 
-                        e4_reg, e4_streamers, e4_threads = connect_e4_devices(root_output_folder_path)
-                        for thread in e4_threads.values():
-                            active_e4.append(thread)
-                        pass
+                        e4_reg = {}
+                        devices = FindDevices()
+                        e4_processes = []
+                        e4_server = False
+
+                        while not (e4_server):
+                            print('Checking for E4 Server Process.\n')
+                            main_logger.info('Checking for E4 Server Process.\n')
+                            f = wmi.WMI()
+
+                            flag = 0
+
+                            # Iterating through all the running processes
+                            for process in f.Win32_Process():
+                                if "EmpaticaBLEServer.exe" == process.Name:
+                                    print("E4 Server is running. Finding E4 devices.\n")
+                                    main_logger.info("E4 Server is running. Finding E4 devices.\n")
+                                    e4_server = True
+                                    flag = 1
+                                    break
+
+                            if flag == 0:
+                                e4_server = False
+                                print("E4 Server is not running. Please start the server first.\n")
+                                main_logger.info("E4 Server is not running. Please start the server first.\n")
+                                time.sleep(10)
+
+                        q2 = Queue()
+                        t2 = threading.Thread(target=devices.find_empatica, args=(q2,))
+                        t2.start()
+                        e4s = q2.get()
+                        t2.join()
+
+                        if len(e4s) != 0:
+                            shared_queues_dict = {
+                                e4: {
+                                    'acc': mp.Queue(),
+                                    'bvp': mp.Queue(),
+                                    'gsr': mp.Queue(),
+                                    'tmp': mp.Queue(),
+                                    'ibi': mp.Queue(),
+                                    'hr': mp.Queue(),
+                                    'tag': mp.Queue()
+                                }
+                                for e4 in e4s
+                            }
+                            for i in range(len(e4s)):
+                                p = mp.Process(target=start_streaming_process, args=(
+                                    e4s[i], root_output_folder, synchronized_start_time, shared_queues_dict[e4s[i]]))
+                                p.start()
+                                e4_processes.append(p)
+
+                        else:
+                            print("No E4 devices found.")
+                            main_logger.info("No E4 devices found.")
 
                 elif args.command == 'view':
                     if args.data == 'eeg':
@@ -409,9 +480,10 @@ if __name__ == '__main__':
                         root_output_folder_path = Path(root_output_folder)
                         root_output_folder_path.mkdir(parents=True, exist_ok=True)
                         if flag == 1:
+                            _setup_logger(root_output_folder_path)
                             flag = 0
-                    data_recorder = StreamRecorder(root_output_folder)
-                    save_data_thread = threading.Thread(target=data_recorder.record_streams)
+                    data_recorder.root_output_folder = root_output_folder
+                    save_data_thread = threading.Thread(target=data_recorder.start_data_collection_and_writing)
                     save_data_thread.start()
                     time.sleep(5)
                     active_record = save_data_thread
@@ -426,6 +498,7 @@ if __name__ == '__main__':
                         root_output_folder_path = Path(root_output_folder)
                         root_output_folder_path.mkdir(parents=True, exist_ok=True)
                         if flag == 1:
+                            _setup_logger(root_output_folder_path)
                             flag = 0
                     exp = VisualOddball(root_output_folder)
                     sequence = (10, 3)
@@ -435,7 +508,7 @@ if __name__ == '__main__':
                 elif args.command == 'stop':
                     stop_signal = True
                     if active_record:
-                        logger.info("Current state saved.")
+                        main_logger.info("Current state saved.")
                         data_recorder.stop()
                         active_record.join()
 

@@ -1,32 +1,48 @@
+import threading
 import bitstring
 import pygatt
 import numpy as np
 from time import time, sleep
-from sys import platform
 import subprocess
 from muselsl import backends
 from muselsl import helper
 from muselsl.constants import *
+from helper.serial_helper import BGAPIBackend
+import logging
 
+# Setup logging
+logger = logging.getLogger("muse_helper.py")
+logger.setLevel(logging.CRITICAL)
+fh = logging.FileHandler("Logs/muse_helper.log")
+fh.setLevel(logging.CRITICAL)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 class Muse():
-    """Muse 2016 headband"""
-
     def __init__(self,
                  address,
-                 adapter,
-                 callback_eeg=None,
-                 callback_control=None,
-                 callback_telemetry=None,
-                 callback_acc=None,
-                 callback_gyro=None,
-                 callback_ppg=None,
+                 shared_eeg,
+                 shared_ppg,
+                 shared_acc,
+                 shared_gyro,
+                 shared_tel,
+                 shared_con,
+                 synchronized_start_time,
                  backend='bgapi',
                  interface=None,
                  time_func=time,
                  name=None,
-                 preset=21,
-                 disable_light=False):
+                 preset=None,
+                 disable_light=False,
+                 enable_eeg = True,
+                 enable_control = True,
+                 enable_telemetry = True,
+                 enable_acc = True,
+                 enable_gyro = True,
+                 enable_ppg = True
+
+    ):
         """Initialize
 
         callback_eeg -- callback for eeg data, function(data, timestamps)
@@ -41,38 +57,61 @@ class Muse():
 
         self.address = address
         self.name = name
-        self.adapter = adapter
-        self.callback_eeg = callback_eeg
-        self.callback_telemetry = callback_telemetry
-        self.callback_control = callback_control
-        self.callback_acc = callback_acc
-        self.callback_gyro = callback_gyro
-        self.callback_ppg = callback_ppg
-
-        self.enable_eeg = not callback_eeg is None
-        self.enable_control = not callback_control is None
-        self.enable_telemetry = not callback_telemetry is None
-        self.enable_acc = not callback_acc is None
-        self.enable_gyro = not callback_gyro is None
-        self.enable_ppg = not callback_ppg is None
-
         self.interface = interface
         self.time_func = time_func
-        self.backend = helper.resolve_backend(backend)
+        self.backend = backend
         self.preset = preset
         self.disable_light = disable_light
 
-    def connect(self):
+        self.enable_eeg = enable_eeg
+        self.enable_control = enable_control
+        self.enable_telemetry = enable_telemetry
+        self.enable_acc = enable_acc
+        self.enable_gyro = enable_gyro
+        self.enable_ppg = enable_ppg
+
+        # Shared Queues
+        self.eeg_queue = shared_eeg
+        self.telemetry_queue = shared_tel
+        self.control_queue = shared_con
+        self.acc_queue = shared_acc
+        self.gyro_queue = shared_gyro
+        self.ppg_queue = shared_ppg
+
+
+    def connect(self, reconnect = False):
         """Connect to the device"""
         try:
+            if not reconnect:
+                if self.backend == 'bluemuse':
+                    print('Starting BlueMuse.')
+                    subprocess.call('start bluemuse:', shell=True)
+                    self.last_timestamp = self.time_func()
+                else:
+                    print('Connecting to %s: %s...' % (self.name
+                                                       if self.name else 'Muse',
+                                                       self.address))
+                    if self.backend == 'gatt':
+                        self.interface = self.interface or 'hci0'
+                        self.adapter = pygatt.GATTToolBackend(self.interface)
+                    elif self.backend == 'bleak':
+                        self.adapter = backends.BleakBackend()
+                    else:
+                        self.adapter = BGAPIBackend(
+                            serial_port=self.interface)
 
-            print('Connecting to %s: %s...' % (self.name
-                                               if self.name else 'Muse',
-                                               self.address))
+                logger.debug('Starting adapter')
+
+                self.adapter.start(reset=False)
+
+                logger.debug('Adapter started')
 
             self.device = self.adapter.connect(self.address)
-            if(self.preset != None):
+
+            if (self.preset != None):
                 self.select_preset(self.preset)
+
+            logger.debug('Adapter connected')
 
             # subscribes to EEG stream
             if self.enable_eeg:
@@ -97,6 +136,8 @@ class Muse():
                 self._disable_light()
 
             self.last_timestamp = self.time_func()
+
+            logger.debug('Subscribed to data streams')
 
             return True
 
@@ -125,16 +166,19 @@ class Muse():
 
                 if self.enable_ppg:
                     self._subscribe_ppg()
-                
+
                 if self.disable_light:
                     self._disable_light()
 
                 self.last_timestamp = self.time_func()
 
+                logger.debug('Subscribed to data streams')
+
                 return True
 
             else:
-                print('Connection to', self.address, 'failed')
+                print('Connecting to', self.address, '...')
+                logger.error('Connection to %s failed due to %s', self.address, str(error))
                 return False
 
     def _write_cmd(self, cmd):
@@ -214,6 +258,8 @@ class Muse():
         self._init_control()
         self.resume()
 
+        logger.debug('Streaming started')
+
     def resume(self):
         """Resume streaming, sending 'd' command"""
         self._write_cmd_str('d')
@@ -236,7 +282,7 @@ class Muse():
         """Keep streaming, sending 'k' command"""
         self._write_cmd_str('k')
 
-    def select_preset(self, preset=21):
+    def select_preset(self, preset=50):
         """Set preset for headband configuration
 
         See details here https://articles.jaredcamins.com/figuring-out-bluetooth-low-energy-part-2-750565329a7d
@@ -249,7 +295,7 @@ class Muse():
         if preset[0] == 'p':
             preset = preset[1:]
         if str(preset) != '21':
-            print('Sending command for non-default preset: p' + preset)
+            logger.debug('Sending command for non-default preset: p' + preset)
         preset = bytes(preset, 'utf-8')
         self._write_cmd([0x04, 0x70, *preset, 0x0a])
 
@@ -327,7 +373,7 @@ class Muse():
         # least square estimation
         P = self._P
         R = self.reg_params[1]
-        P = P - ((P**2) * (t_source**2)) / (1 - (P * (t_source**2)))
+        P = P - ((P ** 2) * (t_source ** 2)) / (1 - (P * (t_source ** 2)))
         R = R + P * t_source * (t_receiver - t_source * R)
 
         # update parameters
@@ -337,8 +383,8 @@ class Muse():
     def _handle_eeg(self, handle, data):
         """Callback for receiving a sample.
 
-        samples are received in this order : 44, 41, 38, 32, 35
-        wait until we get 35 and call the data callback
+        samples are received in this order : 41, 38, 32, 35, 44
+        wait until we get 44 and call the data callback
         """
         if self.first_sample:
             self._init_timestamp_correction()
@@ -351,17 +397,20 @@ class Muse():
         if self.last_tm == 0:
             self.last_tm = tm - 1
 
+        logger.debug(f"For device: {self.name} at address: {self.address}, received: %d %d %d", handle, tm, self.last_tm + 1)
+
         self.data[index] = d
         self.timestamps[index] = timestamp
         # last data received
-        if handle == 35:
+        if handle == 44:
             if tm != self.last_tm + 1:
                 if (tm - self.last_tm) != -65535:  # counter reset
-                    print("missing sample %d : %d" % (tm, self.last_tm))
+                    logger.debug(f"For device: {self.name} at address: {self.address}, missing sample %d : %d" % (tm, self.last_tm+1))
                     # correct sample index for timestamp estimation
                     self.sample_index += 12 * (tm - self.last_tm + 1)
 
             self.last_tm = tm
+            logger.debug(f"For device: {self.name} at address: {self.address}, present Handle: %d %d %d", handle, tm, self.last_tm)
 
             # calculate index of time samples
             idxs = np.arange(0, 12) + self.sample_index
@@ -378,7 +427,9 @@ class Muse():
             timestamps = self.reg_params[1] * idxs + self.reg_params[0]
 
             # push data
-            self.callback_eeg(self.data, timestamps)
+            self.eeg_queue.put((self.data, timestamps))
+
+            logger.debug(f"For device: {self.name} Data size: {len(self.data)}")
 
             # save last timestamp for disconnection timer
             self.last_timestamp = timestamps[-1]
@@ -414,6 +465,8 @@ class Muse():
 
         each line is a message, the 4 messages are a json object.
         """
+        # logger.debug('Received control packet: %s', packet)
+
         if handle != 14:
             return
 
@@ -434,7 +487,7 @@ class Muse():
         self._current_msg += incoming_message
 
         if incoming_message[-1] == '}':  # Message ended completely
-            self.callback_control(self._current_msg)
+            self.control_queue.put(self._current_msg)
 
             self._init_control()
 
@@ -445,7 +498,7 @@ class Muse():
     def _handle_telemetry(self, handle, packet):
         """Handle the telemetry (battery, temperature and stuff) incoming data
         """
-
+        # logger.debug('Received telemetry packet: %s', packet)
         if handle != 26:  # handle 0x1a
             return
         timestamp = self.time_func()
@@ -459,8 +512,7 @@ class Muse():
         adc_volt = data[3]
         temperature = data[4]
 
-        self.callback_telemetry(timestamp, battery, fuel_gauge, adc_volt,
-                                temperature)
+        self.telemetry_queue.put((timestamp, battery, fuel_gauge, adc_volt, temperature))
 
     def _unpack_imu_channel(self, packet, scale=1):
         """Decode data packet of the accelerometer and gyro (imu) channels.
@@ -488,6 +540,8 @@ class Muse():
         """Handle incoming accelerometer data.
 
         sampling rate: ~17 x second (3 samples in each message, roughly 50Hz)"""
+        # logger.debug('Received acc packet: %s', packet)
+
         if handle != 23:  # handle 0x17
             return
         timestamps = [self.time_func()] * 3
@@ -498,7 +552,9 @@ class Muse():
         packet_index, samples = self._unpack_imu_channel(
             packet, scale=MUSE_ACCELEROMETER_SCALE_FACTOR)
 
-        self.callback_acc(samples, timestamps)
+        self.acc_queue.put((samples, timestamps))
+        # logger.debug(f"Device {self.name} ({self.address}) ACC queue size: {self.acc_queue.qsize()}")
+
 
     def _subscribe_gyro(self):
         self.device.subscribe(MUSE_GATT_ATTR_GYRO, callback=self._handle_gyro)
@@ -507,6 +563,9 @@ class Muse():
         """Handle incoming gyroscope data.
 
         sampling rate: ~17 x second (3 samples in each message, roughly 50Hz)"""
+
+        # logger.debug('Received gyro packet: %s', packet)
+
         if handle != 20:  # handle 0x14
             return
 
@@ -518,7 +577,11 @@ class Muse():
         packet_index, samples = self._unpack_imu_channel(
             packet, scale=MUSE_GYRO_SCALE_FACTOR)
 
-        self.callback_gyro(samples, timestamps)
+        logger.debug(f"Device {self.name} GYRO data: {samples}, GYRO data: {timestamps}")
+
+        self.gyro_queue.put((samples, timestamps))
+        # logger.debug(f"Device {self.name} ({self.address}) GYRO queue size: {self.gyro_queue.qsize()}")
+
 
     def _subscribe_ppg(self):
         try:
@@ -541,6 +604,8 @@ class Muse():
         samples are received in this order : 56, 59, 62
         wait until we get x and call the data callback
         """
+        # logger.debug('Received ppg data: %s', data)
+
         timestamp = self.time_func()
         index = int((handle - 56) / 3)
         tm, d = self._unpack_ppg_channel(data)
@@ -553,7 +618,8 @@ class Muse():
         # last data received
         if handle == 62:
             if tm != self.last_tm_ppg + 1:
-                print("missing sample %d : %d" % (tm, self.last_tm_ppg))
+                # print("missing sample %d : %d" % (tm, self.last_tm_ppg))
+                pass
             self.last_tm_ppg = tm
 
             # calculate index of time samples
@@ -562,14 +628,14 @@ class Muse():
 
             # timestamps are extrapolated backwards based on sampling rate and current time
             timestamps = self.reg_ppg_sample_rate[1] * \
-                idxs + self.reg_ppg_sample_rate[0]
+                         idxs + self.reg_ppg_sample_rate[0]
 
             # save last timestamp for disconnection timer
             self.last_timestamp = timestamps[-1]
 
             # push data
-            if self.callback_ppg:
-                self.callback_ppg(self.data_ppg, timestamps)
+            self.ppg_queue.put((self.data_ppg, timestamps))
+            # logger.debug(f"Device {self.name} ({self.address}) PPG queue size: {self.ppg_queue.qsize()}")
 
             # reset sample
             self._init_ppg_sample()
@@ -587,6 +653,6 @@ class Muse():
         data = res[1:]
 
         return packetIndex, data
-    
+
     def _disable_light(self):
         self._write_cmd_str('L0')
