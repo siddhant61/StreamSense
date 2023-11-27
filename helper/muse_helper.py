@@ -1,9 +1,12 @@
+import asyncio
 import threading
 import bitstring
 import pygatt
 import numpy as np
 from time import time, sleep
 import subprocess
+
+from pylsl import local_clock
 from muselsl import backends
 from muselsl import helper
 from muselsl.constants import *
@@ -31,7 +34,7 @@ class Muse():
                  synchronized_start_time,
                  backend='bgapi',
                  interface=None,
-                 time_func=time,
+                 time_func=local_clock,
                  name=None,
                  preset=None,
                  disable_light=False,
@@ -54,7 +57,6 @@ class Muse():
         callback_gyro -- function(timestamp, samples)
         - samples is a list of 3 samples, where each sample is [x, y, z]
         """
-
         self.address = address
         self.name = name
         self.interface = interface
@@ -62,6 +64,8 @@ class Muse():
         self.backend = backend
         self.preset = preset
         self.disable_light = disable_light
+        self.connected = False
+        self.miss_count = 0
 
         self.enable_eeg = enable_eeg
         self.enable_control = enable_control
@@ -77,6 +81,8 @@ class Muse():
         self.acc_queue = shared_acc
         self.gyro_queue = shared_gyro
         self.ppg_queue = shared_ppg
+
+
 
 
     def connect(self, reconnect = False):
@@ -177,7 +183,6 @@ class Muse():
                 return True
 
             else:
-                print('Connecting to', self.address, '...')
                 logger.error('Connection to %s failed due to %s', self.address, str(error))
                 return False
 
@@ -277,6 +282,19 @@ class Muse():
             return
 
         self._write_cmd_str('h')
+
+    async def keep_alive_periodic(self, interval=10):
+        """
+        Sends 'k' command periodically to keep the Muse connection alive.
+        :param interval: Time in seconds between each 'k' command
+        """
+        while self.connected:
+            self.keep_alive()
+            await asyncio.sleep(interval)
+
+    def start_keep_alive(self):
+        # Starting the keep_alive_periodic coroutine
+        asyncio.ensure_future(self.keep_alive_periodic())
 
     def keep_alive(self):
         """Keep streaming, sending 'k' command"""
@@ -408,6 +426,12 @@ class Muse():
                     logger.debug(f"For device: {self.name} at address: {self.address}, missing sample %d : %d" % (tm, self.last_tm+1))
                     # correct sample index for timestamp estimation
                     self.sample_index += 12 * (tm - self.last_tm + 1)
+                    self.miss_count += 1
+                    if self.miss_count > 3:
+                        self.connected = False
+            else:
+                self.miss_count = 0
+                self.connected = True
 
             self.last_tm = tm
             logger.debug(f"For device: {self.name} at address: {self.address}, present Handle: %d %d %d", handle, tm, self.last_tm)
@@ -436,6 +460,7 @@ class Muse():
 
             # reset sample
             self._init_sample()
+
 
     def _init_control(self):
         """Variable to store the current incoming message."""

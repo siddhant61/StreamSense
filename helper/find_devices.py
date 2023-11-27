@@ -1,8 +1,13 @@
 import logging
 import asyncio
+import multiprocessing
+import socket
+import subprocess
+import threading
+
 import bluetooth
 from muselsl import backends
-from helper.e4_helper import EmpaticaServerConnectError
+from helper.e4_helper import EmpaticaServerConnectError, EmpaticaServer
 import pywifi
 import time
 import serial.tools.list_ports
@@ -19,7 +24,42 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
+CONNECTION_TIMEOUT = 3
+CONNECTION_DELAY = 5
+
 class FindDevices:
+
+    @staticmethod
+    def find_muses_with_ports():
+        logger.info("Starting find_muses_with_ports function")
+        bled_ports = []
+        ports = serial.tools.list_ports.comports()
+        muses = {}
+        unique_ports = []
+
+        # Check for BLED112 ports
+        for port, desc, hwid in sorted(ports):
+            if "Bluegiga Bluetooth Low Energy" in desc:
+                bled_ports.append(port)
+
+        # Scan for Muse devices on each BLED112 port
+        for port in bled_ports:
+            try:
+                adapter = BGAPIBackend(serial_port=port)
+                adapter.start()
+                devices = adapter.scan(timeout=3)  # or your preferred timeout
+                adapter.stop()
+                print(f"Resetting Port {port}")
+                for d in devices:
+                    if d['name'] and 'Muse' in d['name']:
+                        muse_id = (d['name'].replace('\x00', ''), d['address'])
+                        muses[muse_id] = d
+                    unique_ports.append(port)
+            except Exception as e:
+                logger.warning(f"Error scanning on {port}: {e}")
+
+        logger.info("Finished find_muses_with_ports function")
+        return list(set(muses.keys())), list(set(unique_ports))
 
     @staticmethod
     def find_muse():
@@ -43,28 +83,43 @@ class FindDevices:
         return muses
 
     @staticmethod
-    def find_empatica(q, client):
+    def find_empatica():
+        # Create an instance of EmpaticaServer
+        server = EmpaticaServer()
+
         logger.info("Starting find_empatica function")
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         e4s = []
         try:
-            client.send("device_list\r\n")
-            response = client.data_queue.get()
-            for device in response:
-                e4s.append(device.decode())
-            q.put(e4s)
-        except Exception as e:
-            print(f"Error: {e}")
-            print("Could not connect to Empatica E4:", client.device_list)
-            logger.error(f"Error finding Empatica: {e}")
+            # Discover available E4 devices
+            devices = server.find_e4s()
+
+            if len(devices)!=0:
+                # Create and start a process for each device to connect and monitor
+                threads = []
+                for device in devices:
+                    print("E4 detected:", device)
+                    e4s.append(device)
+                    thread = threading.Thread(target=server.connect_and_monitor_e4, args=(device,))
+                    thread.start()
+                    threads.append(thread)
+                    server.connected_event.wait()  # Wait for the device to be connected
+                    server.connected_event.clear()
+                    time.sleep(5)
+
         except EmpaticaServerConnectError:
             print("Failed to connect to server. Ensure E4 Streaming Server is open and connected to the BLE dongle.")
             logger.error("Failed to connect to server. Ensure E4 Streaming Server is open and connected to the BLE dongle.")
+        except Exception as e:
+            print(f"Error: {e}")
+            print("Could not connect to Empatica E4")
+            logger.error(f"Error finding Empatica: {e}")
         if not e4s:
             print("No E4 devices found.")
             logger.warning("No E4 devices found.")
         logger.info("Finished find_empatica function")
+        return e4s
 
     @staticmethod
     def scan_bluetooth():

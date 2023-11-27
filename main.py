@@ -1,3 +1,4 @@
+import asyncio
 from queue import Queue
 
 active_record = None
@@ -42,29 +43,27 @@ from streamer.stream_muse import StreamMuse
 from streamer.stream_e4 import StreamE4
 from viewer.view_streams import ViewStreams
 from experiments.visual_oddball import VisualOddball
-import warnings
 import helper.e4_helper
-warnings.filterwarnings("ignore")
+
 
 
 def connect_muse_devices(root_output_folder):
     muse_reg = {}
     devices = FindDevices()
-    com_ports = devices.serial_ports()
+    muses, com_ports = devices.find_muses_with_ports()
 
-    print(f"{len(com_ports)} free serial port(s) detected: {com_ports}\n")
+    print(f"{len(com_ports)} serial port(s) available: {com_ports}\n")
     logger.info(f"{len(com_ports)} free serial port(s) detected.\n")
 
     if len(com_ports) != 0:
-        muses = devices.find_muse()
         if len(com_ports) > len(muses):
             n = len(muses)
         else:
             n = len(com_ports)
         if len(muses) != 0:
             for i in range(n):
-                key = muses[i]['name']
-                value = muses[i]['address']
+                key = muses[i][0]
+                value = muses[i][1]
                 muse_reg[key] = value
             print(f"{len(muse_reg)} Muse device(s) registered.\n")
             logger.info(f"{len(muse_reg)} Muse device(s) registered.\n")
@@ -99,6 +98,8 @@ def connect_e4_devices(root_output_folder):
     e4_reg = {}
     devices = FindDevices()
 
+    e4s = devices.find_empatica()
+
     e4_server = False
 
     while not (e4_server):
@@ -122,13 +123,6 @@ def connect_e4_devices(root_output_folder):
             print("E4 Server is not running. Please start the server first.\n")
             logger.info("E4 Server is not running. Please start the server first.\n")
             time.sleep(10)
-
-    with helper.e4_helper.EmpaticaClient() as client:
-        q2 = Queue()
-        t2 = threading.Thread(target=devices.find_empatica, args=(q2, client))
-        t2.start()
-        e4s = q2.get()
-        t2.join()
 
     if len(e4s) != 0:
         for i in range(len(e4s)):
@@ -430,6 +424,7 @@ if __name__ == '__main__':
                     exp = VisualOddball(root_output_folder)
                     sequence = (10, 3)
                     exp.start_oddball(sequence)
+                    print(time.time())
                     pass
 
                 elif args.command == 'stop':

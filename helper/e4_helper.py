@@ -1,4 +1,5 @@
 import logging
+import multiprocessing
 import socket
 import threading
 import subprocess
@@ -8,6 +9,8 @@ from datetime import datetime, timezone
 from queue import Queue
 
 # Setup logging
+from pylsl import local_clock
+
 logger = logging.getLogger("e4_helper.py")
 logger.setLevel(logging.CRITICAL)
 fh = logging.FileHandler("Logs/e4_helper.log")
@@ -16,8 +19,15 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
-MAX_RETRIES = 3
+MONITORING_INTERVAL=10
+MAX_RETRIES = 10
 RETRY_WAIT = 5  # wait 5 seconds before retrying
+EXE_PATH = "D:/E4StreamingServer1.0.4.5400/EmpaticaBLEServer.exe"
+API_KEY = "7abb651d308e498fa558642f5c2b7a66"
+SERVER_ADDRESS = '127.0.0.1'
+SERVER_PORT = 28000
+BUFFER_SIZE = 4096
+
 
 class EmpaticaServerConnectError(Exception):
     """
@@ -62,6 +72,95 @@ def start_e4_server(exe_path):
     """
     subprocess.Popen(exe_path)
 
+class EmpaticaServer():
+    def __init__(self):
+        self.connected_event = multiprocessing.Event()  # Event to indicate successful connection
+        self.stop_signal = multiprocessing.Event()
+        self.start_e4_server(EXE_PATH, API_KEY)
+        time.sleep(5)
+
+    def start_e4_server(self, exe_path, api_key):
+        command = f"{exe_path} {api_key} {SERVER_ADDRESS} {SERVER_PORT}"
+        subprocess.Popen(command.split())
+
+    def find_e4s(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect((SERVER_ADDRESS, SERVER_PORT))
+            device_list_response = self.send_command(sock, "device_discover_list")
+            parts = device_list_response.split('|')
+            device_names = [part.strip().split()[0] for part in parts[1:]]
+            return device_names
+
+    def send_command(self, sock, command):
+        try:
+            sock.sendall(command.encode() + b'\r\n')
+            response = sock.recv(BUFFER_SIZE)
+            return response.decode().strip()
+        except socket.error as e:
+            logging.error(f"Socket error: {e}")
+            return None
+
+    def connect_and_monitor_e4(self, device_name):
+        # Create and start a new process for connecting and monitoring the device
+        process = multiprocessing.Process(target=self._connect_and_monitor_process, args=(device_name,))
+        process.start()
+        return process
+
+    def _connect_and_monitor_process(self, device_name):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.connect((SERVER_ADDRESS, SERVER_PORT))
+                for attempt in range(MAX_RETRIES):
+                    logging.warning(f"Attempt {attempt + 1} to connect to {device_name}")
+                    self.send_command(sock, f"device_discover_list {device_name}")
+                    time.sleep(RETRY_WAIT)
+                    response = self.send_command(sock, f"device_connect_btle {device_name}")
+
+                    if "OK" in response or "connected" in response:
+                        logging.warning(f"Connected to {device_name}")
+                        self.connected_event.set()
+                        time.sleep(5)
+                        # Start monitoring in a new thread
+                        monitoring_thread = threading.Thread(target=self.monitor_e4, args=(device_name,))
+                        monitoring_thread.start()
+                        break
+                    elif "ERR" in response:
+                        logging.warning(f"Error connecting to {device_name}: {response}")
+                    time.sleep(RETRY_WAIT)
+
+                if attempt == MAX_RETRIES - 1:
+                    logging.warning(f"Failed to connect to {device_name} after {MAX_RETRIES} attempts")
+        except Exception as e:
+            logging.error(f"Error with {device_name}: {e}")
+
+    def monitor_e4(self, device_name):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect((SERVER_ADDRESS, SERVER_PORT))
+            logging.info(f"Monitoring device {device_name}")
+
+            while not self.stop_signal.is_set():
+                if not self.is_device_connected(sock, device_name):
+                    logging.warning(f"Device {device_name} disconnected. Attempting to reconnect.")
+                    # Graceful reconnection attempt with delay
+                    for _ in range(MAX_RETRIES):
+                        response = self.send_command(sock, f"device_discover_list {device_name}")
+                        if device_name in response:
+                            if "OK" in self.send_command(sock, f"device_connect_btle {device_name}"):
+                                break
+                        time.sleep(RETRY_WAIT)
+                else:
+                    logging.info(f"{device_name} is connected and being monitored.")
+                time.sleep(MONITORING_INTERVAL)
+
+    def is_device_connected(self, sock, device_name):
+        response = self.send_command(sock, "device_list")
+        if response is None:
+            logging.error("Received None response in is_device_connected")
+            return False
+        return device_name in response
+
+    def stop_monitoring(self):
+        self.stop_signal.set()
 
 class EmpaticaClient:
 
@@ -290,23 +389,23 @@ class EmpaticaE4:
                     self.on_wrist = True
             elif data_type == b'Temperature':
                 self.tmp.append(float(data[2]))
-                self.tmp_timestamps.append(float(data[1]))
+                self.tmp_timestamps.append(local_clock())
                 self.format_and_queue_data(data)
             elif data_type == b'Ibi':
                 self.ibi.append(float(data[2]))
-                self.ibi_timestamps.append(float(data[1]))
+                self.ibi_timestamps.append(local_clock())
                 self.format_and_queue_data(data)
             elif data_type == b'Hr':
                 self.hr.append(float(data[2]))
-                self.hr_timestamps.append(float(data[1]))
+                self.hr_timestamps.append(local_clock())
                 self.format_and_queue_data(data)
             elif data_type == b'Battery':
                 self.bat.append(float(data[2]))
-                self.bat_timestamps.append(float(data[1]))
+                self.bat_timestamps.append(local_clock())
                 self.format_and_queue_data(data)
             elif data_type == b'Tag':
                 self.tag.append(float(data[2]))
-                self.tag_timestamps.append(float(data[1]))
+                self.tag_timestamps.append(local_clock())
                 self.format_and_queue_data(data)
             else:
                 self.last_error = "EmpaticaDataError - " + str(data)
@@ -403,9 +502,9 @@ class EmpaticaE4:
         # self.client.device = self
         self.send(command)
 
-        start_time = time.time()
+        start_time = local_clock()
         while not self.connected:
-            elapsed_time = time.time() - start_time
+            elapsed_time = local_clock() - start_time
             if elapsed_time > timeout:
                 print(f"Connection timed out for device: {device_name} after {elapsed_time} seconds")
                 raise EmpaticaServerConnectError(f"Could not connect to {device_name}!")
@@ -422,9 +521,9 @@ class EmpaticaE4:
         """
         command = "device_disconnect\r\n"
         self.send(command)
-        start_time = time.time()
+        start_time = local_clock()
         while self.connected:
-            if time.time() - start_time > timeout:
+            if local_clock() - start_time > timeout:
                 raise EmpaticaServerConnectError(f"Could not disconnect from device!")
             pass
         self.client.stop_reading_thread()
@@ -517,9 +616,9 @@ class EmpaticaE4:
         """
         command = "device_subscribe " + stream + " ON\r\n"
         self.send(command)
-        start_time = time.time()
+        start_time = local_clock()
         while not self.subscribed_streams.get(stream):
-            if time.time() - start_time > timeout:
+            if local_clock() - start_time > timeout:
                 raise EmpaticaServerConnectError(f"Could not subscribe to {stream}!")
             pass
 
@@ -532,9 +631,9 @@ class EmpaticaE4:
         """
         command = "device_subscribe " + stream + " OFF\r\n"
         self.send(command)
-        start_time = time.time()
+        start_time = local_clock()
         while self.subscribed_streams.get(stream):
-            if time.time() - start_time > timeout:
+            if local_clock() - start_time > timeout:
                 raise EmpaticaServerConnectError(f"Could not unsubscribe to {stream}!")
             pass
 

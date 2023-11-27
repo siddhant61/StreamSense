@@ -157,9 +157,8 @@ class StreamE4():
             print("Streaming ACC BVP GSR TEMP TAG...\n")
             self.queue.put('connected')
 
-            # Capture the initial timestamps when you start streaming
+            # Initialize initial timestamps
             initial_device_timestamp = None
-            initial_lsl_timestamp = local_clock()
 
             while not self.stop_signal:
                 try:
@@ -167,6 +166,8 @@ class StreamE4():
                     if "connection lost to device" in response:
                         logger.info(response)
                         self.connected = False
+                        # Reset initial timestamps due to disconnection
+                        initial_device_timestamp = None
                         self.reconnect()
                         continue
                     samples = response.split("\n")
@@ -177,16 +178,15 @@ class StreamE4():
 
                         device_timestamp = float(samples[i].split()[1].replace(',', '.'))
 
-                        # If the initial_device_timestamp is not set, set it now
+                        # Set initial timestamps upon reconnection or start of streaming
                         if initial_device_timestamp is None:
                             initial_device_timestamp = device_timestamp
 
-                        # Calculate the relative timestamps
-                        relative_device_timestamp = device_timestamp - initial_device_timestamp
-                        relative_lsl_timestamp = local_clock() - initial_lsl_timestamp
+                        # Calculate the elapsed time since the initial device timestamp
+                        elapsed_time = device_timestamp - initial_device_timestamp
 
                         # Calculate the corrected timestamp
-                        corrected_timestamp = device_timestamp + (relative_lsl_timestamp - relative_device_timestamp)
+                        corrected_timestamp = elapsed_time
 
                         if stream_type == "E4_Acc":
                             data = [

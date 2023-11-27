@@ -38,7 +38,7 @@ class StreamRecorder:
         self.sync_timestamp = None
         self.stop_signal = False
         self.stream_sample_rates = {
-            "EEG": 256, "BVP": 64, "PPG": 64, "GYRO": 50, "ACC": 50, "GSR": 4, "TEMP": 4
+            "EEG": 256, "BVP": 64, "PPG": 64, "GYRO": 50, "ACC": 32, "GSR": 4, "TEMP": 4, "TAG": 0.1
         }
         self.backoff_start = backoff_start  # Initial backoff time in seconds
         self.backoff_factor = backoff_factor  # Factor by which the backoff time increases
@@ -72,19 +72,21 @@ class StreamRecorder:
 
     def calculate_sfreq(self, timestamps):
         try:
-            # Convert float Unix timestamps to datetime objects
-            timestamps_datetime = [datetime.datetime.fromtimestamp(ts) for ts in timestamps]
+            # Ensure timestamps are sorted and unique
+            timestamps = np.sort(np.unique(timestamps))
 
             # Calculate the differences between consecutive timestamps
-            time_diff = np.diff(timestamps_datetime)
-            # Convert datetime.timedelta to seconds
-            time_diff = [td.total_seconds() for td in time_diff]
-            avg_time_diff = np.mean(time_diff)
+            time_diff = np.diff(timestamps)
 
-            if avg_time_diff == 0:
+            # Handle any potential anomalies in time differences
+            time_diff = time_diff[time_diff > 0]  # Remove non-positive differences
+
+            if len(time_diff) == 0:
                 raise ValueError("Invalid timestamps: Cannot calculate sampling frequency.")
 
-            sfreq = int(1 / avg_time_diff)
+            avg_time_diff = np.mean(time_diff)
+
+            sfreq = 1 / avg_time_diff
             return sfreq
         except ValueError as e:
             print(f"Timestamp conversion error: {e}")
@@ -118,7 +120,10 @@ class StreamRecorder:
             try:
                 with h5py.File(filepath, 'r') as hf:
                     if stream_id in hf:
-                        df_data = pd.DataFrame(hf[stream_id][:]).drop(columns=["R_AUX"])
+                        if 'EEG' in stream_id:
+                            df_data = pd.DataFrame(hf[stream_id][:]).drop(columns=[4])
+                        else:
+                            df_data = pd.DataFrame(hf[stream_id][:])
                         timestamps = hf[f"{stream_id}_timestamps"][:]
                         df = pd.DataFrame(df_data.values, index=timestamps)
                         if "EEG" in stream_id:
@@ -200,13 +205,13 @@ class StreamRecorder:
             except Exception as e:
                 logger.error(f"Error saving dataset for TEMP data: {e}. Traceback: {traceback.format_exc()}")
         if len(tag_dataset) != 0:
-            pickle_file_path = output_folder / "hr_dataset.pkl"
+            pickle_file_path = output_folder / "tag_dataset.pkl"
             try:
                 with open(pickle_file_path, 'wb') as f:
                     pickle.dump(tag_dataset, f)
-                    logger.info("Processed HR data and saved to dataset.")
+                    logger.info("Processed TAG data and saved to dataset.")
             except Exception as e:
-                logger.error(f"Error saving dataset for HR data: {e}. Traceback: {traceback.format_exc()}")
+                logger.error(f"Error saving dataset for TAG data: {e}. Traceback: {traceback.format_exc()}")
         if len(ibi_dataset) != 0:
             pickle_file_path = output_folder / "ibi_dataset.pkl"
             try:
@@ -312,13 +317,18 @@ class StreamRecorder:
             "GYRO": 15,
             "ACC": 15,
             "GSR": 40,
-            "TEMP": 40
+            "TEMP": 40,
+            "TAG": 2000
         }
-        threshold = thresholds.get(stream_id.split('_')[0], 20)  # default to 20
+        threshold = thresholds.get(stream_id.split('_')[-1], 20)  # default to 20
         if miss_count.get(stream_id) > threshold:
             if self.connected[stream_id]:
                 logger.info(f"Stream disconnected: {stream_id}")
             self.connected[stream_id] = False
+
+    def estimate_timestamps(self, last_timestamp, stream_id, count):
+        interval = 1.0 / self.nominal_srates[stream_id]
+        return [last_timestamp + i * interval for i in range(1, count + 1)]
 
     def record_streams(self):
         self.streams = self.check_streams()
@@ -326,8 +336,11 @@ class StreamRecorder:
         self.disconnect_handler_thread.start()  # Start the disconnection handler thread
 
         miss_count = {}
+        self.last_received_timestamps = {}
+        self.nominal_srates = {stream_id: stream.nominal_srate() for stream_id, stream in self.streams.items()}
 
         for stream_id, stream in self.streams.items():
+            self.last_received_timestamps[stream_id] = None
             inlet = StreamInlet(stream)
             self.stream_inlets[stream_id] = inlet
             self.connected[stream_id] = True
@@ -356,12 +369,23 @@ class StreamRecorder:
                     samples, sample_timestamps = inlet.pull_chunk(timeout=0.1)
                     if samples:
                         self.save_to_h5(stream_id, samples, sample_timestamps)
+                        self.last_received_timestamps[stream_id] = sample_timestamps[-1]
                 else:
                     logger.debug(f"{stream_id} missing samples. Saving NA values.")
-                    fake_data_count = 1
-                    fake_data = [[np.nan] * inlet.info().channel_count()] * fake_data_count
-                    fake_timestamps = [local_clock()] * fake_data_count
-                    self.save_to_h5(stream_id, fake_data, fake_timestamps)
+                    if self.last_received_timestamps[stream_id] is not None:
+                        current_time = local_clock()
+                        missing_sample_count = 1
+
+                        fake_data = [[np.nan] * inlet.info().channel_count()] * missing_sample_count
+                        estimated_timestamps = self.estimate_timestamps(
+                            self.last_received_timestamps[stream_id],
+                            stream_id,
+                            missing_sample_count
+                        )
+                        self.save_to_h5(stream_id, fake_data, estimated_timestamps)
+                        # Update the last received timestamp to the timestamp of the last estimated sample
+                        if estimated_timestamps:
+                            self.last_received_timestamps[stream_id] = estimated_timestamps[-1]
 
             time.sleep(0.1)
 

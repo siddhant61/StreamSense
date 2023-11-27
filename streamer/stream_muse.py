@@ -6,10 +6,10 @@ import time
 from functools import partial
 from multiprocessing import Process, Event, Queue
 
-import pylsl
 from pygatt.exceptions import NotConnectedError
 from helper.muse_helper import Muse
-from pylsl import StreamInfo, StreamOutlet
+from pylsl import StreamInfo, StreamOutlet, local_clock
+from muselsl.constants import *
 
 
 from muselsl.constants import (
@@ -22,8 +22,6 @@ from muselsl.constants import (
 import warnings
 from queue import Queue as ThreadSafeQueue
 from threading import Thread
-warnings.filterwarnings("ignore")
-
 import logging
 
 # Setup logging
@@ -34,7 +32,7 @@ fh.setLevel(logging.CRITICAL)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
-
+warnings.filterwarnings("ignore")
 
 class ThreadPool:
     def __init__(self, num_threads):
@@ -97,7 +95,6 @@ class StreamMuse:
         self.shared_tel = Queue()
         self.shared_con = Queue()
         self.synchronized_start_time = synchronized_start_time
-        self.last_data_received_timestamp = time.time()
         self.stream_config = {
             'EEG': {
                 'channels': ['RAW_TP9', 'RAW_AF7', 'RAW_AF8', 'RAW_TP10', 'R_AUX'],
@@ -176,7 +173,7 @@ class StreamMuse:
             lock = threading.Lock()
 
             def cleanup_cache():
-                current_time = pylsl.local_clock()  # Use LSL clock
+                current_time = local_clock()  # Use LSL clock
                 for data_type, cache in recent_data_cache.items():
                     # Determine the appropriate interval based on data type
                     if data_type == 'EEG':
@@ -201,7 +198,10 @@ class StreamMuse:
 
             def data_processor(stream_id, muse, outlet):
                 logger.info(f"Starting data processing for {stream_id} on device: {self.name}")
+                # Initialize the initial timestamps
+                initial_lsl_timestamp = None
                 previous_sample_timestamp = None
+
                 while not self.stop_signal.is_set():
                     data = None
                     if stream_id == f"{muse.name}_EEG":
@@ -226,16 +226,23 @@ class StreamMuse:
                         logger.warning(f"No data received for {stream_id}. Retrying...")
                         continue
 
-                    sample_data_chunk, _ = data  # We won't use the original timestamps
+                    sample_data_chunk, sample_timestamps  = data
                     data_type = stream_id.split('_')[-1]
 
                     for i in range(sample_data_chunk.shape[1]):
                         sample_data = sample_data_chunk[:, i]
-                        lsl_timestamp = pylsl.local_clock()  # Generate new timestamp using LSL local clock
+                        sample_timestamp = sample_timestamps[i]
+
+                        # Generate new timestamp using LSL local clock
+                        lsl_timestamp = local_clock()
+
+                        # Check if it's the first sample to set the initial LSL timestamp
+                        if initial_lsl_timestamp is None:
+                            initial_lsl_timestamp = lsl_timestamp
 
                         if previous_sample_timestamp is not None:
                             logger.debug(
-                                f"Interval between samples for {stream_id}: {lsl_timestamp - previous_sample_timestamp}")
+                                f"Interval between samples for {stream_id}: {previous_sample_timestamp}")
 
                         BUFFER = 1e-4  # adjust as needed
 
@@ -255,10 +262,12 @@ class StreamMuse:
                         removal_timer = threading.Timer(removal_delay, recent_data_cache[data_type].remove,
                                                         args=[lsl_timestamp])
                         removal_timer.start()
-
-                        outlet.push_sample(sample_data.tolist(), lsl_timestamp)
+                        # Calculate the corrected timestamp
+                        corrected_timestamp = sample_timestamp
+                        outlet.push_sample(sample_data.tolist(), corrected_timestamp)
+                        self.last_data_received_timestamp = corrected_timestamp
                         logger.debug(
-                            f"Sample pushed to LSL outlet for {stream_id}: Sample Size: {len(sample_data)}, Timestamp: {lsl_timestamp}")
+                            f"Sample pushed to LSL outlet for {stream_id}: Sample Size: {len(sample_data)}, Timestamp: {corrected_timestamp}")
 
                         previous_sample_timestamp = lsl_timestamp
 
@@ -294,31 +303,39 @@ class StreamMuse:
                     logger.info("Connected.")
                     self.queue.put('connected')
 
-                    logger.info(f"Starting Muse streaming for device: {self.name}")
-                    muse.start()
-                    logger.info("Muse streaming started. Waiting for data...")
-
                     CHECK_FREQUENCY = 0.1
                     threshold = 30 / CHECK_FREQUENCY
 
                     miss_count = 0
 
+                    logger.info(f"Starting Muse streaming for device: {self.name}")
+                    muse.start()
+                    logger.info("Muse streaming started. Waiting for data...")
+
+                    muse.start_keep_alive()
+
+                    time.sleep(1)
+
+
+
+                    # Starting the connection monitor in a separate thread
+                    connection_monitor_thread = threading.Thread(target=self._monitor_connection(muse, CHECK_FREQUENCY))
+                    connection_monitor_thread.start()
+
                     while not self.stop_signal.is_set():
                         time.sleep(CHECK_FREQUENCY)
-                        current_time = time.time()
+                        current_time = local_clock()
 
-                        if current_time - muse.last_timestamp >= CHECK_FREQUENCY:
-                            miss_count += 1
-                        else:
-                            miss_count = 0
-
-                        muse.keep_alive()
-
-                        if miss_count > threshold:
-                            logger.warning("Data loss detected.")
-                            print("Data loss detected.")
-                            self._reconnect_muse(muse)
-                            miss_count = 0
+                        # if current_time - muse.last_timestamp >= CHECK_FREQUENCY:
+                        #     miss_count += 1
+                        # else:
+                        #     miss_count = 0
+                        #
+                        # if miss_count > threshold:
+                        #     logger.warning("Data loss detected.")
+                        #     print("Data loss detected.")
+                        #     self._reconnect_muse(muse)
+                        #     miss_count = 0
                 else:
                     print("Connection failed.")
 
@@ -330,6 +347,8 @@ class StreamMuse:
                 logger.error(f"Exception during streaming: {e}")
                 self._reconnect_muse(muse)
 
+            if connection_monitor_thread.is_alive():
+                connection_monitor_thread.join()
             thread_pool.join()
             thread_pool.stop()
         except Exception as e:
@@ -357,25 +376,22 @@ class StreamMuse:
         """
         retry_count = 0
         delay = INITIAL_RETRY_DELAY_MUSE
-        logger.info(f"Attempting to reconnect to device: {self.name}. Retry count: {retry_count+1}")
-        print(f"Attempting to reconnect to device: {self.name}. Retry count: {retry_count+1}")
+        # print(f"Attempting to reconnect to device: {self.name}. Retry count: {retry_count + 1}")
+        logger.warning(f"Attempting to reconnect to device: {self.name}. Retry count: {retry_count + 1}")
         while retry_count < MAX_RETRIES_MUSE:
             try:
-                if muse.connect(reconnect = True):
+                if muse.connect(reconnect=True):
                     muse.start()
-                    logger.info("Reconnected successfully!")
-                    print("Reconnected successfully!")
+                    # print("Reconnected successfully!")
+                    logger.warning("Reconnected successfully!")
                     return
             except Exception as e:
                 retry_count += 1
                 delay *= 2  # Exponential backoff
                 logger.warning(
-                    f"Attempt {retry_count+1} to reconnection failed: {e}. Retrying in {delay} seconds..."
+                    f"Attempt {retry_count + 1} to reconnection failed: {e}. Retrying in {delay} seconds..."
                 )
                 time.sleep(delay)
-
-        # If all reconnection attempts have failed
-        logger.error("Max reconnection attempts reached. Exiting...")
 
     def _setup_lsl_streams(self):
         # set up LSL outlets
@@ -397,6 +413,22 @@ class StreamMuse:
             logger.info("GYRO outlet set up.")
 
         return self.eeg_outlet, self.ppg_outlet, self.acc_outlet, self.gyro_outlet
+
+    def _monitor_connection(self, muse, MONITORING_INTERVAL):
+        """
+        Monitors the connection status of the device.
+        """
+        while not self.stop_signal.is_set():
+            current_time = local_clock()
+            if current_time - muse.last_timestamp > AUTO_DISCONNECT_DELAY:
+                logger.warning("Connection timeout detected.")
+                # print("Connection timeout detected:", muse.name)
+                self._reconnect_muse(muse)
+                self.last_data_received_timestamp = current_time
+                # print("Reconnected:", muse.name)
+            time.sleep(MONITORING_INTERVAL)
+
+
 
 
 

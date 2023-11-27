@@ -122,7 +122,8 @@ class VisualOddball:
             );
 
             # Initialize LSL marker stream
-            writer = create_markers(logfile=f"{output_folder}/oddball_markers.csv");
+            writer = create_markers(logfile=f"{output_folder}/oddball_start_{time.time()}.csv");
+
 
             time.sleep(5)
 
@@ -134,6 +135,7 @@ class VisualOddball:
             # Run through paradigm
             self.paradigm(seq)
         finally:
+            writer = create_markers(logfile=f"{output_folder}/oddball_end_{time.time()}.csv");
             win.close()
 
     # ========================================================
