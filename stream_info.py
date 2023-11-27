@@ -33,66 +33,59 @@ def update_sampling_rate(sampling_rates, stream, freq):
 def update_plot(i, ax, sampling_rates, figsize=(8, 4)):
     try:
         ax.clear()
-        ax.figure.set_size_inches(*figsize)  # Set the figure size
-        ax.set_title("Active LSL Streams", fontsize=16)
+        ax.figure.set_size_inches(*figsize)
+        ax.set_title("Active LSL Streams", fontsize=20, fontweight='bold', loc='left')
 
-        # Determine the grid size for the matrix layout
-        num_stream_types = len(sampling_rates)
-        num_columns = math.ceil(math.sqrt(num_stream_types))  # Square root rounded up for columns
-        num_rows = math.ceil(num_stream_types / num_columns)  # Number of rows needed
-
-        # Set the aspect of the plot box to auto to fill the figure
-        ax.set_aspect('auto')
-
-        # Set the plot limits
-        ax.set_xlim(0, num_columns)
-        ax.set_ylim(0, num_rows)
-        ax.invert_yaxis()  # Invert the y-axis so the top-left is (0,0)
+        # Turn off the axis lines and labels
         ax.axis('off')
 
-        # Calculate the height and width of each block in the matrix
-        block_width = 1 / num_columns
-        block_height = 1 / num_rows
+        # Define the number of streams per row and calculate the number of rows needed
+        streams_per_row = 3
+        num_rows = math.ceil(len(sampling_rates) / streams_per_row)
+        num_columns = min(len(sampling_rates), streams_per_row)
 
-        # Padding term for the gaps between columns and rows (as a fraction of block size)
-        column_padding = block_width * 0.1
-        row_padding = block_height * 0.1
+        # Calculate the column width and row height based on the number of columns and rows
+        column_width = 1 / num_columns
+        row_height = 1 / num_rows
 
-        # Loop through each stream type and plot it in the matrix
-        for index, stream_type in enumerate(sampling_rates.keys()):
-            streams_info = sampling_rates[stream_type]  # This should be a dictionary {stream_name: frequency}
+        # Set an initial font size
+        header_font_size = 12  # Adjust as needed
+        stream_font_size = 10  # Adjust as needed
+        vertical_padding = 0.02  # Space between rows
 
-            # Calculate the row and column for the current stream type
-            col = index % num_columns
-            row = index // num_columns
+        # Initialize the starting y position (top of the plot)
+        current_y = 1 - vertical_padding
 
-            # Calculate the position for the stream type title
-            x_position = col + column_padding  # Adjust for padding
-            y_position = row + row_padding  # Adjust for padding
+        # Iterate over the stream types and place them in the plot
+        for row in range(num_rows):
+            for col in range(num_columns):
+                index = row * streams_per_row + col
+                if index >= len(sampling_rates):  # Check if we've placed all stream types
+                    break
+                stream_type = sorted(sampling_rates.keys())[index]
+                streams = sampling_rates[stream_type]
 
-            # Dynamically adjust the font size based on the block size
-            header_font_size = max(min((block_width - 2 * column_padding) * figsize[0], (block_height - 2 * row_padding) * figsize[1]), 10)
-            stream_font_size = max(header_font_size * 0.5, 8)  # Ensure stream font is smaller than header
+                # Position the stream type header
+                x_position = col * column_width
+                ax.text(x_position, current_y, f"{stream_type} Streams",
+                        fontsize=header_font_size, fontweight='bold', transform=ax.transAxes, ha='left', va='top')
 
-            # Stream type title
-            ax.text(x_position, y_position, f"{stream_type}:", ha='left', va='top', fontsize=header_font_size, fontweight='bold')
+                # Position each stream detail below the header
+                for stream_index, (name, freq) in enumerate(sorted(streams.items()), start=1):
+                    expected_freq = EXPECTED_RATES.get(stream_type, 0)/2
+                    color = 'green' if freq >= expected_freq else 'red'
+                    vertical_padding = 0.05
+                    stream_y_position = current_y - (stream_index * vertical_padding)
+                    ax.text(x_position, stream_y_position, f"{name}: {freq:.2f} Hz",
+                            fontsize=stream_font_size, color=color, transform=ax.transAxes, ha='left', va='top')
 
-            # Adjust the vertical space per stream within the padded area
-            stream_space = (block_height - 2 * row_padding) * 0.99 / max(len(streams_info), 1)  # Avoid division by zero
-            # List each stream below the stream type heading
-            for stream_index, (name, freq) in enumerate(streams_info.items(), start=1):
-                expected_freq = EXPECTED_RATES.get(stream_type, 0)
-                color = 'green' if freq >= expected_freq / 2 else 'red'
-                # Update y_position for each stream
-                stream_y_position = y_position + (stream_index * stream_space)
-                ax.text(x_position, stream_y_position, f"{stream_index}. {name}: {freq:.2f} Hz", ha='left', va='top', fontsize=stream_font_size, color=color)
+            # Update the y position for the next row
+            current_y -= row_height
 
-        # Adjust the layout to ensure no text is cut off and the matrix is well-distributed
-        plt.subplots_adjust(left=0.05, right=0.95, top=0.90, bottom=0, wspace=0, hspace=0)
+        plt.subplots_adjust(left=0.05, right=0.95, top=0.9, bottom=0.1)
+        plt.tight_layout()
     except Exception as e:
         print("An error occurred while updating the plot:", str(e))
-
-
 
 def initialize_streams():
     streams = pylsl.resolve_streams()
