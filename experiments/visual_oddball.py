@@ -118,7 +118,8 @@ class VisualOddball:
                 units="pix",
                 fullscr=True,
                 color=bg_color,
-                gammaErrorPolicy="ignore"
+                gammaErrorPolicy="ignore",
+                checkTiming = False
             );
 
             # Initialize LSL marker stream
@@ -135,7 +136,6 @@ class VisualOddball:
             # Run through paradigm
             self.paradigm(seq)
         finally:
-            writer = create_markers(logfile=f"{output_folder}/oddball_end_{time.time()}.csv");
             win.close()
 
     # ========================================================

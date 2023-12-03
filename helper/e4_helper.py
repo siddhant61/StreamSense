@@ -157,6 +157,10 @@ class EmpaticaServer():
         if response is None:
             logging.error("Received None response in is_device_connected")
             return False
+        else:
+            self.send_command(sock, f"device_subscribe bat ON {device_name}")
+            time.sleep(1)  # Short pause
+            self.send_command(sock, f"device_subscribe bat OFF {device_name}")
         return device_name in response
 
     def stop_monitoring(self):
