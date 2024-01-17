@@ -672,3 +672,5 @@ class EmpaticaE4:
         for stream, is_subscribed in self.subscribed_streams.items():
             max_rate = max(max_rate, stream_rates[stream])
         return max_rate
+
+

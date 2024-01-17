@@ -1,4 +1,7 @@
 import asyncio
+import os
+import subprocess
+import sys
 from queue import Queue
 
 active_record = None
@@ -43,8 +46,6 @@ from streamer.stream_muse import StreamMuse
 from streamer.stream_e4 import StreamE4
 from viewer.view_streams import ViewStreams
 from experiments.visual_oddball import VisualOddball
-import helper.e4_helper
-
 
 
 def connect_muse_devices(root_output_folder):
@@ -173,7 +174,8 @@ def display_menu():
         (3) Connect and stream E4 devices.
         (4) Start recording all the streams.
         (5) Run the visual oddball paradigm.
-        (6) Stop all the active LSL streams.
+        (6) Start the event logger console.
+        (7) Stop all the active LSL streams.
         """
     print(menu_options)
 
@@ -190,6 +192,16 @@ def display_streams_menu():
         (6) Go back to the main menu.
         """
     print(menu_options)
+
+def start_event_logger_process(output_folder):
+    try:
+        script_path = os.path.join(os.path.dirname(sys.argv[0]), 'event_logger.py')
+        command = [sys.executable, script_path, '--output_folder', output_folder, '--start_time', str(synchronized_start_time)]
+
+        # Open a new console window and run the event_logger script
+        subprocess.Popen(["start", "cmd", "/k"] + command, shell=True)
+    except Exception as e:
+        print(e)
 
 # def get_user_choice():
 #     """Get a valid user choice from the menu."""
@@ -208,12 +220,16 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
     flag = 1
     parser = argparse.ArgumentParser(description='Command-line options for the script.')
-    parser.add_argument('command', choices=['menu', 'stream', 'view', 'record', 'oddball', 'stop'],
-                        help='The command to execute.')
-    parser.add_argument('--dev', choices=['muse', 'e4'], help='The device to stream. Used with the stream command.')
+    parser.add_argument('--command', choices=['menu', 'stream', 'view', 'record', 'oddball', 'logger', 'stop'],
+                        default='menu',
+                        help='The command to execute. If no command is provided, the default is "menu".')
+    parser.add_argument('--dev', choices=['muse', 'e4'],
+                        help='The device to stream. This option is used with the "stream" command.')
     parser.add_argument('--data', choices=['eeg', 'bvp', 'acc', 'gsr', 'ppg'],
-                        help='The data stream to view. Used with the view command.')
+                        help='The data stream to view. This option is used with the "view" command.')
+
     print("Type 'help' to display the command options or 'exit' to quit.")
+    args = parser.parse_args()
 
     while True:
         try:
@@ -314,6 +330,17 @@ if __name__ == '__main__':
                             pass
 
                         elif int(user_input) == 6:
+                            # Create a root directory for saving data and oddball results only if not already created
+                            if not root_output_folder:
+                                root_output_folder = userpaths.get_my_documents().replace("\\",
+                                                                                          "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
+                                root_output_folder_path = Path(root_output_folder)
+                                root_output_folder_path.mkdir(parents=True, exist_ok=True)
+                                if flag == 1:
+                                    flag = 0
+                            start_event_logger_process(root_output_folder_path)
+
+                        elif int(user_input) == 7:
                             stop_signal = True
                             if active_record:
                                 logger.info("Current state saved.")
@@ -453,8 +480,19 @@ if __name__ == '__main__':
                     root_output_folder = None
                     pass
 
+                elif args.command == 'logger':
+                    # Create a root directory for saving data and oddball results only if not already created
+                    if not root_output_folder:
+                        root_output_folder = userpaths.get_my_documents().replace("\\",
+                                                                                  "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
+                        root_output_folder_path = Path(root_output_folder)
+                        root_output_folder_path.mkdir(parents=True, exist_ok=True)
+                        if flag == 1:
+                            flag = 0
+                    start_event_logger_process(root_output_folder_path)
+
                 elif args.command == 'exit':
                     exit()
         except:
-            print("usage:[-h] {menu,stream[--dev {muse,e4}],view[--data {eeg,bvp,acc,gsr}],record,oddball,stop}")
+            print("usage:[-h] {menu,stream[--dev {muse,e4}],view[--data {eeg,bvp,acc,gsr}],record,oddball, logger, stop}")
             pass

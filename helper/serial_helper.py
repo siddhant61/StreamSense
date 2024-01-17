@@ -663,12 +663,15 @@ class BGAPIBackend(BLEBackend):
                 try:
                     packet_type, args = self._lib.decode_packet(packet)
                 except bglib.UnknownMessageType:
-                    logger.warn("Ignoring message decode failure", exc_info=True)
+                    logger.warning("Ignoring message decode failure", exc_info=True)
                     continue
                 if packet_type == EventPacketType.attclient_attribute_value:
-                    device = self._connections[args['connection_handle']]
-                    device.receive_notification(args['atthandle'],
-                                                bytearray(args['value']))
+                    connection_handle = args['connection_handle']
+                    # Check if the connection handle exists in the dictionary
+                    if connection_handle in self._connections:
+                        device = self._connections[connection_handle]
+                        device.receive_notification(args['atthandle'],
+                                                    bytearray(args['value']))
                 self._receiver_queue.put(packet)
         logger.info("Stopping receiver")
 

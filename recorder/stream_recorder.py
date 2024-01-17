@@ -15,6 +15,8 @@ from pylsl import resolve_streams, StreamInlet, local_clock
 from collections import Counter
 
 # Setup logging
+from scipy.interpolate import interp1d
+
 logger = logging.getLogger("stream_recorder.py")
 logger.setLevel(logging.CRITICAL)
 fh = logging.FileHandler("Logs/stream_recorder.log")
@@ -326,6 +328,46 @@ class StreamRecorder:
                 logger.info(f"Stream disconnected: {stream_id}")
             self.connected[stream_id] = False
 
+    def handle_disconnection(self, stream_id, disconnection_duration):
+        max_interpolation_duration = 120.0  # 2 minutes
+
+        # Extract the stream type from the stream_id
+        stream_type = stream_id.split('_')[-1]
+
+        if disconnection_duration <= max_interpolation_duration:
+            interval = 1.0 / self.nominal_srates[stream_id]
+            missing_sample_count = int(disconnection_duration / interval)
+            last_valid_timestamp = self.last_received_timestamps[stream_id]
+            interpolated_timestamps = [last_valid_timestamp + i * interval for i in range(1, missing_sample_count + 1)]
+
+            # Use the buffer to get historical data points for interpolation
+            buffer_data = self.buffers[stream_type]
+            if buffer_data:
+                if stream_type in ["EEG", "BVP", "PPG", "GYRO", "ACC"]:
+                    # Spline interpolation for complex signals
+                    # Use as many historical data points as available for better accuracy
+                    historical_data = np.array(buffer_data[-missing_sample_count:])
+                    time_indices = np.linspace(0, 1, len(historical_data))
+                    spline = interp1d(time_indices, historical_data, kind='cubic', axis=0, fill_value="extrapolate")
+                    interpolated_data = spline(np.linspace(0, 1, missing_sample_count))
+
+                elif stream_type in ["GSR", "TEMP"]:
+                    # Linear interpolation for more stable signals
+                    historical_data = np.array(buffer_data[-missing_sample_count:])
+                    interpolated_data = np.linspace(historical_data[0], historical_data[-1], missing_sample_count)
+
+                elif stream_type == "TAG":
+                    # Repeat the last known value for TAG data
+                    last_valid_data = buffer_data[-1]
+                    interpolated_data = [last_valid_data for _ in range(missing_sample_count)]
+
+                else:
+                    # Default handling for unrecognized stream types
+                    last_valid_data = buffer_data[-1]
+                    interpolated_data = [last_valid_data for _ in range(missing_sample_count)]
+
+                self.save_to_h5(stream_id, interpolated_data, interpolated_timestamps)
+
     def estimate_timestamps(self, last_timestamp, stream_id, count):
         interval = 1.0 / self.nominal_srates[stream_id]
         return [last_timestamp + i * interval for i in range(1, count + 1)]
@@ -338,6 +380,7 @@ class StreamRecorder:
         miss_count = {}
         self.last_received_timestamps = {}
         self.nominal_srates = {stream_id: stream.nominal_srate() for stream_id, stream in self.streams.items()}
+        disconnection_times = {}
 
         for stream_id, stream in self.streams.items():
             self.last_received_timestamps[stream_id] = None
@@ -370,22 +413,13 @@ class StreamRecorder:
                     if samples:
                         self.save_to_h5(stream_id, samples, sample_timestamps)
                         self.last_received_timestamps[stream_id] = sample_timestamps[-1]
+                    elif stream_id in disconnection_times:
+                        # Handle disconnection upon reconnection
+                        disconnection_duration = local_clock() - disconnection_times[stream_id]
+                        self.handle_disconnection(stream_id, disconnection_duration)
+                        del disconnection_times[stream_id]
                 else:
-                    logger.debug(f"{stream_id} missing samples. Saving NA values.")
-                    if self.last_received_timestamps[stream_id] is not None:
-                        current_time = local_clock()
-                        missing_sample_count = 1
-
-                        fake_data = [[np.nan] * inlet.info().channel_count()] * missing_sample_count
-                        estimated_timestamps = self.estimate_timestamps(
-                            self.last_received_timestamps[stream_id],
-                            stream_id,
-                            missing_sample_count
-                        )
-                        self.save_to_h5(stream_id, fake_data, estimated_timestamps)
-                        # Update the last received timestamp to the timestamp of the last estimated sample
-                        if estimated_timestamps:
-                            self.last_received_timestamps[stream_id] = estimated_timestamps[-1]
+                    disconnection_times[stream_id] = local_clock()
 
             time.sleep(0.1)
 
@@ -398,3 +432,6 @@ class StreamRecorder:
 
         # Save datasets
         self.save_datasets()
+
+
+

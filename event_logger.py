@@ -1,31 +1,30 @@
 import pylsl
-import time
+import argparse
+import os
 
-
-# Function to log an event with a timestamp
-def log_event(event, start_time, file_name="event_log.txt"):
-    # Get the current time from pylsl's clock
+def log_event(event, start_time, file_name):
     current_time = pylsl.local_clock()
-
-    # Calculate elapsed time since the experiment started
     elapsed_time = current_time - start_time
-
-    # Create the log entry
     log_entry = f"{elapsed_time:.6f}: {event}\n"
 
-    # Write the log entry to the file
     with open(file_name, "a") as file:
         file.write(log_entry)
 
     print(f"Logged event: {log_entry.strip()}")
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Event Logger")
+    parser.add_argument('--output_folder', type=str, required=True, help='Output folder path for logging events')
+    parser.add_argument('--start_time', type=str, required=True, help='Synchronized start time')
+    args = parser.parse_args()
 
-# Record the start time of the experiment
-start_time = pylsl.local_clock()
+    start_time = float(args.start_time)
+    file_name = os.path.join(args.output_folder, "event_log.txt")
 
-# Example of how to use the log_event function
-while True:
-    event = input("Enter event (or type 'exit' to stop): ")
-    if event.lower() == 'exit':
-        break
-    log_event(event, start_time)
+    print("Event Logger started. Type your events here:")
+
+    while True:
+        event = input("> ")
+        if event.lower() == 'exit':
+            break
+        log_event(event, start_time, file_name)
