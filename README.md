@@ -15,6 +15,7 @@ StreamSense is an innovative open-source platform tailored for real-time acquisi
   ![Data Visualization 2](https://github.com/siddhant61/StreamSense/blob/master/Logs/Slide27.JPG)
 - **Event Logging**: Allows users to mark events in real-time, facilitating data analysis.
 - **Data Recording**: Captures data streams in formats suitable for detailed offline analysis.
+  ![Signal Monitoring](https://github.com/siddhant61/StreamSense/blob/master/Logs/Slide24.JPG)
   ![Data Quality](https://github.com/siddhant61/StreamSense/blob/master/Logs/Slide25.JPG)
 
 ## Installation
