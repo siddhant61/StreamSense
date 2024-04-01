@@ -603,6 +603,6 @@ class DataProcessor:
         self.save_datasets()
 
 # Usage example
-data_processor = DataProcessor(folder_path='D:/Study Data/tv_gi/session_5/1704828739_10/RawData', NA_0=True)
+data_processor = DataProcessor(folder_path='D:/Study Data/set_1/session_1/RawData', NA_0=True)
 data_processor.process_and_synchronize_data()
 data_processor.plot_synchronized_data()
