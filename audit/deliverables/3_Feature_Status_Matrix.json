@@ -1,0 +1,113 @@
+[
+  {
+    "feature": "Device Discovery",
+    "description": "Finds available Muse and Empatica E4 devices for connection.",
+    "files": [
+      "helper/find_devices.py",
+      "main.py"
+    ],
+    "status": "Needs Improvement (Technical Debt)",
+    "status_justification": "The code is overly complex, with multiple overlapping methods for discovery (pygatt, bleak, custom BGAPI). It lacks robust error handling and relies on fixed-time sleeps, which is not a reliable practice.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Muse Device Connection & Streaming",
+    "description": "Connects to Muse headbands via BLE and streams their data (EEG, PPG, ACC, GYRO) to the LSL bus.",
+    "files": [
+      "streamer/stream_muse.py",
+      "helper/muse_helper.py",
+      "helper/serial_helper.py",
+      "main.py"
+    ],
+    "status": "Needs Improvement (Technical Debt)",
+    "status_justification": "The connection and streaming logic is highly complex, using a mix of threading and multiprocessing without clear state management or error propagation. It relies heavily on `time.sleep()` for synchronization, which is fragile.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Empatica E4 Device Connection & Streaming",
+    "description": "Connects to the Empatica E4 streaming server via TCP socket and streams E4 data (ACC, BVP, GSR, TEMP, TAG) to the LSL bus.",
+    "files": [
+      "streamer/stream_e4.py",
+      "helper/e4_helper.py",
+      "main.py"
+    ],
+    "status": "Needs Improvement (Technical Debt)",
+    "status_justification": "Similar to the Muse implementation, this feature relies on fragile threading, `time.sleep()` calls, and lacks robust error handling for socket communication and device disconnections.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Real-time Data Visualization",
+    "description": "Displays a live plot of a selected LSL data stream in an interactive window.",
+    "files": [
+      "viewer/view_streams.py",
+      "viewer/plot_streams.py",
+      "helper/plot_helper.py"
+    ],
+    "status": "Incomplete/Partial",
+    "status_justification": "The code to generate visualizations exists, but its functionality cannot be verified without a runnable environment. Given the large number of dependencies (`vispy`, `matplotlib`, `pyqt5`), version conflicts are likely, and the code may be broken.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Real-time Stream Monitoring",
+    "description": "Displays a dashboard of all active LSL streams and their current sampling rates.",
+    "files": [
+      "stream_info.py"
+    ],
+    "status": "Needs Integration",
+    "status_justification": "The feature is fully implemented in `stream_info.py`, but it exists as an orphaned, standalone utility. It is not integrated into the main application's CLI workflow and must be run manually.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Data Recording",
+    "description": "Subscribes to all active LSL streams and records the data into HDF5 files.",
+    "files": [
+      "recorder/stream_recorder.py",
+      "main.py"
+    ],
+    "status": "Needs Improvement (Technical Debt)",
+    "status_justification": "The core recording logic is present. However, it contains complex and fragile-looking code for handling device disconnections and attempting to interpolate missing data, which is a significant source of potential bugs and technical debt.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Event Logging",
+    "description": "Launches a separate console for manual, timestamped event logging during a session.",
+    "files": [
+      "event_logger.py",
+      "main.py"
+    ],
+    "status": "Needs Integration",
+    "status_justification": "The feature is implemented as a standalone script that is launched in a new console window. This is not a robust integration; it's disconnected from the main application's state and lifecycle.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Visual Oddball Experiment",
+    "description": "Runs a P300 visual oddball experiment and sends synchronization markers to LSL.",
+    "files": [
+      "experiments/visual_oddball.py",
+      "main.py"
+    ],
+    "status": "Incomplete/Partial",
+    "status_justification": "The code for the experiment is present and appears self-contained. However, its functionality, and more importantly, its synchronization with the data streams via LSL, cannot be verified without a runnable `psychopy` environment.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Offline Data Processing & Quality Analysis",
+    "description": "Processes recorded HDF5 files to detect data gaps and generate quality reports.",
+    "files": [
+      "data_processor.py"
+    ],
+    "status": "Incomplete/Partial",
+    "status_justification": "This is a large, complex, standalone script with sophisticated logic for data cleaning, gap detection, and spike-based synchronization. It is not integrated into any user workflow, and its correctness is impossible to determine without test data and a runnable environment.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  },
+  {
+    "feature": "Command Line Interface (CLI)",
+    "description": "Provides an interactive menu and direct command-line arguments to control the application.",
+    "files": [
+      "main.py"
+    ],
+    "status": "Needs Improvement (Technical Debt)",
+    "status_justification": "The CLI successfully launches other components. However, its reliance on global variables for state management across multiple threads and processes is a major source of technical debt and makes the application's state unpredictable and hard to manage.",
+    "test_coverage": "None. No automated tests were found for this feature."
+  }
+]
