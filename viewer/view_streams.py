@@ -1,6 +1,8 @@
 import logging
-from pylsl import resolve_streams
-from collections import Counter
+from collections import OrderedDict
+from typing import Dict, Tuple
+
+from pylsl import StreamInfo, StreamInlet, resolve_streams
 from viewer.plot_streams import plot_stream
 from muselsl.constants import LSL_SCAN_TIMEOUT
 from helper.plot_helper import run_vispy
@@ -15,48 +17,39 @@ class ViewStreams:
         view_logger.info("Initiating Viewer Instance.")
 
 
-    def find_streams(self, stream_type):
-        all_streams = resolve_streams(LSL_SCAN_TIMEOUT)
-        all_streams = [stream for stream in all_streams if stream.type() == stream_type]
-        stream_ids = {}
-        result = {}
-        streams = {}
+    def find_streams(self, stream_type: str) -> Dict[str, StreamInfo]:
+        """Return the latest LSL stream for each discovered stream name.
 
-        for stream in all_streams:
-            key = stream.created_at()
-            value = stream.name()
-            stream_ids[key] = value
+        The previous implementation attempted to coerce a list into a dictionary
+        in ``start_viewing`` and silently dropped duplicate streams.  Instead we
+        explicitly track the newest stream per name and return a mapping so the
+        caller can address streams deterministically.
+        """
 
-        # Create a Counter from the dictionary values
-        counts = Counter(stream_ids.values())
+        try:
+            discovered_streams = resolve_streams(LSL_SCAN_TIMEOUT)
+        except Exception:
+            view_logger.exception("Failed to resolve streams from the local LSL network.")
+            return {}
 
-        # Create a new dictionary with only the keys whose value has a count greater than 1
-        duplicates = {k: v for k, v in stream_ids.items() if counts[v] > 1}
+        matching_streams = [s for s in discovered_streams if s.type() == stream_type]
+        latest_streams: Dict[str, Tuple[float, StreamInfo]] = {}
 
-        # Keep values which were created later to access the latest stream
-        for key, value in duplicates.items():
-            if value not in result or key > result[value]:
-                result[value] = key
+        for stream in matching_streams:
+            created_at = stream.created_at() or 0.0
+            name = stream.name()
+            previous_entry = latest_streams.get(name)
+            if previous_entry is None or created_at > previous_entry[0]:
+                latest_streams[name] = (created_at, stream)
 
-        result = {v: k for k, v in result.items()}
+        ordered_pairs = sorted(latest_streams.items(), key=lambda item: item[1][0])
+        ordered_streams = OrderedDict((name, stream) for name, (_created_at, stream) in ordered_pairs)
 
-        # Remove older duplicate streams from the dictionary
-        for stream in all_streams:
-            if not stream.name() in duplicates.values():
-                key = stream.created_at()
-                value = stream.name()
-                result[key] = value
+        return dict(ordered_streams)
 
-        # Save latest stream names and objects in the streams dictionary
-        for stream in all_streams:
-            if stream.created_at() in result.keys():
-                streams[stream.name()] = stream
-
-
-        return streams.values()
-
-    def plot_stream_with_canvas(self, stream_type, i, canvases_statuses, duration = 60):
-        canvas = plot_stream(stream_type, i)
+    def plot_stream_with_canvas(self, stream_info_xml: str, canvases_statuses, duration = 60):
+        stream_info = StreamInfo(xml=stream_info_xml)
+        canvas = plot_stream(stream_info)
         if canvas:
             canvases_statuses.append(True)  # Just a simple flag indicating a canvas was created
             run_vispy()
@@ -88,24 +81,47 @@ class ViewStreams:
         else:
             print("Invalid choice.")
             return
-        canvases = []
         streams = self.find_streams(stream_type)
-        for stream in streams:
+        if not streams:
+            view_logger.warning("No %s streams discovered on the LSL network.", stream_type)
+            return
+
+        validated_streams = {}
+        for name, stream in streams.items():
+            inlet = None
+            sample = None
             try:
-                # Attempt to pull a sample of data from the stream
-                sample, timestamp = stream.pull_sample(timeout=5)
-                if sample:  # Check if any data was retrieved
-                    streams[stream.name()] = stream
-            except:
-                pass
+                inlet = StreamInlet(stream)
+                sample, _timestamp = inlet.pull_sample(timeout=5)
+            except Exception:
+                view_logger.exception("Failed to validate stream '%s'.", name)
+                continue
+            finally:
+                if inlet is not None:
+                    try:
+                        inlet.close_stream()
+                    except Exception:
+                        view_logger.debug("Stream inlet cleanup failed for '%s'.", name, exc_info=True)
+
+            if sample:
+                validated_streams[name] = stream
+            else:
+                view_logger.warning("Stream '%s' did not return data within the timeout window.", name)
+
+        if not validated_streams:
+            view_logger.warning("No %s streams produced data for visualization.", stream_type)
+            return
 
         with Manager() as manager:
             shared_canvases_statuses = manager.list()  # This will allow us to use the statuses across processes
 
             processes = []
-            for i, stream in enumerate(streams):
+            for stream in validated_streams.values():
                 # Start a separate process for each plot_stream_with_canvas call
-                process = Process(target=self.plot_stream_with_canvas, args=(stream.type(), i, shared_canvases_statuses))
+                process = Process(
+                    target=self.plot_stream_with_canvas,
+                    args=(stream.as_xml(), shared_canvases_statuses),
+                )
                 processes.append(process)
                 process.start()
 
