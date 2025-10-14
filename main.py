@@ -66,6 +66,44 @@ class AppState:
         self.root_output_path = None
 
 
+def _shutdown_muse_streams(state: AppState, join_timeout: float = 5.0) -> None:
+    """Stop all running Muse streamers and wait for their threads to finish."""
+
+    if not state.muse_streamers and not state.muse_threads:
+        return
+
+    for muse_instance in list(state.muse_streamers.values()):
+        try:
+            muse_instance.stop_streaming()
+        except Exception as exc:  # pragma: no cover - defensive logging
+            logger.error(f"Error while stopping Muse streamer: {exc}")
+
+    for thread in list(state.muse_threads.values()):
+        thread.join(timeout=join_timeout)
+
+    state.muse_streamers.clear()
+    state.muse_threads.clear()
+
+
+def _shutdown_e4_streams(state: AppState, join_timeout: float = 5.0) -> None:
+    """Stop all running E4 streamers and wait for their threads to finish."""
+
+    if not state.e4_streamers and not state.e4_threads:
+        return
+
+    for e4_instance in list(state.e4_streamers.values()):
+        try:
+            e4_instance.stop_streaming()
+        except Exception as exc:  # pragma: no cover - defensive logging
+            logger.error(f"Error while stopping E4 streamer: {exc}")
+
+    for thread in list(state.e4_threads.values()):
+        thread.join(timeout=join_timeout)
+
+    state.e4_streamers.clear()
+    state.e4_threads.clear()
+
+
 def connect_muse_devices(state: AppState):
     """Discover Muse devices and launch streaming threads, updating the shared state."""
 
@@ -93,8 +131,7 @@ def connect_muse_devices(state: AppState):
             logger.info("No Muse devices found.\n")
 
         if len(muse_reg) != 0:
-            state.muse_streamers.clear()
-            state.muse_threads.clear()
+            _shutdown_muse_streams(state)
             for i in range(len(muse_reg)):
                 streamer_key = f"muse_streamer_{i + 1}"
                 streamer = StreamMuse(
@@ -166,8 +203,7 @@ def connect_e4_devices(state: AppState):
         logger.info("No E4 devices found.")
 
     if len(e4_reg) != 0:
-        state.e4_streamers.clear()
-        state.e4_threads.clear()
+        _shutdown_e4_streams(state)
         output_path = state.root_output_path or Path(state.ensure_output_folder())
         for i in range(len(e4_reg)):
             streamer_key = f"e4_streamer_{i + 1}"
@@ -240,21 +276,8 @@ def stop_all_streams(state: AppState) -> None:
         state.recorder = None
         state.recorder_thread = None
 
-    if state.e4_streamers:
-        for e4_instance in state.e4_streamers.values():
-            e4_instance.stop_streaming()
-        for thread in state.e4_threads.values():
-            thread.join()
-        state.e4_streamers.clear()
-        state.e4_threads.clear()
-
-    if state.muse_streamers:
-        for muse_instance in state.muse_streamers.values():
-            muse_instance.stop_streaming()
-        for thread in state.muse_threads.values():
-            thread.join()
-        state.muse_streamers.clear()
-        state.muse_threads.clear()
+    _shutdown_e4_streams(state)
+    _shutdown_muse_streams(state)
 
     state.reset_output_folder()
 
