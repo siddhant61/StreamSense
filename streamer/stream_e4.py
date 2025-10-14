@@ -35,7 +35,7 @@ class StreamE4():
         self.current_e4 = e4
         self.streaming = False
         self.connected = False
-        self.stop_signal = False
+        self.stop_event = Event()
         self.connected_event = Event()
         self.queue = Queue()
         self.empatica_e4 = None
@@ -130,7 +130,7 @@ class StreamE4():
         retry_count = 0
         reconnect_delay = 2  # Constant reconnect delay of 2 seconds
 
-        while not self.connected and retry_count < MAX_RETRIES_E4 and not self.stop_signal:
+        while not self.connected and retry_count < MAX_RETRIES_E4 and not self.stop_event.is_set():
             try:
                 self.connect()
                 retry_count += 1
@@ -161,9 +161,9 @@ class StreamE4():
             # Initialize initial timestamps
             initial_device_timestamp = None
 
-            while not self.stop_signal:
+            while not self.stop_event.is_set():
                 try:
-                    response = self.empatica_e4.lsl_data_queue.get()
+                    response = self.empatica_e4.lsl_data_queue.get(timeout=1)
                     if "connection lost to device" in response:
                         logger.info(response)
                         self.connected = False
@@ -216,13 +216,23 @@ class StreamE4():
                             self.outletTAG.push_sample(data, timestamp=corrected_timestamp)
 
                 except Empty:
-                    logger.warning("No data received for 10 seconds.")
+                    if self.stop_event.is_set():
+                        break
+                    logger.warning("No data received from Empatica E4 within timeout window.")
         except Exception as e:
             logger.error(f"Error in stream method: {e}")
         except KeyboardInterrupt:
             logger.info("Disconnecting from device")
-            self.empatica_e4.disconnect()
+            if self.empatica_e4 is not None:
+                self.empatica_e4.disconnect()
+        finally:
+            if self.empatica_e4 is not None:
+                try:
+                    self.empatica_e4.disconnect()
+                except Exception as disconnect_error:
+                    logger.error(f"Error disconnecting Empatica E4: {disconnect_error}")
             self.connected = False
+            self.streaming = False
 
     def e4_streamer(self):
         self.connect()
@@ -239,7 +249,7 @@ class StreamE4():
             return
 
         self.connected_event.clear()
-        self.stop_signal = False
+        self.stop_event.clear()
         self.process = Process(target=self.e4_streamer)
         self.process.start()
 
@@ -261,16 +271,16 @@ class StreamE4():
 
     def stop_streaming(self):
         try:
-            self.stop_signal = True
-            if self.empatica_e4 is not None:
-                self.empatica_e4.disconnect()
+            self.stop_event.set()
         except Exception as e:
             logger.error(f"Error stopping the stream: {e}")
         finally:
             if self.process and self.process.is_alive():
                 self.process.join(timeout=5)
                 if self.process.is_alive():
-                    logger.warning("Empatica E4 streamer process did not terminate cleanly.")
+                    logger.warning("Empatica E4 streamer process did not terminate cleanly; terminating.")
+                    self.process.terminate()
+                    self.process.join(timeout=5)
             self.process = None
             self.streaming = False
             self.connected_event.clear()
