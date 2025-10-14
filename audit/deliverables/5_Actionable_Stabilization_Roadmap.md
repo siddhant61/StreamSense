@@ -73,3 +73,81 @@ This document provides a prioritized, actionable roadmap for stabilizing the Str
 4.  **Task: Harden Device Connections.**
     -   **Action**: Refactor the device connection logic in the `helper` modules to be more resilient to errors and disconnections. This includes improving the reconnection logic and providing clearer feedback to the user.
     -   **Justification**: The current connection logic is a major source of fragility and a poor user experience.
+
+---
+
+## Milestone A: Controller & Platform Refactor
+
+**Goal**: Decouple lifecycle management from the CLI and remove Windows-specific assumptions so the platform can run reliably across environments.
+
+1.  **Task: Introduce a lifecycle controller.**
+    -   **Action**: Extract discovery, streaming, recording, and viewing orchestration from `main.py` into a dedicated controller/service layer that owns shared state instead of relying on module-level dictionaries.
+    -   **Justification**: Eliminates fragile global state, enables reuse by headless or GUI clients, and clarifies ownership of background threads.
+
+2.  **Task: Isolate device discovery workflows.**
+    -   **Action**: Move device scanning concerns behind controller-managed interfaces so discovery can be invoked deterministically and its errors surfaced to operators.
+    -   **Justification**: Prevents discovery from polluting global state and allows the visualization layer to report issues promptly.
+
+3.  **Task: Replace Windows-only utilities.**
+    -   **Action**: Abstract platform-dependent helpers (e.g., WMI lookups for the Empatica server) behind interchangeable providers with Linux and macOS implementations.
+    -   **Justification**: Removes the current Windows lock-in and prepares the controller for remote or containerized deployments.
+
+4.  **Task: Establish minimal CI coverage.**
+    -   **Action**: Lock dependencies, add smoke tests that start the new controller in headless mode, and gate merges on those checks.
+    -   **Justification**: Prevents regressions while the refactor is underway and documents the supported execution path.
+
+---
+
+## Milestone B: Visualization Architecture
+
+**Goal**: Stabilize the viewing experience by consolidating processes and improving error visibility.
+
+1.  **Task: Redesign `ViewStreams`.**
+    -   **Action**: Replace the current process-per-canvas approach with a single manager that tracks active canvases, controls their lifecycle, and surfaces validation errors deterministically.
+    -   **Justification**: Reduces resource usage, simplifies synchronization, and ensures operators receive feedback when discovery fails.
+
+2.  **Task: Provide a unified visualization shell.**
+    -   **Action**: Implement a Qt- or web-based host that can display multiple streams, health indicators, and controls within one event loop.
+    -   **Justification**: Lays the groundwork for dashboards, remote GUIs, and future automation hooks.
+
+---
+
+## Milestone C: Clock Synchronization & Data Integrity
+
+**Goal**: Align device timestamps and capture quality metrics so downstream processing can trust recorded data.
+
+1.  **Task: Persist LSL clock offsets.**
+    -   **Action**: When a device connection is established, capture its offset from the local LSL clock and reuse it on reconnects so elapsed (Empatica) and raw (Muse) timestamps align with the shared wall clock.
+    -   **Justification**: Prevents drift and makes multi-device correlation possible without manual adjustments.
+
+2.  **Task: Record latency and jitter metadata.**
+    -   **Action**: Instrument streamers and the recorder to track latency/jitter metrics, store them alongside recordings, and feed them into gap detection and resampling routines.
+    -   **Justification**: Provides the recorder with the context it needs to apply corrections consistently and audit stream quality.
+
+---
+
+## Milestone D: Sensor Plugin Framework
+
+**Goal**: Make the platform extensible to new sensors by standardizing transport abstractions and stream descriptors.
+
+1.  **Task: Define transport adapters.**
+    -   **Action**: Build reusable adapters for BLE, serial, and socket transports and move Empatica/Muse specifics into device plugins.
+    -   **Justification**: Enables onboarding additional wearables with minimal cross-cutting changes and encourages code reuse.
+
+2.  **Task: Generalize recorder/viewer inputs.**
+    -   **Action**: Update the recorder and viewer to consume generic stream descriptors rather than device-specific assumptions so new plugins can integrate without bespoke wiring.
+    -   **Justification**: Ensures future sensors benefit from the same stability investments and keeps the controller architecture coherent.
+
+---
+
+## Milestone E: Testing & Tooling Enhancements
+
+**Goal**: Provide automated guardrails that cover the data-processing pipeline and forthcoming controller abstractions.
+
+1.  **Task: Expand `DataProcessor` coverage.**
+    -   **Action**: Add regression tests for `highlight_gaps`, resampling, and export paths, building on the existing `detect_gaps` tests.
+    -   **Justification**: Protects critical data workflows from regressions as synchronization logic evolves.
+
+2.  **Task: Mock hardware dependencies.**
+    -   **Action**: Introduce mocks for hardware interfaces so CI can exercise the controller, discovery flows, and streamers without physical devices.
+    -   **Justification**: Makes the test suite reliable, unlocks headless verification, and shortens feedback loops for contributors.
