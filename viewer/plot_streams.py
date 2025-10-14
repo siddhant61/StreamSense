@@ -9,9 +9,10 @@ Multiple real-time digital signals with GLSL-based clipping.
 
 import math
 import logging
-from collections import Counter
+from collections import OrderedDict
+from typing import Dict, Optional, Tuple
 import numpy as np
-from pylsl import resolve_byprop, StreamInlet, resolve_streams
+from pylsl import StreamInfo, StreamInlet, resolve_byprop, resolve_streams
 from seaborn import color_palette
 from mne.filter import create_filter
 from vispy import gloo, app, visuals
@@ -79,57 +80,46 @@ void main() {
 plot_logger = logging.getLogger(__name__)
 
 
-def find_streams(stream_type):
-    all_streams = resolve_streams(LSL_SCAN_TIMEOUT)
-    all_streams = [stream for stream in all_streams if stream.type() == stream_type]
-    stream_ids = {}
-    result = {}
-    streams = {}
+def find_streams(stream_type: str) -> Dict[str, StreamInfo]:
+    try:
+        discovered_streams = resolve_streams(LSL_SCAN_TIMEOUT)
+    except Exception:
+        plot_logger.exception("Failed to resolve streams from the local LSL network.")
+        return {}
 
-    for stream in all_streams:
-        key = stream.created_at()
-        value = stream.name()
-        stream_ids[key] = value
+    matching_streams = [stream for stream in discovered_streams if stream.type() == stream_type]
+    latest_streams: Dict[str, Tuple[float, StreamInfo]] = {}
 
-    # Create a Counter from the dictionary values
-    counts = Counter(stream_ids.values())
-
-    # Create a new dictionary with only the keys whose value has a count greater than 1
-    duplicates = {k: v for k, v in stream_ids.items() if counts[v] > 1}
-
-    # Keep values which were created later to access the latest stream
-    for key, value in duplicates.items():
-        if value not in result or key > result[value]:
-            result[value] = key
-
-    result = {v: k for k, v in result.items()}
-
-    # Remove older duplicate streams from the dictionary
-    for stream in all_streams:
-        if not stream.name() in duplicates.values():
-            key = stream.created_at()
-            value = stream.name()
-            result[key] = value
-
-    # Save latest stream names and objects in the streams dictionary
-    for stream in all_streams:
-        if stream.created_at() in result.keys():
-            streams[stream.name()] = stream
-
-    return streams.values()
-
-
-def plot_stream(stream_type, n):
-    streams = find_streams(stream_type)
-    if n < len(streams):
-        stream = list(streams)[n]
-        inlet = StreamInlet(stream)
+    for stream in matching_streams:
+        created_at = stream.created_at() or 0.0
         name = stream.name()
-        plot_logger.info(f"Start acquiring data for stream '{name}'.")
-        canvas = Canvas(inlet, name)
-        return canvas  # return the Canvas
-    else:
-        plot_logger.warning("Invalid stream index.")
+        previous_entry = latest_streams.get(name)
+        if previous_entry is None or created_at > previous_entry[0]:
+            latest_streams[name] = (created_at, stream)
+
+    ordered_pairs = sorted(latest_streams.items(), key=lambda item: item[1][0])
+    ordered_streams = OrderedDict((name, stream) for name, (_created_at, stream) in ordered_pairs)
+
+    return dict(ordered_streams)
+
+
+def plot_stream(stream_info: StreamInfo) -> Optional["Canvas"]:
+    name = stream_info.name()
+    plot_logger.info("Start acquiring data for stream '%s'.", name)
+    try:
+        inlet = StreamInlet(stream_info)
+    except Exception:
+        plot_logger.exception("Unable to open inlet for stream '%s'.", name)
+        return None
+
+    try:
+        return Canvas(inlet, name)
+    except Exception:
+        plot_logger.exception("Failed to initialize canvas for stream '%s'.", name)
+        try:
+            inlet.close_stream()
+        except Exception:
+            plot_logger.debug("Failed to close inlet for stream '%s' after canvas error.", name, exc_info=True)
         return None
 
 
