@@ -46,16 +46,40 @@ class Muse():
                  enable_ppg = True
 
     ):
-        """Initialize
+        """Initialize the Muse interface with queue-based data sinks.
 
-        callback_eeg -- callback for eeg data, function(data, timestamps)
-        callback_control -- function(message)
-        callback_telemetry -- function(timestamp, battery, fuel_gauge,
-                                       adc_volt, temperature)
-
-        callback_acc -- function(timestamp, samples)
-        callback_gyro -- function(timestamp, samples)
-        - samples is a list of 3 samples, where each sample is [x, y, z]
+        Parameters
+        ----------
+        address : str
+            Bluetooth address of the Muse headset.
+        shared_eeg : multiprocessing.Queue
+            Queue used to deliver EEG samples to the consumer process.
+        shared_ppg : multiprocessing.Queue
+            Queue receiving photoplethysmography (PPG) samples.
+        shared_acc : multiprocessing.Queue
+            Queue receiving accelerometer samples.
+        shared_gyro : multiprocessing.Queue
+            Queue receiving gyroscope samples.
+        shared_tel : multiprocessing.Queue
+            Queue receiving telemetry updates.
+        shared_con : multiprocessing.Queue
+            Queue receiving control channel messages.
+        synchronized_start_time : float
+            Wall-clock reference for aligning device timestamps.
+        backend : str, optional
+            BLE backend identifier (``'bgapi'``, ``'gatt'``, ``'bleak'``, or ``'bluemuse'``).
+        interface : str, optional
+            Identifier for the BLE adapter interface when required by the backend.
+        time_func : Callable, optional
+            Function used to obtain the local clock for timestamp alignment.
+        name : str, optional
+            Friendly name for logging purposes.
+        preset : str, optional
+            Optional preset profile to select after connecting.
+        disable_light : bool, optional
+            If ``True``, the LED is disabled after connecting.
+        enable_* : bool, optional
+            Flags controlling which sensor subscriptions are activated.
         """
         self.address = address
         self.name = name
