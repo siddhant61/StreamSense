@@ -208,7 +208,10 @@ def start_recording(state: AppState) -> None:
     recorder = StreamRecorder(state.root_output_folder)
     thread = threading.Thread(target=recorder.record_streams)
     thread.start()
-    time.sleep(5)
+    if not recorder.started_event.wait(timeout=10):
+        warning = "Recorder failed to report readiness within 10 seconds."
+        print(f"{warning}\n")
+        logger.critical(warning)
     state.recorder = recorder
     state.recorder_thread = thread
 

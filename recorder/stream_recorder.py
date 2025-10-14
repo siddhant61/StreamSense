@@ -47,9 +47,10 @@ class StreamRecorder:
         self.backoff_limit = backoff_limit  # Maximum backoff time in seconds
         self.backoff_times = {}  # Dictionary to track backoff times for each stream
         self.stream_update_interval = 2.0
-        self.stream_update_thread = threading.Thread(target=self.update_streams)
-        self.disconnect_handler_thread = threading.Thread(target=self.handle_disconnected_streams_thread)
+        self.stream_update_thread = None
+        self.disconnect_handler_thread = None
         self.disconnected_streams = set()
+        self.started_event = threading.Event()
 
         # Initialize the buffers and locks for the predefined stream types
         for key in self.stream_sample_rates.keys():
@@ -373,62 +374,82 @@ class StreamRecorder:
         return [last_timestamp + i * interval for i in range(1, count + 1)]
 
     def record_streams(self):
-        self.streams = self.check_streams()
-        self.stream_update_thread.start()
-        self.disconnect_handler_thread.start()  # Start the disconnection handler thread
+        try:
+            self.streams = self.check_streams()
+            self.stream_update_thread = threading.Thread(
+                target=self.update_streams,
+                name="StreamRecorderUpdate",
+                daemon=True,
+            )
+            self.disconnect_handler_thread = threading.Thread(
+                target=self.handle_disconnected_streams_thread,
+                name="StreamRecorderReconnect",
+                daemon=True,
+            )
+            self.stream_update_thread.start()
+            self.disconnect_handler_thread.start()  # Start the disconnection handler thread
 
-        miss_count = {}
-        self.last_received_timestamps = {}
-        self.nominal_srates = {stream_id: stream.nominal_srate() for stream_id, stream in self.streams.items()}
-        disconnection_times = {}
+            miss_count = {}
+            self.last_received_timestamps = {}
+            self.nominal_srates = {stream_id: stream.nominal_srate() for stream_id, stream in self.streams.items()}
+            disconnection_times = {}
 
-        for stream_id, stream in self.streams.items():
-            self.last_received_timestamps[stream_id] = None
-            inlet = StreamInlet(stream)
-            self.stream_inlets[stream_id] = inlet
-            self.connected[stream_id] = True
-            logger.info(f"Stream Connected: {stream_id}")
-            output_file = f"{self.output_folder}/{stream_id}.h5"
-            self.output_files[stream_id] = output_file
-            miss_count[stream_id] = 0
+            for stream_id, stream in self.streams.items():
+                self.last_received_timestamps[stream_id] = None
+                inlet = StreamInlet(stream)
+                self.stream_inlets[stream_id] = inlet
+                self.connected[stream_id] = True
+                logger.info(f"Stream Connected: {stream_id}")
+                output_file = f"{self.output_folder}/{stream_id}.h5"
+                self.output_files[stream_id] = output_file
+                miss_count[stream_id] = 0
 
-        while not self.stop_signal:
-            for stream_id, inlet in self.stream_inlets.items():
-                sample = inlet.pull_sample(timeout=0.0)
-                if sample[0] is None:
-                    miss_count[stream_id] = miss_count.get(stream_id) + 1
-                else:
-                    miss_count[stream_id] = 0
+            self.started_event.set()
 
-                # Check for disconnect using the provided method
-                self.check_disconnect(stream_id, miss_count)
+            while not self.stop_signal:
+                for stream_id, inlet in self.stream_inlets.items():
+                    sample = inlet.pull_sample(timeout=0.0)
+                    if sample[0] is None:
+                        miss_count[stream_id] = miss_count.get(stream_id) + 1
+                    else:
+                        miss_count[stream_id] = 0
 
-                # If a stream is disconnected, add it to the set of disconnected streams
-                if not self.connected[stream_id]:
-                    self.disconnected_streams.add(stream_id)
+                    # Check for disconnect using the provided method
+                    self.check_disconnect(stream_id, miss_count)
 
-            for stream_id, inlet in self.stream_inlets.items():
-                if self.connected[stream_id]:
-                    samples, sample_timestamps = inlet.pull_chunk(timeout=0.1)
-                    if samples:
-                        self.save_to_h5(stream_id, samples, sample_timestamps)
-                        self.last_received_timestamps[stream_id] = sample_timestamps[-1]
-                    elif stream_id in disconnection_times:
-                        # Handle disconnection upon reconnection
-                        disconnection_duration = local_clock() - disconnection_times[stream_id]
-                        self.handle_disconnection(stream_id, disconnection_duration)
-                        del disconnection_times[stream_id]
-                else:
-                    disconnection_times[stream_id] = local_clock()
+                    # If a stream is disconnected, add it to the set of disconnected streams
+                    if not self.connected[stream_id]:
+                        self.disconnected_streams.add(stream_id)
 
-            time.sleep(0.1)
+                for stream_id, inlet in self.stream_inlets.items():
+                    if self.connected[stream_id]:
+                        samples, sample_timestamps = inlet.pull_chunk(timeout=0.1)
+                        if samples:
+                            self.save_to_h5(stream_id, samples, sample_timestamps)
+                            self.last_received_timestamps[stream_id] = sample_timestamps[-1]
+                        elif stream_id in disconnection_times:
+                            # Handle disconnection upon reconnection
+                            disconnection_duration = local_clock() - disconnection_times[stream_id]
+                            self.handle_disconnection(stream_id, disconnection_duration)
+                            del disconnection_times[stream_id]
+                    else:
+                        disconnection_times[stream_id] = local_clock()
+
+                time.sleep(0.1)
+        except Exception:
+            logger.error("StreamRecorder failed to start streaming threads", exc_info=True)
+            self.started_event.set()
+            raise
 
     def stop(self):
         self.stop_signal = True
+        self.started_event.set()
 
         # Signal threads to stop
-        self.stream_update_thread.join()
-        self.disconnect_handler_thread.join()
+        if self.stream_update_thread:
+            self.stream_update_thread.join()
+        if self.disconnect_handler_thread:
+            self.disconnect_handler_thread.join()
 
         # Save datasets
         self.save_datasets()
