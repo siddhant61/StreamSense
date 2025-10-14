@@ -40,6 +40,7 @@ class StreamE4():
         self.queue = Queue()
         self.empatica_e4 = None
         self.root_output_folder = root_output_folder
+        self.process = None
         self.subscribed_streams = {
             "acc": False,
             "bvp": False,
@@ -64,7 +65,7 @@ class StreamE4():
         except Exception as e:
             logger.error(f"Connection failed: {e}")
 
-    def suscribe_to_data(self):
+    def subscribe_to_data(self):
         self.empatica_e4.suspend_streaming()
         try:
             if acc:
@@ -144,7 +145,7 @@ class StreamE4():
         if self.connected:
             logger.info("Reconnected successfully!")
             time.sleep(1)
-            self.suscribe_to_data()
+            self.subscribe_to_data()
             time.sleep(1)
             self.stream()
         else:
@@ -226,25 +227,52 @@ class StreamE4():
     def e4_streamer(self):
         self.connect()
         time.sleep(2)
-        self.suscribe_to_data()
+        self.subscribe_to_data()
         time.sleep(1)
         self.prepare_LSL_streaming()
         time.sleep(1)
         self.stream()
 
     def start_streaming(self):
-        process = Process(target=self.e4_streamer)
-        process.start()
-        result = self.queue.get()  # Wait until we get a result from the process
-        if result == 'connected':
-            self.connected_event.set()
-        process.join()
+        if self.streaming:
+            logger.warning("Streaming already in progress; start_streaming call ignored.")
+            return
+
+        self.connected_event.clear()
+        self.stop_signal = False
+        self.process = Process(target=self.e4_streamer)
+        self.process.start()
+
+        try:
+            result = self.queue.get(timeout=10)  # Wait until we get a result from the process
+            if result == 'connected':
+                self.connected_event.set()
+                self.streaming = True
+        except Empty:
+            logger.error("Timed out waiting for Empatica E4 connection confirmation.")
+
+        if not self.connected_event.is_set():
+            logger.error("Empatica E4 failed to report a successful connection.")
+            if self.process and self.process.is_alive():
+                self.process.terminate()
+                self.process.join(timeout=5)
+            self.process = None
+            self.streaming = False
 
     def stop_streaming(self):
         try:
-            self.empatica_e4.disconnect()
             self.stop_signal = True
+            if self.empatica_e4 is not None:
+                self.empatica_e4.disconnect()
         except Exception as e:
             logger.error(f"Error stopping the stream: {e}")
+        finally:
+            if self.process and self.process.is_alive():
+                self.process.join(timeout=5)
+                if self.process.is_alive():
+                    logger.warning("Empatica E4 streamer process did not terminate cleanly.")
+            self.process = None
+            self.streaming = False
+            self.connected_event.clear()
 
 

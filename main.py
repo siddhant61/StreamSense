@@ -1,22 +1,9 @@
-import asyncio
 import os
 import subprocess
 import sys
-from queue import Queue
+from dataclasses import dataclass, field
+from typing import Dict, Optional
 
-active_record = None
-active_e4 = []
-active_muse = []
-muse_threads = {}
-e4_threads = {}
-muse_streamers = {}
-e4_streamers = {}
-global save_data_thread
-save_data_thread = None
-root_output_folder = None
-root_output_folder_path= None
-global stop_signal
-stop_signal = False
 import multiprocessing
 import argparse
 from datetime import datetime
@@ -24,7 +11,6 @@ from pathlib import Path
 import threading
 import time
 import userpaths
-import serial
 import wmi
 import logging
 from pylsl import local_clock
@@ -48,8 +34,42 @@ from viewer.view_streams import ViewStreams
 from experiments.visual_oddball import VisualOddball
 
 
-def connect_muse_devices(root_output_folder):
-    muse_reg = {}
+@dataclass
+class AppState:
+    """Container for mutable application state managed by the CLI."""
+
+    root_output_folder: Optional[str] = None
+    root_output_path: Optional[Path] = None
+    recorder_thread: Optional[threading.Thread] = None
+    recorder: Optional[StreamRecorder] = None
+    muse_threads: Dict[str, threading.Thread] = field(default_factory=dict)
+    e4_threads: Dict[str, threading.Thread] = field(default_factory=dict)
+    muse_streamers: Dict[str, StreamMuse] = field(default_factory=dict)
+    e4_streamers: Dict[str, StreamE4] = field(default_factory=dict)
+
+    def ensure_output_folder(self) -> str:
+        """Ensure that the root output directory exists and return its string path."""
+
+        if not self.root_output_folder:
+            documents = userpaths.get_my_documents().replace("\\", "/")
+            folder = f"{documents}/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
+            path = Path(folder)
+            path.mkdir(parents=True, exist_ok=True)
+            self.root_output_folder = folder
+            self.root_output_path = path
+        return self.root_output_folder
+
+    def reset_output_folder(self) -> None:
+        """Clear cached output folder metadata so a new session can be created."""
+
+        self.root_output_folder = None
+        self.root_output_path = None
+
+
+def connect_muse_devices(state: AppState):
+    """Discover Muse devices and launch streaming threads, updating the shared state."""
+
+    muse_reg: Dict[str, str] = {}
     devices = FindDevices()
     muses, com_ports = devices.find_muses_with_ports()
 
@@ -73,30 +93,41 @@ def connect_muse_devices(root_output_folder):
             logger.info("No Muse devices found.\n")
 
         if len(muse_reg) != 0:
+            state.muse_streamers.clear()
+            state.muse_threads.clear()
             for i in range(len(muse_reg)):
-                key = f"muse_streamer_{i + 1}"
-                value = StreamMuse(list(muse_reg.keys())[i], list(muse_reg.values())[i], com_ports[n-i-1], root_output_folder, synchronized_start_time)
-                muse_streamers[key] = value
-                key = f"thread_{i + 1}"
-                value = threading.Thread(target=list(muse_streamers.values())[i].start_streaming)
-                muse_threads[key] = value
+                streamer_key = f"muse_streamer_{i + 1}"
+                streamer = StreamMuse(
+                    list(muse_reg.keys())[i],
+                    list(muse_reg.values())[i],
+                    com_ports[n - i - 1],
+                    state.ensure_output_folder(),
+                    synchronized_start_time,
+                )
+                state.muse_streamers[streamer_key] = streamer
+                thread_key = f"thread_{i + 1}"
+                thread = threading.Thread(target=streamer.start_streaming)
+                state.muse_threads[thread_key] = thread
 
-            if len(muse_threads) != 0:
-                for i in range(len(muse_threads)):
-                    list(muse_threads.values())[i].start()
-                    list(muse_streamers.values())[i].connected_event.wait()
+            if len(state.muse_threads) != 0:
+                streamers = list(state.muse_streamers.values())
+                for i, thread in enumerate(state.muse_threads.values()):
+                    thread.start()
+                    streamers[i].connected_event.wait()
                     if i == 0:
                         time.sleep(5)  # Delay for 5 seconds after the first device
 
-                print(f"{len(muse_threads)} Muse streaming thread(s) running.\n")
-                logger.info(f"{len(muse_threads)} Muse streaming thread(s) running.\n")
+                print(f"{len(state.muse_threads)} Muse streaming thread(s) running.\n")
+                logger.info(f"{len(state.muse_threads)} Muse streaming thread(s) running.\n")
             else:
                 print("No Muse streaming threads running.\n")
                 logger.info("No Muse streaming threads running.\n")
-    return muse_reg, muse_streamers, muse_threads
+    return muse_reg, state.muse_streamers, state.muse_threads
 
-def connect_e4_devices(root_output_folder):
-    e4_reg = {}
+def connect_e4_devices(state: AppState):
+    """Discover E4 devices and start streaming threads, updating the shared state."""
+
+    e4_reg: Dict[str, str] = {}
     devices = FindDevices()
 
     e4s = devices.find_empatica()
@@ -135,34 +166,97 @@ def connect_e4_devices(root_output_folder):
         logger.info("No E4 devices found.")
 
     if len(e4_reg) != 0:
+        state.e4_streamers.clear()
+        state.e4_threads.clear()
+        output_path = state.root_output_path or Path(state.ensure_output_folder())
         for i in range(len(e4_reg)):
-            key = f"e4_streamer_{i + 1}"
-            value = StreamE4(list(e4_reg.values())[i], root_output_folder, synchronized_start_time)
-            e4_streamers[key] = value
+            streamer_key = f"e4_streamer_{i + 1}"
+            streamer = StreamE4(list(e4_reg.values())[i], output_path, synchronized_start_time)
+            state.e4_streamers[streamer_key] = streamer
 
-            key = f"thread_{i + 1}"
-            value = threading.Thread(target=list(e4_streamers.values())[i].start_streaming)
-            e4_threads[key] = value
+            thread_key = f"thread_{i + 1}"
+            thread = threading.Thread(target=streamer.start_streaming)
+            state.e4_threads[thread_key] = thread
         print(f"{len(e4_reg)} E4 device(s) registered.\n")
         logger.info(f"{len(e4_reg)} E4 device(s) registered.\n")
 
-        if len(e4_threads) != 0:
-            for i in range(len(e4_threads)):
-                list(e4_threads.values())[i].start()
-                list(e4_streamers.values())[i].connected_event.wait()
+        if len(state.e4_threads) != 0:
+            streamers = list(state.e4_streamers.values())
+            for i, thread in enumerate(state.e4_threads.values()):
+                thread.start()
+                streamers[i].connected_event.wait()
 
-        print(f"{len(e4_threads)} E4 streaming thread(s) running.\n")
-        logger.info(f"{len(e4_threads)} E4 streaming thread(s) running.\n")
+        print(f"{len(state.e4_threads)} E4 streaming thread(s) running.\n")
+        logger.info(f"{len(state.e4_threads)} E4 streaming thread(s) running.\n")
     else:
         print("No E4 devices registered.\n")
         print("No E4 streaming threads running.\n")
         logger.info("No E4 streaming threads running.\n")
-    return e4_reg, e4_streamers, e4_threads
+    return e4_reg, state.e4_streamers, state.e4_threads
+
 
 def log_and_print(message, logger):
     """Log and print the given message."""
     print(message)
     logger.info(message)
+
+
+def start_recording(state: AppState) -> None:
+    """Launch the recording thread and remember it in the application state."""
+
+    state.ensure_output_folder()
+    recorder = StreamRecorder(state.root_output_folder)
+    thread = threading.Thread(target=recorder.record_streams)
+    thread.start()
+    time.sleep(5)
+    state.recorder = recorder
+    state.recorder_thread = thread
+
+
+def start_visual_oddball(state: AppState) -> None:
+    """Kick off the visual oddball experiment using the configured output folder."""
+
+    state.ensure_output_folder()
+    exp = VisualOddball(state.root_output_folder)
+    sequence = (10, 3)
+    exp.start_oddball(sequence)
+
+
+def start_event_logger(state: AppState) -> None:
+    """Open the event logger console in a new process."""
+
+    state.ensure_output_folder()
+    if state.root_output_path:
+        start_event_logger_process(str(state.root_output_path))
+
+
+def stop_all_streams(state: AppState) -> None:
+    """Stop all active streamers and the recorder, clearing the stored state."""
+
+    if state.recorder and state.recorder_thread:
+        logger.info("Current state saved.")
+        state.recorder.stop()
+        state.recorder_thread.join()
+        state.recorder = None
+        state.recorder_thread = None
+
+    if state.e4_streamers:
+        for e4_instance in state.e4_streamers.values():
+            e4_instance.stop_streaming()
+        for thread in state.e4_threads.values():
+            thread.join()
+        state.e4_streamers.clear()
+        state.e4_threads.clear()
+
+    if state.muse_streamers:
+        for muse_instance in state.muse_streamers.values():
+            muse_instance.stop_streaming()
+        for thread in state.muse_threads.values():
+            thread.join()
+        state.muse_streamers.clear()
+        state.muse_threads.clear()
+
+    state.reset_output_folder()
 
 def display_menu():
     """Display the main menu options."""
@@ -203,6 +297,57 @@ def start_event_logger_process(output_folder):
     except Exception as e:
         print(e)
 
+
+def run_view_menu():
+    """Interactive loop for viewing different categories of streams."""
+
+    while True:
+        display_streams_menu()
+        view_choice = input("> ").strip()
+        if view_choice == "6":
+            break
+        try:
+            view_choice_int = int(view_choice)
+        except ValueError:
+            print("Invalid Input. Please choose within (1-6)\n")
+            continue
+
+        if 1 <= view_choice_int <= 5:
+            viewer = ViewStreams()
+            viewer.start_viewing(view_choice_int)
+        else:
+            print("Invalid Input. Please choose within (1-6)\n")
+
+
+def run_menu_loop(state: AppState):
+    """Interactive loop for the main command menu."""
+
+    while True:
+        display_menu()
+        user_input = input("> ").strip()
+        try:
+            choice = int(user_input)
+        except ValueError:
+            print("Invalid Input. Please choose within (1-7)\n")
+            continue
+
+        if choice == 1:
+            connect_muse_devices(state)
+        elif choice == 2:
+            run_view_menu()
+        elif choice == 3:
+            connect_e4_devices(state)
+        elif choice == 4:
+            start_recording(state)
+        elif choice == 5:
+            start_visual_oddball(state)
+        elif choice == 6:
+            start_event_logger(state)
+        elif choice == 7:
+            stop_all_streams(state)
+        else:
+            print("Invalid Input. Please choose within (1-7)\n")
+
 # def get_user_choice():
 #     """Get a valid user choice from the menu."""
 #     while True:
@@ -218,7 +363,7 @@ def start_event_logger_process(output_folder):
 if __name__ == '__main__':
 
     multiprocessing.freeze_support()
-    flag = 1
+    state = AppState()
     parser = argparse.ArgumentParser(description='Command-line options for the script.')
     parser.add_argument('--command', choices=['menu', 'stream', 'view', 'record', 'oddball', 'logger', 'stop'],
                         default='menu',
@@ -229,270 +374,51 @@ if __name__ == '__main__':
                         help='The data stream to view. This option is used with the "view" command.')
 
     print("Type 'help' to display the command options or 'exit' to quit.")
-    args = parser.parse_args()
 
     while True:
         try:
             user_input = input("> ").strip()
+        except EOFError:
+            break
 
-            if user_input.lower() == "exit":
-                break
+        if not user_input:
+            continue
 
-            elif user_input.lower() == "help":
-                # Display the menu
-                parser.print_help()
+        lowered = user_input.lower()
+        if lowered == "exit":
+            break
+        if lowered == "help":
+            parser.print_help()
+            continue
 
+        try:
+            args = parser.parse_args(user_input.split())
+        except SystemExit:
+            print("usage: [-h] {menu,stream --dev {muse,e4}, view --data {eeg,bvp,acc,gsr,ppg}, record, oddball, logger, stop}")
+            continue
+
+        if args.command == 'menu':
+            run_menu_loop(state)
+        elif args.command == 'stream':
+            if args.dev == 'muse':
+                connect_muse_devices(state)
+            elif args.dev == 'e4':
+                connect_e4_devices(state)
             else:
-                # Execute the command
-                args = parser.parse_args(user_input.split())
-                if args.command == 'menu':
-                    while True:
-                        display_menu()
-                        user_input = input("> ").strip()
+                print("Please specify --dev {muse,e4} for the stream command.")
+        elif args.command == 'view':
+            if args.data:
+                data_map = {'eeg': 1, 'acc': 2, 'bvp': 3, 'gsr': 4, 'ppg': 5}
+                viewer = ViewStreams()
+                viewer.start_viewing(data_map[args.data])
+            else:
+                run_view_menu()
+        elif args.command == 'record':
+            start_recording(state)
+        elif args.command == 'oddball':
+            start_visual_oddball(state)
+        elif args.command == 'logger':
+            start_event_logger(state)
+        elif args.command == 'stop':
+            stop_all_streams(state)
 
-                        if int(user_input) == 1:
-                            # Create a root directory for saving data and oddball results only if not already created
-                            if not root_output_folder:
-                                root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                          "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                                root_output_folder_path = Path(root_output_folder)
-                                root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                                if flag == 1:
-                                    flag = 0
-
-                            muse_reg, muse_streamers, muse_threads = connect_muse_devices(root_output_folder)
-                            for thread in muse_threads.values():
-                                active_muse.append(thread)
-                            pass
-
-                        elif int(user_input) == 2:
-                            while True:
-                                display_streams_menu()
-                                view_choice = input("> ").strip()
-                                view_choice = int(view_choice)
-
-                                if view_choice < 6 and view_choice > 0:
-                                    viewer = ViewStreams()
-                                    viewer.start_viewing(view_choice, )
-                                    pass
-                                elif view_choice == 6:
-                                    break
-                                else:
-                                    print("Invalid Input. Please choose within (1-5)\n")
-                                    pass
-
-                        elif int(user_input) == 3:
-                            # Create a root directory for saving data and oddball results only if not already created
-                            if not root_output_folder:
-                                root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                          "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                                root_output_folder_path = Path(root_output_folder)
-                                root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                                if flag == 1:
-                                    flag = 0
-
-                            e4_reg, e4_streamers, e4_threads = connect_e4_devices(root_output_folder_path)
-                            for thread in e4_threads.values():
-                                active_e4.append(thread)
-                            pass
-
-                        elif int(user_input) == 4:
-                            # Create a root directory for saving data and oddball results only if not already created
-                            if not root_output_folder:
-                                root_output_folder = userpaths.get_my_documents().replace("\\\\",
-                                                                                          "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                                root_output_folder_path = Path(root_output_folder)
-                                root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                                if flag == 1:
-                                    flag = 0
-
-                            data_recorder = StreamRecorder(root_output_folder)
-                            save_data_thread = threading.Thread(
-                                target=data_recorder.record_streams)
-                            save_data_thread.start()
-                            time.sleep(5)
-                            active_record = save_data_thread
-
-                            pass
-
-                        elif int(user_input) == 5:
-                            # Create a root directory for saving data and oddball results only if not already created
-                            if not root_output_folder:
-                                root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                          "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                                root_output_folder_path = Path(root_output_folder)
-                                root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                                if flag == 1:
-                                    flag = 0
-                            exp = VisualOddball(root_output_folder)
-                            sequence = (10, 3)
-                            exp.start_oddball(sequence)
-                            pass
-
-                        elif int(user_input) == 6:
-                            # Create a root directory for saving data and oddball results only if not already created
-                            if not root_output_folder:
-                                root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                          "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                                root_output_folder_path = Path(root_output_folder)
-                                root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                                if flag == 1:
-                                    flag = 0
-                            start_event_logger_process(root_output_folder_path)
-
-                        elif int(user_input) == 7:
-                            stop_signal = True
-                            if active_record:
-                                logger.info("Current state saved.")
-                                data_recorder.stop()
-                                active_record.join()
-
-                            if active_e4:
-                                # Stop the streaming in the stream_e4 script
-                                for e4_instance in e4_streamers.values():
-                                    e4_instance.stop_streaming()
-                                # Join the E4 threads to ensure they stop gracefully
-                                for thread in active_e4:
-                                    thread.join()
-
-                            if active_muse:
-                                # Stop the streaming in the stream_muse script
-                                for muse_instance in muse_streamers.values():
-                                    muse_instance.stop_streaming()
-                                # Join the Muse threads to ensure they stop gracefully
-                                for thread in active_muse:
-                                    thread.join()
-
-                            root_output_folder = None
-                            pass
-
-                elif args.command == 'stream':
-                    if args.dev == 'muse':
-                        # Create a root directory for saving data and oddball results only if not already created
-                        if not root_output_folder:
-                            root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                      "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                            root_output_folder_path = Path(root_output_folder)
-                            root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                            if flag == 1:
-                                flag = 0
-
-                        muse_reg, muse_streamers, muse_threads = connect_muse_devices(root_output_folder)
-                        for thread in muse_threads.values():
-                            active_muse.append(thread)
-                        pass
-
-                    elif args.dev == 'e4':
-                        # Create a root directory for saving data and oddball results only if not already created
-                        if not root_output_folder:
-                            root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                      "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                            root_output_folder_path = Path(root_output_folder)
-                            root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                            if flag == 1:
-                                flag = 0
-
-                        e4_reg, e4_streamers, e4_threads = connect_e4_devices(root_output_folder_path)
-                        for thread in e4_threads.values():
-                            active_e4.append(thread)
-                        pass
-
-                elif args.command == 'view':
-                    if args.data == 'eeg':
-                        viewer = ViewStreams()
-                        viewer.start_viewing(1, )
-                        pass
-
-                    elif args.data == 'acc':
-                        viewer = ViewStreams()
-                        viewer.start_viewing(2, )
-                        pass
-
-                    elif args.data == 'bvp':
-                        viewer = ViewStreams()
-                        viewer.start_viewing(3, )
-                        pass
-
-                    elif args.data == 'gsr':
-                        viewer = ViewStreams()
-                        viewer.start_viewing(4, )
-                        pass
-                    elif args.data == 'ppg':
-                        viewer = ViewStreams()
-                        viewer.start_viewing(5, )
-                        pass
-
-                elif args.command == 'record':
-                    # Create a root directory for saving data and oddball results only if not already created
-                    if not root_output_folder:
-                        root_output_folder = userpaths.get_my_documents().replace("\\\\",
-                                                                                  "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                        root_output_folder_path = Path(root_output_folder)
-                        root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                        if flag == 1:
-                            flag = 0
-                    data_recorder = StreamRecorder(root_output_folder)
-                    save_data_thread = threading.Thread(target=data_recorder.record_streams)
-                    save_data_thread.start()
-                    time.sleep(5)
-                    active_record = save_data_thread
-
-                    pass
-
-                elif args.command == 'oddball':
-                    # Create a root directory for saving data and oddball results only if not already created
-                    if not root_output_folder:
-                        root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                  "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                        root_output_folder_path = Path(root_output_folder)
-                        root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                        if flag == 1:
-                            flag = 0
-                    exp = VisualOddball(root_output_folder)
-                    sequence = (10, 3)
-                    exp.start_oddball(sequence)
-                    print(time.time())
-                    pass
-
-                elif args.command == 'stop':
-                    stop_signal = True
-                    if active_record:
-                        logger.info("Current state saved.")
-                        data_recorder.stop()
-                        active_record.join()
-
-                    if active_e4:
-                        # Stop the streaming in the stream_e4 script
-                        for e4_instance in e4_streamers.values():
-                            e4_instance.stop_streaming()
-                        # Join the E4 threads to ensure they stop gracefully
-                        for thread in active_e4:
-                            thread.join()
-
-                    if active_muse:
-                        # Stop the streaming in the stream_muse script
-                        for muse_instance in muse_streamers.values():
-                            muse_instance.stop_streaming()
-                        # Join the Muse threads to ensure they stop gracefully
-                        for thread in active_muse:
-                            thread.join()
-
-                    root_output_folder = None
-                    pass
-
-                elif args.command == 'logger':
-                    # Create a root directory for saving data and oddball results only if not already created
-                    if not root_output_folder:
-                        root_output_folder = userpaths.get_my_documents().replace("\\",
-                                                                                  "/") + f"/StreamSense/{str(datetime.today().timestamp()).replace('.', '_')}"
-                        root_output_folder_path = Path(root_output_folder)
-                        root_output_folder_path.mkdir(parents=True, exist_ok=True)
-                        if flag == 1:
-                            flag = 0
-                    start_event_logger_process(root_output_folder_path)
-
-                elif args.command == 'exit':
-                    exit()
-        except:
-            print("usage:[-h] {menu,stream[--dev {muse,e4}],view[--data {eeg,bvp,acc,gsr}],record,oddball, logger, stop}")
-            pass
