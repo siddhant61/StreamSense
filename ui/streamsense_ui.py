@@ -18,12 +18,15 @@ from typing import Dict, List, Optional
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QGroupBox, QScrollArea, QProgressBar,
-    QFrame, QSplitter
+    QFrame, QSplitter, QMessageBox
 )
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread
 from PyQt5.QtGui import QFont, QPalette, QColor, QIcon
 
 import pylsl
+
+# Import the backend controller
+from ui.streamsense_controller import StreamSenseController
 
 
 # Color scheme - Professional dark theme
@@ -44,6 +47,10 @@ class DeviceCard(QFrame):
     """
     Beautiful card widget for displaying device status.
     """
+
+    # Signals for device actions
+    connect_clicked = pyqtSignal(str)  # device_name
+    disconnect_clicked = pyqtSignal(str)  # device_name
 
     def __init__(self, device_name: str, device_type: str, parent=None):
         super().__init__(parent)
@@ -115,14 +122,40 @@ class DeviceCard(QFrame):
             }}
         """)
 
+        # Connect/Disconnect button
+        self.connect_button = QPushButton("Connect")
+        self.connect_button.setFixedHeight(30)
+        self.connect_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {Colors.PRIMARY};
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                border: none;
+                border-radius: 5px;
+            }}
+            QPushButton:hover {{
+                background-color: #99c4fa;
+            }}
+        """)
+        self.connect_button.clicked.connect(self._on_button_clicked)
+
         layout.addWidget(name_label)
         layout.addWidget(type_label)
         layout.addSpacing(5)
         layout.addWidget(self.status_label)
         layout.addWidget(self.signal_bar)
+        layout.addWidget(self.connect_button)
 
         self.setLayout(layout)
-        self.setFixedHeight(140)
+        self.setFixedHeight(170)
+
+    def _on_button_clicked(self):
+        """Handle connect/disconnect button click."""
+        if self.is_connected:
+            self.disconnect_clicked.emit(self.device_name)
+        else:
+            self.connect_clicked.emit(self.device_name)
 
     def set_connected(self, connected: bool, signal_quality: int = 0):
         self.is_connected = connected
@@ -135,6 +168,20 @@ class DeviceCard(QFrame):
                 }}
             """)
             self.signal_bar.setValue(signal_quality)
+            self.connect_button.setText("Disconnect")
+            self.connect_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {Colors.ERROR};
+                    color: white;
+                    font-size: 12px;
+                    font-weight: bold;
+                    border: none;
+                    border-radius: 5px;
+                }}
+                QPushButton:hover {{
+                    background-color: #f59bb8;
+                }}
+            """)
         else:
             self.status_label.setText("● Disconnected")
             self.status_label.setStyleSheet(f"""
@@ -144,6 +191,20 @@ class DeviceCard(QFrame):
                 }}
             """)
             self.signal_bar.setValue(0)
+            self.connect_button.setText("Connect")
+            self.connect_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {Colors.PRIMARY};
+                    color: white;
+                    font-size: 12px;
+                    font-weight: bold;
+                    border: none;
+                    border-radius: 5px;
+                }}
+                QPushButton:hover {{
+                    background-color: #99c4fa;
+                }}
+            """)
 
 
 class StreamWidget(QFrame):
@@ -257,6 +318,17 @@ class StreamSenseUI(QMainWindow):
         self.setWindowTitle("StreamSense - Multi-Device Physiological Recording")
         self.setGeometry(100, 100, 1400, 900)
 
+        # Backend controller
+        self.controller = StreamSenseController()
+
+        # Connect controller signals to UI methods
+        self.controller.device_discovered.connect(self.on_device_discovered)
+        self.controller.device_connected.connect(self.on_device_connected)
+        self.controller.recording_started.connect(self.on_recording_started)
+        self.controller.recording_stopped.connect(self.on_recording_stopped)
+        self.controller.error_occurred.connect(self.on_error)
+        self.controller.status_message.connect(self.on_status_message)
+
         # State
         self.devices: Dict[str, DeviceCard] = {}
         self.streams: Dict[str, StreamWidget] = {}
@@ -319,9 +391,48 @@ class StreamSenseUI(QMainWindow):
             }}
         """)
 
+        devices_inner_layout = QVBoxLayout()
+
+        # Discover Devices button
+        self.discover_button = QPushButton("🔍 Discover Devices")
+        self.discover_button.setFixedHeight(45)
+        self.discover_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {Colors.SECONDARY};
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                border: none;
+                border-radius: 8px;
+            }}
+            QPushButton:hover {{
+                background-color: #f59bb8;
+            }}
+            QPushButton:pressed {{
+                background-color: #e07a98;
+            }}
+        """)
+        self.discover_button.clicked.connect(self.discover_devices)
+        devices_inner_layout.addWidget(self.discover_button)
+
+        # Devices scroll area
+        devices_scroll = QScrollArea()
+        devices_scroll.setWidgetResizable(True)
+        devices_scroll.setStyleSheet(f"""
+            QScrollArea {{
+                border: none;
+                background-color: {Colors.BACKGROUND};
+            }}
+        """)
+
+        devices_container = QWidget()
         self.devices_layout = QVBoxLayout()
         self.devices_layout.addStretch()
-        devices_group.setLayout(self.devices_layout)
+        devices_container.setLayout(self.devices_layout)
+        devices_scroll.setWidget(devices_container)
+
+        devices_inner_layout.addWidget(devices_scroll, 1)
+        devices_group.setLayout(devices_inner_layout)
 
         left_layout.addWidget(devices_group, 1)
 
@@ -388,9 +499,23 @@ class StreamSenseUI(QMainWindow):
             }}
         """)
 
+        # Status message label
+        self.status_label_widget = QLabel("Ready")
+        self.status_label_widget.setWordWrap(True)
+        self.status_label_widget.setStyleSheet(f"""
+            QLabel {{
+                color: {Colors.TEXT_DIM};
+                font-size: 12px;
+                padding: 10px;
+                background-color: {Colors.SURFACE};
+                border-radius: 5px;
+            }}
+        """)
+
         controls_layout.addWidget(self.record_button)
         controls_layout.addWidget(self.session_label)
         controls_layout.addWidget(self.duration_label)
+        controls_layout.addWidget(self.status_label_widget)
         controls_layout.addStretch()
 
         controls_group.setLayout(controls_layout)
@@ -455,6 +580,9 @@ class StreamSenseUI(QMainWindow):
         """Add a device card to the UI."""
         if device_name not in self.devices:
             card = DeviceCard(device_name, device_type)
+            # Connect device card signals to UI handlers
+            card.connect_clicked.connect(self.on_device_connect_clicked)
+            card.disconnect_clicked.connect(self.on_device_disconnect_clicked)
             self.devices[device_name] = card
             self.devices_layout.insertWidget(
                 self.devices_layout.count() - 1,  # Before stretch
@@ -487,47 +615,13 @@ class StreamSenseUI(QMainWindow):
                 )
 
     def toggle_recording(self):
-        """Toggle recording state."""
-        self.recording = not self.recording
-
+        """Toggle recording state using the controller."""
         if self.recording:
-            self.recording_start_time = datetime.now()
-            self.record_button.setText("■ Stop Recording")
-            self.record_button.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: {Colors.ERROR};
-                    color: white;
-                    font-size: 18px;
-                    font-weight: bold;
-                    border: none;
-                    border-radius: 10px;
-                }}
-                QPushButton:hover {{
-                    background-color: #f59bb8;
-                }}
-            """)
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            self.session_label.setText(f"Recording session: {timestamp}")
-            print(f"🔴 Recording started: {timestamp}")
+            # Stop recording
+            self.controller.stop_recording()
         else:
-            self.recording_start_time = None
-            self.record_button.setText("● Start Recording")
-            self.record_button.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: {Colors.SUCCESS};
-                    color: white;
-                    font-size: 18px;
-                    font-weight: bold;
-                    border: none;
-                    border-radius: 10px;
-                }}
-                QPushButton:hover {{
-                    background-color: #94e3a4;
-                }}
-            """)
-            self.session_label.setText("Recording stopped")
-            self.duration_label.setText("Duration: 00:00:00")
-            print("⏹️  Recording stopped")
+            # Start recording
+            self.controller.start_recording()
 
     def update_ui(self):
         """Update UI elements periodically."""
@@ -539,10 +633,112 @@ class StreamSenseUI(QMainWindow):
             seconds = duration.seconds % 60
             self.duration_label.setText(f"Duration: {hours:02d}:{minutes:02d}:{seconds:02d}")
 
+    # === Controller Signal Handlers ===
+
+    def discover_devices(self):
+        """Trigger device discovery."""
+        # Run discovery in a background thread to avoid blocking UI
+        from PyQt5.QtCore import QThread
+        import threading
+
+        def run_discovery():
+            self.controller.discover_devices()
+
+        thread = threading.Thread(target=run_discovery, daemon=True)
+        thread.start()
+
+    def on_device_discovered(self, name: str, device_type: str, address: str):
+        """Handle device discovery from controller."""
+        self.add_device(name, device_type)
+
+    def on_device_connected(self, name: str, connected: bool, signal_quality: int):
+        """Handle device connection status from controller."""
+        self.update_device_status(name, connected, signal_quality)
+
+    def on_recording_started(self, session_id: str):
+        """Handle recording started from controller."""
+        self.recording = True
+        self.recording_start_time = datetime.now()
+        self.record_button.setText("■ Stop Recording")
+        self.record_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {Colors.ERROR};
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                border: none;
+                border-radius: 10px;
+            }}
+            QPushButton:hover {{
+                background-color: #f59bb8;
+            }}
+        """)
+        self.session_label.setText(f"Recording session: {session_id}")
+        print(f"🔴 Recording started: {session_id}")
+
+    def on_recording_stopped(self):
+        """Handle recording stopped from controller."""
+        self.recording = False
+        self.recording_start_time = None
+        self.record_button.setText("● Start Recording")
+        self.record_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {Colors.SUCCESS};
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                border: none;
+                border-radius: 10px;
+            }}
+            QPushButton:hover {{
+                background-color: #94e3a4;
+            }}
+        """)
+        self.session_label.setText("Recording stopped")
+        self.duration_label.setText("Duration: 00:00:00")
+        print("⏹️  Recording stopped")
+
+    def on_error(self, title: str, message: str):
+        """Handle error from controller."""
+        QMessageBox.critical(self, title, message)
+        print(f"❌ Error: {title} - {message}")
+
+    def on_status_message(self, message: str):
+        """Handle status message from controller."""
+        self.status_label_widget.setText(message)
+        print(f"ℹ️  {message}")
+
+    def on_device_connect_clicked(self, device_name: str):
+        """Handle connect button click from device card."""
+        # Run in background thread
+        import threading
+
+        def run_connect():
+            self.controller.connect_device(device_name)
+
+        thread = threading.Thread(target=run_connect, daemon=True)
+        thread.start()
+
+    def on_device_disconnect_clicked(self, device_name: str):
+        """Handle disconnect button click from device card."""
+        # Run in background thread
+        import threading
+
+        def run_disconnect():
+            self.controller.disconnect_device(device_name)
+
+        thread = threading.Thread(target=run_disconnect, daemon=True)
+        thread.start()
+
     def closeEvent(self, event):
         """Clean up when closing."""
+        # Disconnect all devices and stop recording
+        self.controller.disconnect_all()
+
+        # Stop LSL monitor
         self.lsl_monitor.stop()
         self.lsl_monitor.wait()
+
         event.accept()
 
 
@@ -557,15 +753,14 @@ def main():
     # Create and show main window
     window = StreamSenseUI()
 
-    # Demo: Add some devices
-    window.add_device("Muse-A01B", "Muse Headband")
-    window.update_device_status("Muse-A01B", True, 92)
-
-    window.add_device("E4-12345", "Empatica E4")
-    window.update_device_status("E4-12345", True, 87)
-
-    window.add_device("BITalino-001", "BITalino (r)evolution")
-    window.update_device_status("BITalino-001", False)
+    # No demo devices - use "Discover Devices" button for real discovery
+    # Or uncomment below for demo mode without hardware:
+    # window.add_device("Muse-A01B", "Muse Headband")
+    # window.update_device_status("Muse-A01B", True, 92)
+    # window.add_device("E4-12345", "Empatica E4")
+    # window.update_device_status("E4-12345", True, 87)
+    # window.add_device("BITalino-001", "BITalino (r)evolution")
+    # window.update_device_status("BITalino-001", False)
 
     window.show()
 
