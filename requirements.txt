@@ -1,19 +1,34 @@
-bitstring
-h5py
-matplotlib
-mne
-muselsl
-numpy
-pandas
-psychopy
-pylsl
-PyQt5
-pybluez
-pygatt
-pyserial
-pywifi
-scipy
-seaborn
-userpaths
-vispy
-wmi
+# Core Data & Scientific Computing
+numpy>=1.24.0,<2.0.0  # Pinned to 1.x for stability
+pandas>=2.0.0,<3.0.0
+scipy>=1.10.0,<2.0.0
+h5py>=3.8.0,<4.0.0
+matplotlib>=3.7.0,<4.0.0
+seaborn>=0.12.0,<1.0.0
+bitstring>=4.0.0,<5.0.0
+
+# Neuroscience & Biometric Sensors
+mne>=1.3.0,<2.0.0  # MNE for EEG analysis
+muselsl>=2.2.0,<3.0.0  # Muse headband streaming
+pylsl>=1.16.0,<2.0.0  # Lab Streaming Layer
+pygatt>=4.0.5,<5.0.0  # Bluetooth LE GATT
+
+# GUI & Visualization
+PyQt5>=5.15.0,<6.0.0  # Qt5 bindings
+vispy>=0.12.0,<1.0.0  # High-performance visualization
+psychopy>=2023.1.0  # Psychophysics experiments
+
+# Hardware Communication
+pyserial>=3.5,<4.0  # Serial port communication
+pybluez>=0.23,<1.0  # Bluetooth communication
+pywifi>=1.1.12,<2.0  # WiFi scanning
+
+# Platform-specific
+wmi>=1.5.1,<2.0.0; sys_platform == 'win32'  # Windows Management (Windows only)
+
+# Utilities
+userpaths>=0.1.3,<1.0.0  # Cross-platform user paths
+
+# Testing (development only)
+pytest>=7.4.0,<8.0.0
+pytest-cov>=4.1.0,<5.0.0

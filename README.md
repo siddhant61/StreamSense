@@ -10,6 +10,37 @@ StreamSense is a research prototype for acquiring, recording, and visualising ph
 
 If you plan to evaluate the project on other platforms or extend it for production use, expect to invest in cross-platform abstractions, centralised lifecycle management, and broader automated test coverage.
 
+## Requirements
+
+### Python Version
+
+**Supported Python versions**: 3.8, 3.9, 3.10, 3.11
+
+**Recommended**: Python 3.10 or 3.11 for best compatibility
+
+**Testing matrix**:
+- Windows: Python 3.8, 3.10, 3.11
+- macOS: Python 3.10, 3.11 (limited feature set)
+- Linux: Python 3.9, 3.11 (limited feature set)
+
+### Platform Support
+
+- **Full support**: Windows 10/11 (64-bit)
+- **Partial support**: macOS, Linux (some features unavailable due to `wmi` dependency)
+
+### Hardware Requirements
+
+- Bluetooth LE adapter (for Muse headbands and Empatica E4)
+- Minimum 4GB RAM (8GB recommended for visualization)
+- Display with OpenGL 2.1+ support (for Vispy viewer)
+
+### External Dependencies
+
+- **Empatica E4**: Requires [Empatica BLE Server](https://support.empatica.com/hc/en-us/articles/202581999-E4-streaming-server-for-Windows) installed separately
+- **Muse headbands**: Compatible with Muse 2, Muse S (original Muse may have limited support)
+
+See `DEPENDENCY_MANAGEMENT.md` for detailed dependency information and troubleshooting.
+
 ## Getting Started
 
 1. **Create a Python environment** (Python 3.8+ is recommended) and activate it.
