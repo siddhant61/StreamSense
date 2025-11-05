@@ -5,7 +5,8 @@ import multiprocessing
 import time
 
 EXE_PATH = "D:/E4StreamingServer1.0.4.5400/EmpaticaBLEServer.exe"
-API_KEY = "7abb651d308e498fa558642f5c2b7a66"
+# SECURITY: API key removed. Set via environment variable E4_API_KEY
+API_KEY = None  # Load from environment: os.getenv('E4_API_KEY')
 SERVER_ADDRESS = '127.0.0.1'
 SERVER_PORT = 28000
 BUFFER_SIZE = 4096
