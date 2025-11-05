@@ -42,8 +42,8 @@ class AppState:
     root_output_path: Optional[Path] = None
     recorder_thread: Optional[threading.Thread] = None
     recorder: Optional[StreamRecorder] = None
-    muse_threads: Dict[str, threading.Thread] = field(default_factory=dict)
-    e4_threads: Dict[str, threading.Thread] = field(default_factory=dict)
+    # Note: Removed muse_threads and e4_threads - streamers already use multiprocessing.Process internally
+    # Using Thread to wrap Process was an anti-pattern identified in Phase 3 concurrency analysis
     muse_streamers: Dict[str, StreamMuse] = field(default_factory=dict)
     e4_streamers: Dict[str, StreamE4] = field(default_factory=dict)
 
@@ -94,7 +94,6 @@ def connect_muse_devices(state: AppState):
 
         if len(muse_reg) != 0:
             state.muse_streamers.clear()
-            state.muse_threads.clear()
             for i in range(len(muse_reg)):
                 streamer_key = f"muse_streamer_{i + 1}"
                 streamer = StreamMuse(
@@ -105,24 +104,23 @@ def connect_muse_devices(state: AppState):
                     synchronized_start_time,
                 )
                 state.muse_streamers[streamer_key] = streamer
-                thread_key = f"thread_{i + 1}"
-                thread = threading.Thread(target=streamer.start_streaming)
-                state.muse_threads[thread_key] = thread
 
-            if len(state.muse_threads) != 0:
+            if len(state.muse_streamers) != 0:
                 streamers = list(state.muse_streamers.values())
-                for i, thread in enumerate(state.muse_threads.values()):
-                    thread.start()
-                    streamers[i].connected_event.wait()
+                # Call start_streaming directly - no need for Thread wrapper
+                # Each StreamMuse creates its own Process internally
+                for i, streamer in enumerate(streamers):
+                    streamer.start_streaming()
+                    streamer.connected_event.wait()
                     if i == 0:
                         time.sleep(5)  # Delay for 5 seconds after the first device
 
-                print(f"{len(state.muse_threads)} Muse streaming thread(s) running.\n")
-                logger.info(f"{len(state.muse_threads)} Muse streaming thread(s) running.\n")
+                print(f"{len(state.muse_streamers)} Muse streaming process(es) running.\n")
+                logger.info(f"{len(state.muse_streamers)} Muse streaming process(es) running.\n")
             else:
-                print("No Muse streaming threads running.\n")
-                logger.info("No Muse streaming threads running.\n")
-    return muse_reg, state.muse_streamers, state.muse_threads
+                print("No Muse streaming processes running.\n")
+                logger.info("No Muse streaming processes running.\n")
+    return muse_reg, state.muse_streamers
 
 def connect_e4_devices(state: AppState):
     """Discover E4 devices and start streaming threads, updating the shared state."""
@@ -167,32 +165,30 @@ def connect_e4_devices(state: AppState):
 
     if len(e4_reg) != 0:
         state.e4_streamers.clear()
-        state.e4_threads.clear()
         output_path = state.root_output_path or Path(state.ensure_output_folder())
         for i in range(len(e4_reg)):
             streamer_key = f"e4_streamer_{i + 1}"
             streamer = StreamE4(list(e4_reg.values())[i], output_path, synchronized_start_time)
             state.e4_streamers[streamer_key] = streamer
 
-            thread_key = f"thread_{i + 1}"
-            thread = threading.Thread(target=streamer.start_streaming)
-            state.e4_threads[thread_key] = thread
         print(f"{len(e4_reg)} E4 device(s) registered.\n")
         logger.info(f"{len(e4_reg)} E4 device(s) registered.\n")
 
-        if len(state.e4_threads) != 0:
+        if len(state.e4_streamers) != 0:
             streamers = list(state.e4_streamers.values())
-            for i, thread in enumerate(state.e4_threads.values()):
-                thread.start()
-                streamers[i].connected_event.wait()
+            # Call start_streaming directly - no need for Thread wrapper
+            # Each StreamE4 creates its own Process internally
+            for i, streamer in enumerate(streamers):
+                streamer.start_streaming()
+                streamer.connected_event.wait()
 
-        print(f"{len(state.e4_threads)} E4 streaming thread(s) running.\n")
-        logger.info(f"{len(state.e4_threads)} E4 streaming thread(s) running.\n")
+        print(f"{len(state.e4_streamers)} E4 streaming process(es) running.\n")
+        logger.info(f"{len(state.e4_streamers)} E4 streaming process(es) running.\n")
     else:
         print("No E4 devices registered.\n")
-        print("No E4 streaming threads running.\n")
-        logger.info("No E4 streaming threads running.\n")
-    return e4_reg, state.e4_streamers, state.e4_threads
+        print("No E4 streaming processes running.\n")
+        logger.info("No E4 streaming processes running.\n")
+    return e4_reg, state.e4_streamers
 
 
 def log_and_print(message, logger):
@@ -243,21 +239,17 @@ def stop_all_streams(state: AppState) -> None:
         state.recorder = None
         state.recorder_thread = None
 
+    # Stop E4 streamers - no need to join threads as stop_streaming() handles process cleanup
     if state.e4_streamers:
         for e4_instance in state.e4_streamers.values():
             e4_instance.stop_streaming()
-        for thread in state.e4_threads.values():
-            thread.join()
         state.e4_streamers.clear()
-        state.e4_threads.clear()
 
+    # Stop Muse streamers - no need to join threads as stop_streaming() handles process cleanup
     if state.muse_streamers:
         for muse_instance in state.muse_streamers.values():
             muse_instance.stop_streaming()
-        for thread in state.muse_threads.values():
-            thread.join()
         state.muse_streamers.clear()
-        state.muse_threads.clear()
 
     state.reset_output_folder()
 
