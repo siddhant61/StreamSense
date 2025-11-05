@@ -1,5 +1,6 @@
 import logging
 import multiprocessing
+import os
 import socket
 import threading
 import subprocess
@@ -23,7 +24,8 @@ MONITORING_INTERVAL=10
 MAX_RETRIES = 10
 RETRY_WAIT = 5  # wait 5 seconds before retrying
 EXE_PATH = "D:/E4StreamingServer1.0.4.5400/EmpaticaBLEServer.exe"
-API_KEY = "7abb651d308e498fa558642f5c2b7a66"
+# SECURITY: API key must be set via environment variable E4_API_KEY
+API_KEY = os.getenv('E4_API_KEY', None)
 SERVER_ADDRESS = '127.0.0.1'
 SERVER_PORT = 28000
 BUFFER_SIZE = 4096
