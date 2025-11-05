@@ -4,12 +4,13 @@ import os
 import threading
 import time
 from functools import partial
-from multiprocessing import Process, Event, Queue
+from multiprocessing import Queue
 
 from pygatt.exceptions import NotConnectedError
 from helper.muse_helper import Muse
 from pylsl import StreamInfo, StreamOutlet, local_clock
 from muselsl.constants import *
+from streamer.base_streamer import BaseStreamer
 
 
 from muselsl.constants import (
@@ -73,17 +74,26 @@ MAX_RETRIES_MUSE = 5  # Maximum number of reconnection attempts
 INITIAL_RETRY_DELAY_MUSE = 2  # Initial delay (in seconds) before retrying a connection
 
 
-class StreamMuse:
-    def __init__(self, name, address, interface, root_output_folder,synchronized_start_time):
+class StreamMuse(BaseStreamer):
+    """
+    Muse headband streamer inheriting from BaseStreamer.
+
+    Streams EEG, PPG, ACC, and GYRO data from Muse headbands to LSL.
+    """
+    def __init__(self, name, address, interface, root_output_folder, synchronized_start_time):
+        # Initialize BaseStreamer
+        super().__init__(
+            device_name=name,
+            synchronized_start_time=synchronized_start_time,
+            root_output_folder=root_output_folder
+        )
+
         logger.info(f"Initializing StreamMuse for device: {name} at address: {address}")
-        self.root_output_folder = root_output_folder
+        # Device-specific attributes
         self.interface = interface
         self.address = address
-        self.name = name
-        self.stop_signal = Event()
-        self.connected_event = Event()
-        self.queue = Queue()
-        self.process = None
+        # Note: self.device_name, self.stop_signal, self.connected_event, self.queue, self.process
+        # are provided by BaseStreamer
         self.eeg_outlet = None
         self.ppg_outlet = None
         self.acc_outlet = None
@@ -131,36 +141,14 @@ class StreamMuse:
         }
 
 
-    def start_streaming(self):
-        try:
-            #local variables for frequent access
-            queue = self.queue
-            self.process = Process(target=self.stream)
-            self.process.start()
-            logger.info("Process for start_adapter started.")
-            result = queue.get()  # Wait until we get a result from the process
-            logger.info(f"Received result from queue: {result}")
-            if result == 'connected':
-                logger.info(f"Starting streaming for device: {self.name}")
-                print(f"Starting streaming for device: {self.name}")
-                self.connected_event.set()
-                logger.info("Connected event set.")
-            else:
-                logger.warning(f"Unexpected result from queue: {result}")
-        except Exception as e:
-            logger.error(f"Error in start_streaming: {e}")
+    # Note: start_streaming() and stop_streaming() are provided by BaseStreamer
+    # They provide more robust error handling and cleanup
 
-    def stop_streaming(self):
-            logger.info(f"Stopping streaming for device: {self.name}")
-            self.stop_signal.set()
-            if self.process:
-                self.process.terminate()
-                self.process.join()
-
-    def stream(self):
+    def _stream_wrapper(self):
+        """Main streaming logic that runs in the process (required by BaseStreamer)."""
         try:
-            logger.info(f"Starting stream method for device: {self.name}")
-            self.eeg_outlet, self.ppg_outlet, self.acc_outlet, self.gyro_outlet = self._setup_lsl_streams()
+            logger.info(f"Starting stream method for device: {self.device_name}")
+            self._setup_lsl_outlets()
 
             # Define recent_data_cache for each data type
             recent_data_cache = {
@@ -197,7 +185,7 @@ class StreamMuse:
             cleanup_timer.start()
 
             def data_processor(stream_id, muse, outlet):
-                logger.info(f"Starting data processing for {stream_id} on device: {self.name}")
+                logger.info(f"Starting data processing for {stream_id} on device: {self.device_name}")
                 # Initialize the initial timestamps
                 initial_lsl_timestamp = None
                 previous_sample_timestamp = None
@@ -271,9 +259,9 @@ class StreamMuse:
 
                         previous_sample_timestamp = lsl_timestamp
 
-            logger.info(f"Setting up Muse object for device: {self.name}")
+            logger.info(f"Setting up Muse object for device: {self.device_name}")
             muse = Muse(
-                name=self.name,
+                name=self.device_name,
                 address=self.address,
                 interface=self.interface,
                 synchronized_start_time=self.synchronized_start_time,
@@ -290,13 +278,13 @@ class StreamMuse:
 
             # Start the data_processor in a separate thread
             if self.eeg_outlet is not None:
-                eeg_processor_thread = thread_pool.submit(data_processor, f"{self.name}_EEG", muse, self.eeg_outlet)
+                eeg_processor_thread = thread_pool.submit(data_processor, f"{self.device_name}_EEG", muse, self.eeg_outlet)
             if self.ppg_outlet is not None:
-                ppg_processor_thread = thread_pool.submit(data_processor, f"{self.name}_PPG", muse, self.ppg_outlet)
+                ppg_processor_thread = thread_pool.submit(data_processor, f"{self.device_name}_PPG", muse, self.ppg_outlet)
             if self.acc_outlet is not None:
-                acc_processor_thread = thread_pool.submit(data_processor, f"{self.name}_ACC", muse, self.acc_outlet)
+                acc_processor_thread = thread_pool.submit(data_processor, f"{self.device_name}_ACC", muse, self.acc_outlet)
             if self.gyro_outlet is not None:
-                gyro_processor_thread = thread_pool.submit(data_processor, f"{self.name}_GYRO", muse, self.gyro_outlet)
+                gyro_processor_thread = thread_pool.submit(data_processor, f"{self.device_name}_GYRO", muse, self.gyro_outlet)
 
             try:
                 if muse.connect():
@@ -308,7 +296,7 @@ class StreamMuse:
 
                     miss_count = 0
 
-                    logger.info(f"Starting Muse streaming for device: {self.name}")
+                    logger.info(f"Starting Muse streaming for device: {self.device_name}")
                     muse.start()
                     logger.info("Muse streaming started. Waiting for data...")
 
@@ -357,7 +345,7 @@ class StreamMuse:
 
     def _setup_stream_info_outlet(self, stream_type):
         config = self.stream_config[stream_type]
-        info = StreamInfo(f'{self.name}_{stream_type}', stream_type, len(config['channels']), config['sampling_rate'],
+        info = StreamInfo(f'{self.device_name}_{stream_type}', stream_type, len(config['channels']), config['sampling_rate'],
                           'float32', f'Muse{self.address}')
         info.desc().append_child_value("manufacturer", "Muse")
         channels = info.desc().append_child("channels")
@@ -376,8 +364,8 @@ class StreamMuse:
         """
         retry_count = 0
         delay = INITIAL_RETRY_DELAY_MUSE
-        # print(f"Attempting to reconnect to device: {self.name}. Retry count: {retry_count + 1}")
-        logger.warning(f"Attempting to reconnect to device: {self.name}. Retry count: {retry_count + 1}")
+        # print(f"Attempting to reconnect to device: {self.device_name}. Retry count: {retry_count + 1}")
+        logger.warning(f"Attempting to reconnect to device: {self.device_name}. Retry count: {retry_count + 1}")
         while retry_count < MAX_RETRIES_MUSE:
             try:
                 if muse.connect(reconnect=True):
@@ -393,26 +381,25 @@ class StreamMuse:
                 )
                 time.sleep(delay)
 
-    def _setup_lsl_streams(self):
+    def _setup_lsl_outlets(self):
+        """Set up LSL outlets for the device (required by BaseStreamer)."""
         # set up LSL outlets
         if self.stream_config['EEG']['enabled']:
-            logger.info(f"Setting up LSL stream for EEG on device: {self.name}")
+            logger.info(f"Setting up LSL stream for EEG on device: {self.device_name}")
             self.eeg_outlet = self._setup_stream_info_outlet('EEG')
             logger.info("EEG outlet set up.")
         if self.stream_config['PPG']['enabled']:
-            logger.info(f"Setting up LSL stream for PPG on device: {self.name}")
+            logger.info(f"Setting up LSL stream for PPG on device: {self.device_name}")
             self.ppg_outlet = self._setup_stream_info_outlet('PPG')
             logger.info("PPG outlet set up.")
         if self.stream_config['ACC']['enabled']:
-            logger.info(f"Setting up LSL stream for ACC on device: {self.name}")
+            logger.info(f"Setting up LSL stream for ACC on device: {self.device_name}")
             self.acc_outlet = self._setup_stream_info_outlet('ACC')
             logger.info("ACC outlet set up.")
         if self.stream_config['GYRO']['enabled']:
-            logger.info(f"Setting up LSL stream for GYRO on device: {self.name}")
+            logger.info(f"Setting up LSL stream for GYRO on device: {self.device_name}")
             self.gyro_outlet = self._setup_stream_info_outlet('GYRO')
             logger.info("GYRO outlet set up.")
-
-        return self.eeg_outlet, self.ppg_outlet, self.acc_outlet, self.gyro_outlet
 
     def _monitor_connection(self, muse, MONITORING_INTERVAL):
         """

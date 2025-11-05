@@ -3,11 +3,12 @@ from queue import Empty
 
 import pylsl
 import logging
-from multiprocessing import Process, Event, Queue
+from multiprocessing import Queue
 
 from pylsl import local_clock
 
 from helper.e4_helper import EmpaticaE4
+from streamer.base_streamer import BaseStreamer
 
 # SELECT DATA TO STREAM
 acc = True  # 3-axis acceleration
@@ -29,18 +30,28 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-class StreamE4():
+class StreamE4(BaseStreamer):
+    """
+    Empatica E4 wearable streamer inheriting from BaseStreamer.
+
+    Streams ACC, BVP, GSR, TEMP, TAG data from E4 devices to LSL.
+    """
 
     def __init__(self, e4, root_output_folder, synchronized_start_time):
-        self.current_e4 = e4
-        self.streaming = False
-        self.connected = False
-        self.stop_signal = False
-        self.connected_event = Event()
-        self.queue = Queue()
+        # Initialize BaseStreamer
+        super().__init__(
+            device_name=e4,
+            synchronized_start_time=synchronized_start_time,
+            root_output_folder=root_output_folder
+        )
+
+        # Device-specific attributes
+        # Note: self.device_name, self.stop_signal, self.connected_event, self.queue, self.process
+        # are provided by BaseStreamer
+        self.current_e4 = e4  # Keep for backwards compatibility
         self.empatica_e4 = None
-        self.root_output_folder = root_output_folder
-        self.process = None
+        self.streaming = False  # Local tracking (BaseStreamer also tracks this)
+        self.connected = False  # Local tracking
         self.subscribed_streams = {
             "acc": False,
             "bvp": False,
@@ -92,7 +103,8 @@ class StreamE4():
         except Exception as e:
             logger.error(f"Subscription failed: {e}")
 
-    def prepare_LSL_streaming(self):
+    def _setup_lsl_outlets(self):
+        """Set up LSL outlets for the device (required by BaseStreamer)."""
         self.empatica_e4.start_streaming()
         logger.info("Starting LSL streaming")
         if acc:
@@ -130,7 +142,7 @@ class StreamE4():
         retry_count = 0
         reconnect_delay = 2  # Constant reconnect delay of 2 seconds
 
-        while not self.connected and retry_count < MAX_RETRIES_E4 and not self.stop_signal:
+        while not self.connected and retry_count < MAX_RETRIES_E4 and not self.stop_signal.is_set():
             try:
                 self.connect()
                 retry_count += 1
@@ -161,7 +173,7 @@ class StreamE4():
             # Initialize initial timestamps
             initial_device_timestamp = None
 
-            while not self.stop_signal:
+            while not self.stop_signal.is_set():
                 try:
                     response = self.empatica_e4.lsl_data_queue.get()
                     if "connection lost to device" in response:
@@ -224,55 +236,17 @@ class StreamE4():
             self.empatica_e4.disconnect()
             self.connected = False
 
-    def e4_streamer(self):
+    def _stream_wrapper(self):
+        """Main streaming logic that runs in the process (required by BaseStreamer)."""
         self.connect()
         time.sleep(2)
         self.subscribe_to_data()
         time.sleep(1)
-        self.prepare_LSL_streaming()
+        self._setup_lsl_outlets()
         time.sleep(1)
         self.stream()
 
-    def start_streaming(self):
-        if self.streaming:
-            logger.warning("Streaming already in progress; start_streaming call ignored.")
-            return
-
-        self.connected_event.clear()
-        self.stop_signal = False
-        self.process = Process(target=self.e4_streamer)
-        self.process.start()
-
-        try:
-            result = self.queue.get(timeout=10)  # Wait until we get a result from the process
-            if result == 'connected':
-                self.connected_event.set()
-                self.streaming = True
-        except Empty:
-            logger.error("Timed out waiting for Empatica E4 connection confirmation.")
-
-        if not self.connected_event.is_set():
-            logger.error("Empatica E4 failed to report a successful connection.")
-            if self.process and self.process.is_alive():
-                self.process.terminate()
-                self.process.join(timeout=5)
-            self.process = None
-            self.streaming = False
-
-    def stop_streaming(self):
-        try:
-            self.stop_signal = True
-            if self.empatica_e4 is not None:
-                self.empatica_e4.disconnect()
-        except Exception as e:
-            logger.error(f"Error stopping the stream: {e}")
-        finally:
-            if self.process and self.process.is_alive():
-                self.process.join(timeout=5)
-                if self.process.is_alive():
-                    logger.warning("Empatica E4 streamer process did not terminate cleanly.")
-            self.process = None
-            self.streaming = False
-            self.connected_event.clear()
+    # Note: start_streaming() and stop_streaming() are provided by BaseStreamer
+    # They provide more robust error handling and cleanup
 
 
