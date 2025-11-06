@@ -88,37 +88,37 @@
 ### Professional UI Dashboard
 *Beautiful dark-themed interface for device management and recording*
 
-![Initial State](docs/screenshots/01_initial_state.png)
+![Initial State](docs/screenshots/01_initial_state.svg)
 *Clean initial state ready for device discovery*
 
 ---
 
-![Devices Discovered](docs/screenshots/02_devices_discovered.png)
+![Devices Discovered](docs/screenshots/02_devices_discovered.svg)
 *Multiple devices discovered and ready to connect*
 
 ---
 
-![Device Connected](docs/screenshots/03_device_connected.png)
+![Device Connected](docs/screenshots/03_device_connected.svg)
 *Muse headband connected with signal quality indicator*
 
 ---
 
-![Multiple Devices](docs/screenshots/04_multiple_devices.png)
+![Multiple Devices](docs/screenshots/04_multiple_devices.svg)
 *Multiple devices streaming simultaneously*
 
 ---
 
-![LSL Streams](docs/screenshots/05_lsl_streams_active.png)
+![LSL Streams](docs/screenshots/05_lsl_streams_active.svg)
 *Live LSL streams from all connected devices*
 
 ---
 
-![Recording Active](docs/screenshots/06_recording_active.png)
+![Recording Active](docs/screenshots/06_recording_active.svg)
 *Recording session in progress with live duration timer*
 
 ---
 
-![Full Overview](docs/screenshots/09_full_window_overview.png)
+![Full Overview](docs/screenshots/09_full_window_overview.svg)
 *Complete UI showing all features in action*
 
 ---
