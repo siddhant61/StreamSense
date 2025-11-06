@@ -1,52 +1,94 @@
 # 📸 Screenshot Generation Guide
 
-**Quick guide to generating professional UI screenshots for the README**
+**Two-tier system: Placeholder screenshots (instant) + Real screenshots (high quality)**
 
 ---
 
 ## 🎯 Purpose
 
-The `scripts/capture_ui_screenshots.py` script automatically generates high-quality screenshots of the StreamSense UI for documentation purposes. These screenshots appear in:
-- `README.md` (repository main page)
-- `docs/UI_QUICK_START.md` (UI usage guide)
-- Other documentation
+StreamSense provides **two screenshot systems** to ensure the README always looks professional:
+
+1. **Placeholder Screenshots** (SVG) - Instant, zero dependencies, already generated ✓
+2. **Real Screenshots** (PNG) - Requires PyQt5, captures actual UI
 
 ---
 
-## ⚡ Quick Start
+## ✅ Current State: Placeholder Screenshots (SVG)
 
-### Prerequisites
+### What You Have Now
 
-Make sure you have all dependencies installed:
+The repository **already contains** 10 professional SVG placeholder screenshots in `docs/screenshots/`:
+- Beautiful dark theme matching the UI
+- Clear titles and descriptions
+- Display perfectly on GitHub
+- No broken image links
+
+### Why Placeholders?
+
+Placeholders ensure:
+- ✅ README looks complete **immediately**
+- ✅ No broken images on GitHub
+- ✅ Works without PyQt5/display server
+- ✅ Professional appearance maintained
+
+---
+
+## 🔄 Regenerating Placeholders (If Needed)
+
+**Usually not necessary**, but if you want to recreate them:
+
+```bash
+python scripts/generate_placeholder_screenshots.py
+```
+
+**Requirements:** None! Uses only Python standard library.
+
+**Output:** 10 SVG files in `docs/screenshots/`
+
+---
+
+## 🎨 Upgrading to Real Screenshots (Optional)
+
+### When to Upgrade
+
+Upgrade to real screenshots when:
+- You have PyQt5 environment available
+- You want actual UI captures instead of placeholders
+- Preparing for a major release
+- UI design has changed
+
+### Prerequisites for Real Screenshots
+
+Install PyQt5 and dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Specifically, you'll need:
+Specifically needed:
 - PyQt5
 - pylsl
 - All StreamSense dependencies
 
-### Generate Screenshots
+### Generate Real Screenshots
 
-**Simply run:**
+**Run the capture script:**
 
 ```bash
 python scripts/capture_ui_screenshots.py
 ```
 
 **What happens:**
-1. UI window opens
-2. Script automatically populates demo devices
-3. Screenshots are captured (takes ~15 seconds)
-4. Images saved to `docs/screenshots/`
+1. UI window opens automatically
+2. Script populates demo devices
+3. Screenshots captured (~15 seconds)
+4. Saved as PNG files to `docs/screenshots/`
 5. Window closes automatically
 
 **Output:**
 ```
 docs/screenshots/
-├── 01_initial_state.png
+├── 01_initial_state.png  (replaces .svg)
 ├── 02_devices_discovered.png
 ├── 03_device_connected.png
 ├── 04_multiple_devices.png
