@@ -123,6 +123,75 @@
 
 ---
 
+### System Architecture & Real Hardware
+
+*How StreamSense works under the hood with actual devices*
+
+![System Architecture](docs/screenshots/real-system/system-architecture.jpg)
+*Complete system architecture showing CLI, device integration, and LSL streaming pipeline*
+
+---
+
+![CLI Interface](docs/screenshots/real-system/cli-interface.jpg)
+*Interactive command-line interface with menu-driven device control*
+
+---
+
+### Real Devices Streaming Live Data
+
+*Actual Muse and E4 sensors connected and streaming physiological signals*
+
+<table>
+<tr>
+<td width="50%">
+
+![Muse Data Streams](docs/screenshots/real-system/data-streams-muse.jpg)
+*Muse headband streaming EEG, PPG, accelerometer, and gyroscope data in real-time*
+
+</td>
+<td width="50%">
+
+![E4 Data Streams](docs/screenshots/real-system/data-streams-e4.jpg)
+*Empatica E4 streaming BVP, GSR, temperature, and acceleration data simultaneously*
+
+</td>
+</tr>
+</table>
+
+---
+
+### Real-Time Visualization
+
+*Live signal monitoring and visualization during active recording sessions*
+
+<table>
+<tr>
+<td width="50%">
+
+![EEG Visualization](docs/screenshots/real-system/realtime-visualization-eeg.jpg)
+*Real-time EEG signal visualization with 4-channel brain activity monitoring*
+
+</td>
+<td width="50%">
+
+![PPG Visualization](docs/screenshots/real-system/realtime-visualization-ppg.jpg)
+*Live PPG (heart rate) visualization showing cardiac pulse patterns*
+
+</td>
+</tr>
+</table>
+
+---
+
+### Data Quality & Recording
+
+*High-quality synchronized multi-device recordings ready for analysis*
+
+![Data Quality](docs/screenshots/real-system/data-quality.jpg)
+*Synchronized data streams from multiple sensors showing excellent signal quality and timestamp alignment*
+
+---
+
 ## 🚀 Quick Start
 
 ### Installation
