@@ -111,7 +111,7 @@ See `audit/deliverables/5_Actionable_Stabilization_Roadmap.md` → "Stabilizatio
 - ✅ P1-3 CI workflow `.github/workflows/tests.yml` (ubuntu, py3.10/3.11) — unit+coverage, integration, pip-audit.
 - ✅ P1-4 `requirements-dev.txt` (CI test stack); validated by fresh-venv install + full CI simulation (both steps RC=0, coverage.xml produced).
 - Finding: working stack is numpy 2.x / pandas 3.x, newer than requirements.txt pins (<2.0 / <3.0) — reconcile (tracked in roadmap).
-- ⬜ P1-2 BITalino + recorder behavioral tests — still open.
+- ✅ P1-2 BITalino + recorder unit tests added — `test_bitalino_streaming.py` (8), `test_recorder_unit.py` (5). stream_bitalino 0%→59%, recorder 11%→26%, TOTAL→25%. Full suite **125 passed, 7 skipped, EXIT 0**.
 
 ### Verification (P1)
 Fresh venv (requirements-dev.txt only): `pytest -m "not integration" --cov` → 66 passed/7 skipped/21%/RC=0; `pytest -m integration` → 46 passed/RC=0; full `pytest` → 112 passed/7 skipped/EXIT 0.
