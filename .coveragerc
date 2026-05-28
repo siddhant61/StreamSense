@@ -1,0 +1,31 @@
+# Coverage configuration for StreamSense.
+#
+# Coverage is measured over the unit/logic tests only:
+#     pytest -m "not integration" --cov=streamer --cov=recorder --cov=helper \
+#            --cov=viewer --cov=data_processor
+#
+# Why a marker split (see pytest.ini): the `integration` tests spawn real
+# multiprocessing.Process workers, which are incompatible with coverage on this
+# Python/numpy build (they deadlock at child exit, or hit numpy's "cannot load
+# module more than once" under coverage's multiprocessing patch). They run
+# separately for pass/fail.
+#
+# Coverage targets are passed on the command line (not via `source` here) because a
+# `source` list would also pull in `ui`/`main` whose imports require GUI/hardware
+# packages (PyQt5, pygatt, psychopy) that are not installed in CI.
+
+[run]
+branch = false
+omit =
+    tests/*
+    scripts/*
+    archive/*
+    experiments/*
+
+[report]
+show_missing = true
+skip_covered = false
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError

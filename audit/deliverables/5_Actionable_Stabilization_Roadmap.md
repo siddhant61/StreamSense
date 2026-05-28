@@ -81,4 +81,14 @@ visible. Everything after is incremental and safe once CI + coverage are trustwo
 
 **Verification:** full per-file suite = **112 passed, 7 skipped, 0 failures/errors** (was 107 passed + 1 errored file). No regressions in streamer/UI tests.
 
-**Still open:** P1 (coverage-deadlock fix + CI + lock file), P2 (BITalino-in-CLI, real signal quality, event-logger integration, LSL health check), P3 (E4 config layer, UI decomposition, sleep→event, **rotate the E4 key still in git history**), P4 (hygiene). UI→E4 and CLI off-Windows fixes are not yet runnable-verified here (PyQt5/pygatt/psychopy not installed in this environment); they are covered by code review + the signature-contract test.
+## Stabilization Progress — P1 applied 2026-05-28
+
+| ID | Status | What changed |
+|----|--------|--------------|
+| P1-1 | ✅ Done | **Coverage deadlock fixed** via a unit/integration split: `tests/test_base_streamer.py`, `test_e4_streaming.py`, `test_stream_recorder.py` marked `integration` (`pytest.ini`); coverage runs `pytest -m "not integration" --cov=…`. Added `.coveragerc` + `pytest.ini` (default `--timeout` backstop). Coverage now completes in ~5s at **21%** (was an indefinite hang). |
+| P1-1b | ✅ Done | **Whole-suite shutdown hang fixed** at the root: an autouse reaper fixture in `tests/conftest.py` terminates stray `multiprocessing` children after each test (a leaked streamer worker had blocked the atexit join). Full suite now exits cleanly: **112 passed, 7 skipped, EXIT 0**. |
+| P1-3 | ✅ Done | **CI added**: `.github/workflows/tests.yml` (ubuntu, py3.10/3.11): unit+coverage, integration pass/fail, and an advisory `pip-audit` job. Install recipe validated in a clean venv. |
+| P1-4 | ✅ Done | **`requirements-dev.txt`** added (CI-installable test stack) and validated by a fresh-venv install + run. Surfaced a pin discrepancy: the working stack is numpy 2.x / pandas 3.x, *newer* than `requirements.txt` (`numpy<2.0`, `pandas<3.0`) — reconcile next. |
+| P1-2 | ⬜ Open | Still need real tests for `stream_bitalino` (0%, no file) and `recorder` (1 trivial test). |
+
+**Still open:** P1-2 (BITalino/recorder tests), reconcile `requirements.txt` numpy/pandas pins with reality, P2 (BITalino-in-CLI, real signal quality, event-logger integration, LSL health check), P3 (E4 config layer, UI decomposition, sleep→event, **rotate the E4 key still in git history**), P4 (hygiene). The UI→E4 and CLI off-Windows fixes are not runtime-verified here (PyQt5/pygatt/psychopy absent); covered by code review + the signature-contract test, and will run in CI on a Windows runner if added.

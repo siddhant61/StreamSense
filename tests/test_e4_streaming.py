@@ -24,6 +24,9 @@ sys.modules['helper.e4_helper'] = Mock()
 from streamer.stream_e4 import StreamE4
 from tests.mocks import MockE4, create_mock_lsl_outlet
 
+# Spawns real multiprocessing.Process workers; excluded from coverage runs. See .coveragerc.
+pytestmark = pytest.mark.integration
+
 
 class TestStreamE4Initialization:
     """Test StreamE4 initialization and configuration."""

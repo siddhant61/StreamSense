@@ -104,3 +104,14 @@ Switched from read-only audit to remediation at the user's request ("proceed as 
 - ✅ Verified: **112 passed, 7 skipped, 0 fail/err** (was 107 + 1 errored file)
 
 See `audit/deliverables/5_Actionable_Stabilization_Roadmap.md` → "Stabilization Progress" for detail.
+
+## Post-Audit: P1 Test-Trustworthiness (applied 2026-05-28)
+- ✅ P1-1 Coverage deadlock fixed — unit/integration split (`pytest.ini` markers), `.coveragerc`; `pytest -m "not integration" --cov` completes ~5s at **21%** (was infinite hang).
+- ✅ P1-1b Whole-suite shutdown hang fixed at root — autouse reaper fixture in `tests/conftest.py` terminates stray multiprocessing children. Full `pytest` now **112 passed, 7 skipped, EXIT 0** (was RC=124 hang).
+- ✅ P1-3 CI workflow `.github/workflows/tests.yml` (ubuntu, py3.10/3.11) — unit+coverage, integration, pip-audit.
+- ✅ P1-4 `requirements-dev.txt` (CI test stack); validated by fresh-venv install + full CI simulation (both steps RC=0, coverage.xml produced).
+- Finding: working stack is numpy 2.x / pandas 3.x, newer than requirements.txt pins (<2.0 / <3.0) — reconcile (tracked in roadmap).
+- ⬜ P1-2 BITalino + recorder behavioral tests — still open.
+
+### Verification (P1)
+Fresh venv (requirements-dev.txt only): `pytest -m "not integration" --cov` → 66 passed/7 skipped/21%/RC=0; `pytest -m integration` → 46 passed/RC=0; full `pytest` → 112 passed/7 skipped/EXIT 0.

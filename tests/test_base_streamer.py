@@ -13,6 +13,10 @@ from multiprocessing import Queue, Event
 # Import the base streamer
 from streamer.base_streamer import BaseStreamer, StreamerError, ConnectionError, StreamingError
 
+# These tests spawn real multiprocessing.Process workers; exclude from coverage runs
+# (coverage + multiprocessing deadlocks/numpy-reload on this interpreter). Run for pass/fail.
+pytestmark = pytest.mark.integration
+
 
 class ConcreteStreamer(BaseStreamer):
     """Concrete implementation of BaseStreamer for testing."""

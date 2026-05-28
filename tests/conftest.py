@@ -24,6 +24,30 @@ from tests.mocks import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _reap_stray_child_processes():
+    """Terminate any multiprocessing children a test left running.
+
+    Several streamer tests call start_streaming(), which spawns a real
+    multiprocessing.Process whose worker loops until stop_signal is set. If a test
+    doesn't stop it, the live child blocks Python's atexit join at interpreter
+    shutdown, hanging the whole pytest session (and CI). Reaping after each test
+    keeps the session able to exit cleanly.
+    """
+    import multiprocessing
+
+    yield
+
+    for child in multiprocessing.active_children():
+        try:
+            child.terminate()
+            child.join(timeout=2)
+            if child.is_alive():
+                child.kill()
+        except Exception:
+            pass
+
+
 @pytest.fixture
 def temp_output_dir():
     """
