@@ -115,3 +115,7 @@ See `audit/deliverables/5_Actionable_Stabilization_Roadmap.md` → "Stabilizatio
 
 ### Verification (P1)
 Fresh venv (requirements-dev.txt only): `pytest -m "not integration" --cov` → 66 passed/7 skipped/21%/RC=0; `pytest -m integration` → 46 passed/RC=0; full `pytest` → 112 passed/7 skipped/EXIT 0.
+
+### CI red→green fixes (PR #21, first runs failed)
+- **py3.11 exit 4 (usage error)**: `pytest.ini addopts` had `--timeout/--timeout-method` (pytest-timeout flags). The plugin wasn't active on the runner → `unrecognized arguments` → exit 4. Reproduced locally with `-p no:timeout`. Fix: removed plugin-dependent flags from `addopts` (reaper fixture already prevents hangs; full suite still EXIT 0 without them). Kept `--strict-markers`.
+- **py3.10 install failure**: pinned numpy 2.4.6 / scipy 1.17.1 / pandas 3.0.3 have **no cp310 wheels** (confirmed via pip dry-run; numpy 3.10-max is 2.2.6). Fix: matrix `["3.10","3.11"]` → `["3.11","3.12"]` (cp312 wheels confirmed available).
