@@ -193,16 +193,33 @@ class DataProcessor:
                     gaps[next_idx] = True
 
         for column_name in df.columns:
-            # Replace contiguous zero values with NaN
-            df[column_name].replace(to_replace=0, method='ffill', limit=nan_sequence_threshold - 1, inplace=True)
-            df[column_name].replace(to_replace=0, value=np.nan, inplace=True)
+            # Forward-fill short runs of zeros (< nan_sequence_threshold) from the
+            # previous valid value; longer runs stay 0 and become NaN below. This is a
+            # pandas>=2.0 compatible replacement for the removed
+            # Series.replace(to_replace=0, method='ffill', limit=...).
+            col = df[column_name]
+            is_zero = col == 0
+            if is_zero.any():
+                run_id = (~is_zero).cumsum()
+                pos_in_run = is_zero.groupby(run_id).cumsum()
+                fillable = is_zero & (pos_in_run < nan_sequence_threshold)
+                prev_valid = col.where(~is_zero).ffill()
+                df[column_name] = col.mask(fillable, prev_valid)
+
+            # Replace any remaining zeros (long runs) with NaN.
+            df[column_name] = df[column_name].replace(to_replace=0, value=np.nan)
 
             # Detect contiguous NaN values in the DataFrame
             is_nan = df[column_name].isna()
             nan_sequences = is_nan.ne(is_nan.shift()).cumsum()
             nan_sequences[~is_nan] = 0
             nan_sequence_counts = nan_sequences.value_counts()
-            long_nan_sequences = nan_sequence_counts[nan_sequence_counts >= nan_sequence_threshold].index
+            # Exclude sequence id 0, which marks the non-NaN samples; without this guard
+            # every run of >= nan_sequence_threshold valid samples is wrongly flagged as a gap.
+            long_nan_sequences = nan_sequence_counts[
+                (nan_sequence_counts >= nan_sequence_threshold)
+                & (nan_sequence_counts.index != 0)
+            ].index
 
             for seq in long_nan_sequences:
                 # Mark the entire sequence as gaps
@@ -602,7 +619,34 @@ class DataProcessor:
         # Save the synchronized datasets
         self.save_datasets()
 
-# Usage example
-data_processor = DataProcessor(folder_path='D:/Study Data/set_1/session_1/RawData', NA_0=True)
-data_processor.process_and_synchronize_data()
-data_processor.plot_synchronized_data()
+def main():
+    """CLI entry point for offline post-processing of a recorded session.
+
+    Importing this module no longer executes any work (previously it ran against a
+    hardcoded ``D:/Study Data/...`` path at import time, crashing every importer,
+    including the test suite).
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Post-process and synchronize a StreamSense RawData folder."
+    )
+    parser.add_argument(
+        "folder_path",
+        help="Path to a session RawData folder containing .h5 files.",
+    )
+    parser.add_argument(
+        "--na-zero",
+        dest="na_0",
+        action="store_true",
+        help="Treat missing values as zero (NA_0=True).",
+    )
+    args = parser.parse_args()
+
+    processor = DataProcessor(folder_path=args.folder_path, NA_0=args.na_0)
+    processor.process_and_synchronize_data()
+    processor.plot_synchronized_data()
+
+
+if __name__ == "__main__":
+    main()

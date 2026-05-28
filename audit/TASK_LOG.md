@@ -86,5 +86,21 @@ Python 3.11.15; deps installed via pip (network OK) for the test run only — no
 ### Reconciliation
 Prior Nov-2025 audit stale (61 files/10 features → now 115/15); secret remediated in code but lives in git history (rotate). See RECONCILIATION_2026-05.md.
 
-### Read-only guarantee
-No application source was modified. Files created are audit artifacts under `audit/` only. Test-run caches (`__pycache__`, `.pytest_cache`, `.coverage`) are git-ignored and not committed.
+### Read-only guarantee (audit phase)
+During Phases 0–5 no application source was modified. Audit artifacts live under `audit/` only. Test-run caches are git-ignored.
+
+---
+
+## Post-Audit: P0 Stabilization (applied 2026-05-28, authorized by user)
+Switched from read-only audit to remediation at the user's request ("proceed as you see fit").
+
+- ✅ P0-1 UI→E4 ctor signature fixed (`ui/streamsense_controller.py`)
+- ✅ P0-2 `data_processor.py` import side-effect removed (behind `main()`)
+- ✅ P0-3 `main.py` `import wmi` guarded + cross-platform event-logger launch + E4 flow skips off-Windows
+- ✅ P0-4 `main.py` CLI hang fixed (use `start_streaming()` bool, drop unconditional `connected_event.wait()`)
+- ✅ P0-5 `stream_muse.py` thread-target bug fixed + eviction Timer daemonized/guarded
+- ✅ bonus: two latent `detect_gaps` bugs fixed (pandas≥2.0 `replace(method=)`; seq-0 mis-flag)
+- ✅ Added `tests/test_import_safety.py` (3 regression tests)
+- ✅ Verified: **112 passed, 7 skipped, 0 fail/err** (was 107 + 1 errored file)
+
+See `audit/deliverables/5_Actionable_Stabilization_Roadmap.md` → "Stabilization Progress" for detail.

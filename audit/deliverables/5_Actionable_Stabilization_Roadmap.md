@@ -65,3 +65,20 @@ flowchart LR
 
 **Headline:** 5 small P0 fixes remove 3 "Broken" statuses and a hang. P1 then makes regressions
 visible. Everything after is incremental and safe once CI + coverage are trustworthy.
+
+---
+
+## Stabilization Progress — P0 applied 2026-05-28 (branch `claude/determined-gates-Zkfw7`)
+
+| ID | Status | What changed |
+|----|--------|--------------|
+| P0-1 | ✅ Done | `ui/streamsense_controller.py` now calls `StreamE4(e4=…, root_output_folder=…, synchronized_start_time=…)`. Locked by `tests/test_import_safety.py::test_stream_e4_constructor_signature_contract`. |
+| P0-2 | ✅ Done | `data_processor.py` module-level run moved behind `main()`/`if __name__=="__main__"`. `tests/test_data_processor.py` now collects + passes (was ERROR). |
+| P0-3 | ✅ Done | `main.py`: `import wmi` guarded (`None` off-Windows) + E4 flow skips gracefully; event-logger launch is cross-platform (`start cmd /k` only on win32, `start_new_session` on POSIX). |
+| P0-4 | ✅ Done | `main.py` Muse + E4 loops use the `start_streaming()` bool return instead of the unconditional `connected_event.wait()` that hung on failure. |
+| P0-5 | ✅ Done | `streamer/stream_muse.py:310` thread target fixed (`target=…, args=(…)`, daemon); per-sample eviction `Timer` daemonized + `ValueError`-guarded. |
+| (bonus) | ✅ Done | Two latent `detect_gaps` bugs surfaced by P0-2 fixed: pandas≥2.0 `Series.replace(method=…)` removal, and the seq-id-0 marker being mis-flagged as a gap. |
+
+**Verification:** full per-file suite = **112 passed, 7 skipped, 0 failures/errors** (was 107 passed + 1 errored file). No regressions in streamer/UI tests.
+
+**Still open:** P1 (coverage-deadlock fix + CI + lock file), P2 (BITalino-in-CLI, real signal quality, event-logger integration, LSL health check), P3 (E4 config layer, UI decomposition, sleep→event, **rotate the E4 key still in git history**), P4 (hygiene). UI→E4 and CLI off-Windows fixes are not yet runnable-verified here (PyQt5/pygatt/psychopy not installed in this environment); they are covered by code review + the signature-contract test.
