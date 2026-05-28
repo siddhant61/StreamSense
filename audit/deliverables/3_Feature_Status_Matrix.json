@@ -1,113 +1,169 @@
-[
-  {
-    "feature": "Device Discovery",
-    "description": "Finds available Muse and Empatica E4 devices for connection.",
-    "files": [
-      "helper/find_devices.py",
-      "main.py"
-    ],
-    "status": "Needs Improvement (Technical Debt)",
-    "status_justification": "The code is overly complex, with multiple overlapping methods for discovery (pygatt, bleak, custom BGAPI). It lacks robust error handling and relies on fixed-time sleeps, which is not a reliable practice.",
-    "test_coverage": "None. No automated tests were found for this feature."
+{
+  "audit_metadata": {
+    "audit_date": "2026-05-28",
+    "audit_branch": "claude/determined-gates-Zkfw7",
+    "protocol": "Granular Audit Protocol (verify & supersede)",
+    "supersedes": "audit/nov_2025_comprehensive_audit.md (2025-11-05) and prior audit/deliverables/* (Aug 2025 baseline)",
+    "ontology": ["Complete", "Incomplete/Partial", "Broken", "Needs Improvement", "Needs Integration", "Orphaned/Dead Code", "Should be Archived", "Unknown"],
+    "test_summary": {
+      "test_files": 8,
+      "tests_passed": 107,
+      "tests_skipped": 7,
+      "collection_errors": 1,
+      "errored_file": "tests/test_data_processor.py (import-time side effect crash)",
+      "coverage_note": "Full-suite coverage cannot be measured: process-spawning tests deadlock under coverage instrumentation. Pure-mock subset (4/8 files) = 19% line coverage."
+    }
   },
-  {
-    "feature": "Muse Device Connection & Streaming",
-    "description": "Connects to Muse headbands via BLE and streams their data (EEG, PPG, ACC, GYRO) to the LSL bus.",
-    "files": [
-      "streamer/stream_muse.py",
-      "helper/muse_helper.py",
-      "helper/serial_helper.py",
-      "main.py"
-    ],
-    "status": "Needs Improvement (Technical Debt)",
-    "status_justification": "The connection and streaming logic is highly complex, using a mix of threading and multiprocessing without clear state management or error propagation. It relies heavily on `time.sleep()` for synchronization, which is fragile.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Empatica E4 Device Connection & Streaming",
-    "description": "Connects to the Empatica E4 streaming server via TCP socket and streams E4 data (ACC, BVP, GSR, TEMP, TAG) to the LSL bus.",
-    "files": [
-      "streamer/stream_e4.py",
-      "helper/e4_helper.py",
-      "main.py"
-    ],
-    "status": "Needs Improvement (Technical Debt)",
-    "status_justification": "Similar to the Muse implementation, this feature relies on fragile threading, `time.sleep()` calls, and lacks robust error handling for socket communication and device disconnections.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Real-time Data Visualization",
-    "description": "Displays a live plot of a selected LSL data stream in an interactive window.",
-    "files": [
-      "viewer/view_streams.py",
-      "viewer/plot_streams.py",
-      "helper/plot_helper.py"
-    ],
-    "status": "Incomplete/Partial",
-    "status_justification": "The code to generate visualizations exists, but its functionality cannot be verified without a runnable environment. Given the large number of dependencies (`vispy`, `matplotlib`, `pyqt5`), version conflicts are likely, and the code may be broken.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Real-time Stream Monitoring",
-    "description": "Displays a dashboard of all active LSL streams and their current sampling rates.",
-    "files": [
-      "stream_info.py"
-    ],
-    "status": "Needs Integration",
-    "status_justification": "The feature is fully implemented in `stream_info.py`, but it exists as an orphaned, standalone utility. It is not integrated into the main application's CLI workflow and must be run manually.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Data Recording",
-    "description": "Subscribes to all active LSL streams and records the data into HDF5 files.",
-    "files": [
-      "recorder/stream_recorder.py",
-      "main.py"
-    ],
-    "status": "Needs Improvement (Technical Debt)",
-    "status_justification": "The core recording logic is present. However, it contains complex and fragile-looking code for handling device disconnections and attempting to interpolate missing data, which is a significant source of potential bugs and technical debt.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Event Logging",
-    "description": "Launches a separate console for manual, timestamped event logging during a session.",
-    "files": [
-      "event_logger.py",
-      "main.py"
-    ],
-    "status": "Needs Integration",
-    "status_justification": "The feature is implemented as a standalone script that is launched in a new console window. This is not a robust integration; it's disconnected from the main application's state and lifecycle.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Visual Oddball Experiment",
-    "description": "Runs a P300 visual oddball experiment and sends synchronization markers to LSL.",
-    "files": [
-      "experiments/visual_oddball.py",
-      "main.py"
-    ],
-    "status": "Incomplete/Partial",
-    "status_justification": "The code for the experiment is present and appears self-contained. However, its functionality, and more importantly, its synchronization with the data streams via LSL, cannot be verified without a runnable `psychopy` environment.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Offline Data Processing & Quality Analysis",
-    "description": "Processes recorded HDF5 files to detect data gaps and generate quality reports.",
-    "files": [
-      "data_processor.py"
-    ],
-    "status": "Incomplete/Partial",
-    "status_justification": "This is a large, complex, standalone script with sophisticated logic for data cleaning, gap detection, and spike-based synchronization. It is not integrated into any user workflow, and its correctness is impossible to determine without test data and a runnable environment.",
-    "test_coverage": "None. No automated tests were found for this feature."
-  },
-  {
-    "feature": "Command Line Interface (CLI)",
-    "description": "Provides an interactive menu and direct command-line arguments to control the application.",
-    "files": [
-      "main.py"
-    ],
-    "status": "Needs Improvement (Technical Debt)",
-    "status_justification": "The CLI successfully launches other components. However, its reliance on global variables for state management across multiple threads and processes is a major source of technical debt and makes the application's state unpredictable and hard to manage.",
-    "test_coverage": "None. No automated tests were found for this feature."
+  "features": [
+    {
+      "id": 1,
+      "feature": "CLI Orchestration",
+      "components": ["main.py"],
+      "status": "Broken",
+      "evidence": "main.py:14 unconditional `import wmi` (Windows-only) crashes import on Linux/macOS; main.py:291 `subprocess.Popen(['start','cmd','/k',...])` is Windows shell; main.py:113-114 calls start_streaming() then connected_event.wait() which blocks forever if start_streaming() returns False (timeout).",
+      "secondary_status": "Needs Improvement",
+      "test_coverage": "None (no test_main.py)",
+      "priority": "HIGH"
+    },
+    {
+      "id": 2,
+      "feature": "PyQt5 UI Dashboard",
+      "components": ["ui/streamsense_ui.py", "ui/streamsense_controller.py"],
+      "status": "Needs Improvement",
+      "evidence": "All 6 controller signals wired (streamsense_ui.py:325-330); all buttons functional. But ui file is monolithic 771 LOC with 28 inline setStyleSheet blocks and duplicated stylesheets; hardcoded geometry (1400x900, 450px). Controller emits FAKE signal-quality (92/87/85 at controller.py:250,268,295).",
+      "test_coverage": "None (UI not under test)",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 3,
+      "feature": "Device Discovery",
+      "components": ["helper/find_devices.py", "helper/serial_helper.py"],
+      "status": "Needs Improvement",
+      "evidence": "find_devices.py provides find_muses_with_ports/find_muse/find_empatica/scan_bluetooth/scan_wifi/serial_ports. Threads in find_empatica not joined; fixed-time sleeps; unique_ports appended inside loop. serial_helper.py (846 LOC) handles cross-platform termios well but is 0% tested.",
+      "test_coverage": "test_device_discovery.py: 20 passed",
+      "priority": "HIGH"
+    },
+    {
+      "id": 4,
+      "feature": "Muse EEG Streaming",
+      "components": ["streamer/stream_muse.py", "helper/muse_helper.py", "helper/serial_helper.py"],
+      "status": "Needs Improvement",
+      "evidence": "Inherits BaseStreamer correctly. stream_muse.py:310 passes self._monitor_connection(...) (a CALL result) as thread target instead of a callable; per-sample threading.Timer creation (stream_muse.py:250-251) is unbounded. muse_helper.py uses Windows-only `start bluemuse:` shell calls and is 0% covered.",
+      "test_coverage": "test_muse_streaming.py: 8 passed, 7 skipped; stream_muse 34%, muse_helper 0%",
+      "priority": "HIGH"
+    },
+    {
+      "id": 5,
+      "feature": "Empatica E4 Streaming",
+      "components": ["streamer/stream_e4.py", "helper/e4_helper.py"],
+      "status": "Broken",
+      "evidence": "UI path BROKEN: streamsense_controller.py:258-262 calls StreamE4(device_id=..., output_path=...) but signature is StreamE4(e4, root_output_folder, synchronized_start_time) (stream_e4.py:40) -> TypeError at runtime, swallowed as 'Failed to connect'. CLI path works (main.py:171 positional). e4_helper.py:26 hardcoded Windows EXE path 'D:/E4StreamingServer.../EmpaticaBLEServer.exe'.",
+      "secondary_status": "Needs Improvement",
+      "test_coverage": "test_e4_streaming.py: 19 passed (slow, 10s); e4_helper 20%",
+      "priority": "HIGH"
+    },
+    {
+      "id": 6,
+      "feature": "BITalino Multi-Sensor Streaming",
+      "components": ["streamer/stream_bitalino.py"],
+      "status": "Needs Integration",
+      "evidence": "Cleanest streamer (full _stream_wrapper + _setup_lsl_outlets, graceful import fallback). Wired into UI controller (controller.py:283-289 signature matches). NOT wired into CLI (main.py has 0 references to bitalino). No dedicated test file; 0% coverage.",
+      "secondary_status": "Complete (code quality)",
+      "test_coverage": "None (no test_bitalino_streaming.py); 0% coverage",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 7,
+      "feature": "Base Streamer Abstraction",
+      "components": ["streamer/base_streamer.py"],
+      "status": "Complete",
+      "evidence": "Abstract base (ABC) with Process/Event/Queue lifecycle, start_streaming(timeout)->bool, stop_streaming with join/terminate/kill escalation, context-manager protocol. All 3 streamers inherit it.",
+      "test_coverage": "test_base_streamer.py: 21 passed; 79% coverage",
+      "priority": "LOW"
+    },
+    {
+      "id": 8,
+      "feature": "Data Recording (LSL -> disk)",
+      "components": ["recorder/stream_recorder.py"],
+      "status": "Needs Improvement",
+      "evidence": "Resolves LSL streams, pulls chunks, writes resizable HDF5, exports pickle datasets (MNE RawArray for EEG). Reachable from main.py:204 and controller.py:373. Complex daemon-thread disconnect handling; interpolation of missing data is risky.",
+      "test_coverage": "test_stream_recorder.py: 1 test only; ~0% effective coverage",
+      "priority": "HIGH"
+    },
+    {
+      "id": 9,
+      "feature": "Real-time Visualization",
+      "components": ["viewer/view_streams.py", "viewer/plot_streams.py", "helper/plot_helper.py"],
+      "status": "Incomplete/Partial",
+      "evidence": "view_streams.py reachable from main.py:311/407 (93% covered). plot_streams.py vispy/GLSL Canvas is full-featured but 0% covered and spawns subprocess windows. plot_helper.py is a 4-line/54-byte stub (run_vispy).",
+      "component_statuses": {"helper/plot_helper.py": "Orphaned/Dead Code", "viewer/plot_streams.py": "Needs Improvement"},
+      "test_coverage": "test_visualization.py: 14 passed (view_streams 93%, plot_streams 0%)",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 10,
+      "feature": "Offline Data Processing",
+      "components": ["data_processor.py"],
+      "status": "Broken",
+      "evidence": "data_processor.py:606-607 executes DataProcessor('D:/Study Data/...').process_and_synchronize_data() at MODULE IMPORT time -> FileNotFoundError; this crashes `import data_processor` and breaks collection of tests/test_data_processor.py. Also never invoked from any entry point.",
+      "secondary_status": "Orphaned/Dead Code",
+      "test_coverage": "test_data_processor.py: ERRORS at collection (cannot import)",
+      "priority": "HIGH"
+    },
+    {
+      "id": 11,
+      "feature": "Event / Marker Logging",
+      "components": ["event_logger.py", "stream_info.py"],
+      "status": "Needs Integration",
+      "evidence": "event_logger.py (30 LOC) and stream_info.py implement near-identical log_event; launched only via main.py:285-291 with Windows-only `start cmd /k`. Not integrated with app lifecycle/state.",
+      "component_statuses": {"event_logger.py": "Should be Archived (duplicate of stream_info.py logic)"},
+      "test_coverage": "None",
+      "priority": "LOW"
+    },
+    {
+      "id": 12,
+      "feature": "Visual Oddball Experiment (P300)",
+      "components": ["experiments/visual_oddball.py", "Logs/Slide20-27.JPG"],
+      "status": "Incomplete/Partial",
+      "evidence": "PsychoPy paradigm reachable from main.py:219. Hardcoded refresh_rate=59.95 and window dims; LSL marker sync unverified; no tests. 8 JPG slides misplaced in Logs/ likely belong as experiment assets.",
+      "test_coverage": "None",
+      "priority": "LOW"
+    },
+    {
+      "id": 13,
+      "feature": "Multi-Device Time Synchronization",
+      "components": ["main.py:18", "ui/streamsense_controller.py:81", "all streamers (synchronized_start_time)"],
+      "status": "Incomplete/Partial",
+      "evidence": "synchronized_start_time = pylsl.local_clock() captured per entry point and threaded through streamers. Documented heavily (docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md) but correctness depends on per-device clock handling that is uneven (E4 uses elapsed-from-first-sample, Muse uses IRLS correction). Not validated by tests.",
+      "test_coverage": "Indirect only",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 14,
+      "feature": "Screenshot / Documentation Tooling",
+      "components": ["scripts/capture_ui_screenshots.py", "scripts/generate_screenshots_simple.py", "scripts/generate_placeholder_screenshots.py", "scripts/capture_screenshots_headless.py", "docs/screenshots/*"],
+      "status": "Needs Improvement",
+      "evidence": "4 overlapping screenshot generators. capture_screenshots_headless.py is redundant (partial mock) -> Should be Archived. docs/screenshots/09 and 10 PNGs are byte-identical (md5 e4bf6724...). All 10 PNGs share identical 3,787,081-byte size (suspect near-duplicate exports).",
+      "component_statuses": {"scripts/capture_screenshots_headless.py": "Should be Archived"},
+      "test_coverage": "N/A",
+      "priority": "LOW"
+    },
+    {
+      "id": 15,
+      "feature": "Test Infrastructure",
+      "components": ["tests/*", "tests/mocks/*"],
+      "status": "Needs Improvement",
+      "evidence": "Good mock layer (MockMuse/MockE4/MockLSL/data_generators). But: process-spawning tests make the full suite hang under coverage; test_data_processor errors at collection; no tests for stream_bitalino, recorder (1 trivial test), muse_helper (0%), serial_helper (0%), data_processor, UI, CLI. No CI workflow present.",
+      "test_coverage": "Self: 107 passed / 7 skipped / 1 errored file",
+      "priority": "HIGH"
+    }
+  ],
+  "status_rollup_primary": {
+    "Complete": 1,
+    "Needs Improvement": 6,
+    "Broken": 3,
+    "Incomplete/Partial": 3,
+    "Needs Integration": 2,
+    "note": "Primary status across 15 features. 'Broken' = CLI orchestration, UI->E4 connect, offline data processing."
   }
-]
+}

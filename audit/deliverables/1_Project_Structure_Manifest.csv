@@ -1,98 +1,116 @@
-path,type,size,last_modified,category,version_tag
-.,d,4096,2025-08-21 11:36:38.3322128420,Directory,
-./experiments,d,4096,2025-08-21 11:25:16.7132990000,Source Code,
-./experiments/visual_oddball.py,f,7724,2025-08-21 11:25:16.7132990000,Source Code,
-./e4_basic_flow.py,f,3848,2025-08-21 11:25:16.7132990000,Source Code,
-./viewer,d,4096,2025-08-21 11:25:16.7172993140,Source Code,
-./viewer/view_streams.py,f,4173,2025-08-21 11:25:16.7172993140,Source Code,
-./viewer/plot_streams.py,f,10941,2025-08-21 11:25:16.7172993140,Source Code,
-./README.md,f,3487,2025-08-21 11:25:16.7132990000,Documentation,
-./recorder,d,4096,2025-08-21 11:25:16.7172993140,Source Code,
-./recorder/stream_recorder.py,f,19985,2025-08-21 11:25:16.7172993140,Source Code,
-./event_logger.py,f,985,2025-08-21 11:25:16.7132990000,Source Code,
-./data_processor.py,f,26843,2025-08-21 11:25:16.7132990000,Source Code,
-./audit,d,4096,2025-08-21 11:37:40.9979049340,Audit,
-./audit/project_manifest.csv,f,29,2025-08-21 11:37:40.9979049340,Audit,
-./.git,d,4096,2025-08-21 11:37:39.9493800200,Version Control,
-./.git/config,f,290,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/refs,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/refs/heads,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/refs/heads/master,f,236,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/refs/remotes,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/refs/remotes/origin,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/refs/remotes/origin/HEAD,f,236,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/logs/HEAD,f,731,2025-08-21 11:25:17.9093931460,Version Control,
-./.git/hooks,d,4096,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/fsmonitor-watchman.sample,f,4726,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/pre-rebase.sample,f,4898,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/pre-receive.sample,f,544,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/push-to-checkout.sample,f,2783,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/update.sample,f,3650,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/post-update.sample,f,189,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/commit-msg.sample,f,896,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/pre-push.sample,f,1374,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/prepare-commit-msg.sample,f,1492,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/hooks/pre-merge-commit.sample,f,416,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/applypatch-msg.sample,f,478,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/pre-applypatch.sample,f,424,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/pre-commit.sample,f,1649,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/hooks/sendemail-validate.sample,f,2308,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/refs,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/refs/tags,d,4096,2025-08-21 11:25:16.3452700480,Version Control,
-./.git/refs/heads,d,4096,2025-08-21 11:25:17.6933761380,Version Control,
-./.git/refs/heads/master,f,41,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/refs/remotes,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/refs/remotes/origin,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/refs/remotes/origin/HEAD,f,32,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/description,f,73,2025-08-21 11:25:15.3291901660,Version Control,
-./.git/shallow,f,41,2025-08-21 11:25:16.4132753980,Version Control,
-./.git/index,f,3725,2025-08-21 11:37:39.9493800200,Version Control,
-./.git/ORIG_HEAD,f,41,2025-08-21 11:25:17.6933761380,Version Control,
-./.git/info,d,4096,2025-08-21 11:25:15.3331904800,Version Control,
-./.git/info/exclude,f,240,2025-08-21 11:25:15.3411911090,Version Control,
-./.git/HEAD,f,41,2025-08-21 11:25:17.9093931460,Version Control,
-./.git/packed-refs,f,114,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/objects,d,4096,2025-08-21 11:25:15.3411911090,Version Control,
-./.git/objects/pack,d,4096,2025-08-21 11:25:16.6932974260,Version Control,
-./.git/objects/pack/pack-1640bb83dbd873e66ff5e384af8ab06fa6ed47d4.idx,f,2276,2025-08-21 11:25:16.6652952240,Version Control,
-./.git/objects/pack/pack-1640bb83dbd873e66ff5e384af8ab06fa6ed47d4.rev,f,224,2025-08-21 11:25:16.6652952240,Version Control,
-./.git/objects/pack/pack-1640bb83dbd873e66ff5e384af8ab06fa6ed47d4.pack,f,826221,2025-08-21 11:25:17.4693585010,Version Control,
-./.git/objects/info,d,4096,2025-08-21 11:25:15.3411911090,Version Control,
-./Logs,d,4096,2025-08-21 11:25:16.7132990000,Log,
-./Logs/Slide27.JPG,f,137273,2025-08-21 11:25:16.7092986850,Asset,
-./Logs/stream_muse.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./Logs/Slide21.JPG,f,145217,2025-08-21 11:25:16.7012980560,Asset,
-./Logs/stream_e4.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./Logs/Slide25.JPG,f,81435,2025-08-21 11:25:16.7052983700,Asset,
-./Logs/muse_helper.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./Logs/main.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./Logs/stream_recorder.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./Logs/Slide20.JPG,f,103830,2025-08-21 11:25:16.6972977410,Asset,
-./Logs/Slide22.JPG,f,107594,2025-08-21 11:25:16.7012980560,Asset,
-./Logs/Slide26.JPG,f,155264,2025-08-21 11:25:16.7092986850,Asset,
-./Logs/e4_helper.log,f,0,2025-08-21 11:25:16.7092986850,Log,
-./Logs/Slide24.JPG,f,110856,2025-08-21 11:25:16.7052983700,Asset,
-./Logs/serial_helper.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./Logs/Slide23.JPG,f,99017,2025-08-21 11:25:16.7052983700,Asset,
-./Logs/find_devices.log,f,0,2025-08-21 11:25:16.7132990000,Log,
-./helper,d,4096,2025-08-21 11:25:16.7132990000,Source Code,
-./helper/plot_helper.py,f,54,2025-08-21 11:25:16.7132990000,Source Code,
-./helper/e4_helper.py,f,26118,2025-08-21 11:25:16.7132990000,Source Code,
-./helper/muse_helper.py,f,23296,2025-08-21 11:25:16.7132990000,Source Code,
-./helper/data_helper.py,f,11647,2025-08-21 11:25:16.7132990000,Source Code,
-./helper/serial_helper.py,f,34097,2025-08-21 11:25:16.7132990000,Source Code,
-./helper/find_devices.py,f,6378,2025-08-21 11:25:16.7132990000,Source Code,
-./.idea,d,4096,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/vcs.xml,f,180,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/misc.xml,f,315,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/modules.xml,f,274,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/StreamSense.iml,f,352,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/inspectionProfiles,d,4096,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/inspectionProfiles/profiles_settings.xml,f,174,2025-08-21 11:25:16.6972977410,Configuration,
-./.idea/.gitignore,f,47,2025-08-21 11:25:16.6972977410,Configuration,
-./streamer,d,4096,2025-08-21 11:25:16.7172993140,Source Code,
-./streamer/stream_muse.py,f,18098,2025-08-21 11:25:16.7172993140,Source Code,
-./streamer/stream_e4.py,f,10288,2025-08-21 11:25:16.7172993140,Source Code,
-./main.py,f,22857,2025-08-21 11:25:16.7172993140,Source Code,
-./stream_info.py,f,4269,2025-08-21 11:25:16.7172993140,Source Code,
+path,type,size_bytes,category
+CONCURRENCY_GUIDELINES.md,md,14568,Documentation
+DEPENDENCY_MANAGEMENT.md,md,5570,Documentation
+Logs/Slide20.JPG,jpg,103830,Asset (image)
+Logs/Slide21.JPG,jpg,145217,Asset (image)
+Logs/Slide22.JPG,jpg,107594,Asset (image)
+Logs/Slide23.JPG,jpg,99017,Asset (image)
+Logs/Slide24.JPG,jpg,110856,Asset (image)
+Logs/Slide25.JPG,jpg,81435,Asset (image)
+Logs/Slide26.JPG,jpg,155264,Asset (image)
+Logs/Slide27.JPG,jpg,137273,Asset (image)
+Logs/e4_helper.log,log,0,Log
+Logs/find_devices.log,log,0,Log
+Logs/main.log,log,0,Log
+Logs/muse_helper.log,log,0,Log
+Logs/serial_helper.log,log,0,Log
+Logs/stream_e4.log,log,0,Log
+Logs/stream_muse.log,log,0,Log
+Logs/stream_recorder.log,log,0,Log
+README.md,md,17566,Documentation
+TEST_COVERAGE_SUMMARY.md,md,11898,Documentation
+archive/data_helper.py,py,11647,Archived/Legacy
+archive/e4_basic_flow.py,py,3937,Archived/Legacy
+audit/PHASE3_1_COMPLETION_SUMMARY.md,md,14075,Audit Artifact
+audit/PHASE3_CONCURRENCY_ANALYSIS.md,md,8841,Audit Artifact
+audit/TASK_LOG.md,md,3337,Audit Artifact
+audit/code_health_tasks.md,md,1609,Audit Artifact
+audit/current_architecture.md,md,3529,Audit Artifact
+audit/dead_code.md,md,1912,Audit Artifact
+audit/deep_codebase_audit.md,md,5847,Audit Artifact
+audit/deliverables/1_Project_Structure_Manifest.csv,csv,7681,Audit Artifact
+audit/deliverables/2_Architecture_Overview.md,md,6438,Audit Artifact
+audit/deliverables/3_Feature_Status_Matrix.json,json,6146,Audit Artifact
+audit/deliverables/4_Technical_Debt_Report.md,md,4395,Audit Artifact
+audit/deliverables/5_Actionable_Stabilization_Roadmap.md,md,10711,Audit Artifact
+audit/dependencies.md,md,624,Audit Artifact
+audit/feature_map.json,json,6146,Audit Artifact
+audit/integrations.md,md,3147,Audit Artifact
+audit/intended_architecture.md,md,3826,Audit Artifact
+audit/nov_2025_comprehensive_audit.md,md,32157,Audit Artifact
+audit/project_manifest.csv,csv,7290,Audit Artifact
+audit/tech_stack.md,md,1875,Audit Artifact
+audit/technical_debt_report.md,md,4380,Audit Artifact
+data_processor.py,py,26843,Source Code
+docs/DEVICE_SUPPORT_ROADMAP.md,md,7808,Documentation
+docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md,md,20263,Documentation
+docs/SCREENSHOT_GENERATION.md,md,7479,Documentation
+docs/UI_QUICK_START.md,md,11696,Documentation
+docs/screenshots/01_initial_state.png,png,3787081,Documentation
+docs/screenshots/01_initial_state.svg,svg,1395,Documentation
+docs/screenshots/02_devices_discovered.png,png,3787081,Documentation
+docs/screenshots/02_devices_discovered.svg,svg,1403,Documentation
+docs/screenshots/03_device_connected.png,png,3787081,Documentation
+docs/screenshots/03_device_connected.svg,svg,1409,Documentation
+docs/screenshots/04_multiple_devices.png,png,3787081,Documentation
+docs/screenshots/04_multiple_devices.svg,svg,1407,Documentation
+docs/screenshots/05_lsl_streams_active.png,png,3787081,Documentation
+docs/screenshots/05_lsl_streams_active.svg,svg,1403,Documentation
+docs/screenshots/06_recording_active.png,png,3787081,Documentation
+docs/screenshots/06_recording_active.svg,svg,1395,Documentation
+docs/screenshots/07_recording_duration.png,png,3787081,Documentation
+docs/screenshots/07_recording_duration.svg,svg,1404,Documentation
+docs/screenshots/08_status_feedback.png,png,3787081,Documentation
+docs/screenshots/08_status_feedback.svg,svg,1389,Documentation
+docs/screenshots/09_full_window_overview.png,png,3787081,Documentation
+docs/screenshots/09_full_window_overview.svg,svg,1406,Documentation
+docs/screenshots/10_device_cards_detail.png,png,3787081,Documentation
+docs/screenshots/10_device_cards_detail.svg,svg,1409,Documentation
+docs/screenshots/README.md,md,1884,Documentation
+event_logger.py,py,985,Source Code
+experiments/visual_oddball.py,py,7724,Source Code
+helper/e4_helper.py,py,26191,Source Code
+helper/find_devices.py,py,6378,Source Code
+helper/muse_helper.py,py,24458,Source Code
+helper/plot_helper.py,py,54,Source Code
+helper/serial_helper.py,py,34097,Source Code
+idea/.gitignore,gitignore,47,Config (IDE)
+idea/StreamSense.iml,iml,352,Config (IDE)
+idea/inspectionProfiles/profiles_settings.xml,xml,174,Config (IDE)
+idea/misc.xml,xml,315,Config (IDE)
+idea/modules.xml,xml,274,Config (IDE)
+idea/vcs.xml,xml,180,Config (IDE)
+main.py,py,15015,Source Code
+recorder/__init__.py,py,0,Source Code
+recorder/stream_recorder.py,py,20854,Source Code
+requirements.txt,txt,996,Config
+scripts/README.md,md,1839,Script (tooling)
+scripts/capture_screenshots_headless.py,py,6382,Script (tooling)
+scripts/capture_ui_screenshots.py,py,13547,Script (tooling)
+scripts/generate_placeholder_screenshots.py,py,5107,Script (tooling)
+scripts/generate_screenshots_simple.py,py,19971,Script (tooling)
+stream_info.py,py,4269,Source Code
+streamer/README.md,md,12152,Documentation
+streamer/base_streamer.py,py,9963,Source Code
+streamer/stream_bitalino.py,py,11500,Source Code
+streamer/stream_e4.py,py,10639,Source Code
+streamer/stream_muse.py,py,17614,Source Code
+tests/conftest.py,py,6421,Test
+tests/mocks/README.md,md,12638,Test
+tests/mocks/__init__.py,py,1711,Test
+tests/mocks/data_generators.py,py,11891,Test
+tests/mocks/mock_e4.py,py,11739,Test
+tests/mocks/mock_lsl.py,py,8304,Test
+tests/mocks/mock_muse.py,py,11971,Test
+tests/test_base_streamer.py,py,12674,Test
+tests/test_data_processor.py,py,1049,Test
+tests/test_device_discovery.py,py,18410,Test
+tests/test_e4_streaming.py,py,17899,Test
+tests/test_hardware_mocks.py,py,10913,Test
+tests/test_muse_streaming.py,py,11741,Test
+tests/test_stream_recorder.py,py,928,Test
+tests/test_visualization.py,py,12593,Test
+ui/streamsense_controller.py,py,17672,Source Code
+ui/streamsense_ui.py,py,24602,Source Code
+viewer/plot_streams.py,py,10854,Source Code
+viewer/view_streams.py,py,5052,Source Code

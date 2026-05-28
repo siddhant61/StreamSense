@@ -1,33 +1,71 @@
-# Deliverable 4: Technical Debt Report
+# Deliverable 4: Technical Debt Report (Refreshed — 2026-05-28)
 
-This document summarizes the major areas of technical debt identified in the StreamSense project. The debt is substantial and exists at all levels of the project, from architecture to code quality and development process.
+> Supersedes the Aug-2025 and Nov-2025 versions. Every item carries `file:line` evidence.
+> Severity: 🔴 critical · 🟠 high · 🟡 medium · ⚪ low.
 
-## 1. Process and Documentation Debt
+---
 
-This is the most critical category of technical debt and the root cause of many other issues.
+## 1. Correctness Bugs (not just smells)
 
--   **No Test Coverage**: The complete absence of automated tests (unit, integration, or E2E) is the single largest risk factor. It makes any code change unsafe and the current functionality impossible to verify.
--   **No Dependency Management**: The lack of a `requirements.txt` or similar file makes the project's environment non-reproducible. It is impossible to know which versions of the 19+ external libraries are required, making it extremely difficult to set up a working development environment.
--   **No Version Control History**: The Git history contains only one meaningful commit. This indicates that the code was not developed under version control, making it impossible to review changes, understand the evolution of features, or revert to previous versions.
--   **Inaccurate and Incomplete Documentation**: The `README.md` is the only piece of documentation, and it is severely out of date. It references multiple non-existent files (`requirements.txt`, `docs/`, `LICENSE`, etc.), which is highly misleading.
+| # | Sev | Issue | Evidence |
+|---|-----|-------|----------|
+| C1 | 🔴 | **UI cannot connect E4** — `StreamE4(device_id=…, output_path=…)` but ctor is `StreamE4(e4, root_output_folder, synchronized_start_time)` → `TypeError`, swallowed as "Failed to connect". | `ui/streamsense_controller.py:258-262` vs `streamer/stream_e4.py:40` |
+| C2 | 🔴 | **`data_processor.py` runs work at import** against `D:/Study Data/...` → `FileNotFoundError`; breaks `import data_processor` and `tests/test_data_processor.py` collection. | `data_processor.py:606-607` |
+| C3 | 🔴 | **CLI import-crashes off Windows** — `import wmi` at module top. | `main.py:14` |
+| C4 | 🟠 | **CLI can hang forever** — after `start_streaming()` returns `False` (timeout), `connected_event.wait()` blocks with no timeout. | `main.py:113-114`, contract `base_streamer.py:128-132` |
+| C5 | 🟠 | **Wrong thread target** — `threading.Thread(target=self._monitor_connection(muse, …))` passes the *call result* (None/generator), not a callable. | `streamer/stream_muse.py:310` |
+| C6 | 🟡 | **Unbounded thread creation** — a new `threading.Timer` per sample for cache eviction. | `streamer/stream_muse.py:250-251` |
 
-## 2. Architectural Debt
+## 2. Cross-Platform Debt (🔴 blocks the documented "Win/macOS/Linux" claim)
 
-The application's high-level design contains several significant flaws that contribute to its instability.
+- `main.py:14` `import wmi`; `main.py:138-155` polls `Win32_Process()` for `EmpaticaBLEServer.exe`.
+- `main.py:291` event-logger launch via `["start","cmd","/k"]` (Windows shell).
+- `helper/e4_helper.py:26` hardcoded `D:/E4StreamingServer1.0.4.5400/EmpaticaBLEServer.exe`.
+- `helper/muse_helper.py` `subprocess.call('start bluemuse:', shell=True)` (multiple sites).
+- `archive/e4_basic_flow.py:7` same Windows EXE path.
+- Good counter-example: `helper/serial_helper.py:31-39` conditionally imports `termios`.
 
--   **Fragile State Management**: The application's state is managed by a set of global variables in `main.py`. This is not a robust or scalable solution. It makes the application's state hard to track and debug, especially in a multi-threaded context.
--   **Lack of Robust Lifecycle Management**: The application's startup and shutdown sequences are not well-defined. The system relies on `time.sleep()` calls to wait for components to initialize, which is unreliable. The `stop` command attempts to clean up resources, but without proper state management, its effectiveness is questionable.
--   **Fragile External Integrations**:
-    -   The Empatica E4 integration depends on an external, proprietary executable (`EmpaticaBLEServer.exe`) and communicates via a raw TCP socket, which is a brittle approach.
-    -   The Muse integration uses a complex stack of libraries and a custom serial backend, making it difficult to maintain.
--   **Orphaned Components**: Key features, like the stream monitoring dashboard (`stream_info.py`), exist as standalone, un-integrated scripts rather than being part of a cohesive application.
+## 3. Concurrency Debt
 
-## 3. Code-Level Debt (Code Smells)
+- **Hybrid model**: `multiprocessing.Process` per device + ad-hoc `threading`, daemon threads (E4 `handle_incoming_data`, server monitors) created without joins.
+- **41 `time.sleep()`** synchronization points across `streamer/`, `helper/`, `recorder/`, `main.py`.
+- **Tests deadlock under coverage**: any run including process-spawning tests (`test_base_streamer`, etc.) hangs >150s with `--cov`; per-file without coverage they pass. This blocks coverage-gated CI until fixed (e.g. `--cov-context`/`concurrency=multiprocessing` config or dependency-injected processes).
 
-The source code itself exhibits numerous code smells and anti-patterns.
+## 4. Design / Maintainability
 
--   **Excessive Use of `time.sleep()`**: `time.sleep()` is used pervasively throughout the codebase for synchronization, especially in the device connection and streaming logic. This is a major anti-pattern that leads to race conditions, slow performance, and unreliable behavior. Asynchronous events should be handled with proper synchronization primitives like Events, Queues, and Conditions.
--   **High Complexity and Low Cohesion**: Many files are extremely long and complex, with classes and functions that have too many responsibilities. For example, `stream_recorder.py` handles not only recording but also data interpolation, conversion to MNE format, and saving processed datasets. This violates the Single Responsibility Principle and makes the code hard to understand and maintain.
--   **Minimal Error Handling**: Many `try...except` blocks either contain a `pass` statement (silently ignoring errors) or simply log the error without any attempt at recovery. In a multi-threaded application dealing with unreliable hardware connections, this is a recipe for instability.
--   **Improper Use of Multithreading/Multiprocessing**: The application liberally spins up new threads and processes without a clear strategy for managing them, communicating between them, or ensuring they are properly terminated. This can lead to resource leaks and zombie processes.
--   **Hardcoded Paths and Configuration**: The path to the `EmpaticaBLEServer.exe` is hardcoded in `e4_helper.py`, making the application non-portable. Other configuration values are scattered throughout the code as global constants.
+- **Monolithic UI**: `ui/streamsense_ui.py` 771 LOC; **28 inline `setStyleSheet`** blocks with duplicated style strings; hardcoded geometry (1400×900, 450px panels).
+- **Fake telemetry**: signal-quality values 92/87/85 are hardcoded (`controller.py:250,268,295`) — misleading in a research/demo tool.
+- **Capability asymmetry**: BITalino is UI-only (CLI has 0 references); E4 works only via CLI. The two entry points expose different, partly-broken feature sets.
+- **Duplication**:
+  - `event_logger.py` ≈ `stream_info.py` (near-identical `log_event`).
+  - `find_streams()` duplicated in `viewer/view_streams.py` and `viewer/plot_streams.py`.
+  - Audit artifacts: `audit/feature_map.json` is byte-identical to `deliverables/3_*.json` (md5 `553c97…`); `audit/project_manifest.csv` == `deliverables/1_*.csv` (md5 `fb0704…`).
+- **Stub / dead code**: `helper/plot_helper.py` (4 lines, 54 bytes); `archive/data_helper.py`, `archive/e4_basic_flow.py` (unreferenced).
+
+## 5. Test & Process Debt
+
+- Coverage uneven: `serial_helper.py` (846 LOC) 0%, `muse_helper.py` (707 LOC) 0%, `plot_streams.py` 0%, `stream_bitalino.py` 0% (no test file), `recorder` effectively ~0% (1 trivial test). Strong: `view_streams` 93%, `base_streamer` 79%.
+- `tests/test_data_processor.py` cannot be collected (see C2).
+- No CI workflow, no linter/formatter/type-check config, no lock file.
+
+## 6. Repository Hygiene
+
+- 8 **empty** `Logs/*.log` files committed; 8 `Logs/Slide20-27.JPG` slides misplaced under `Logs/`.
+- `docs/screenshots/09_*.png` and `10_*.png` are **byte-identical** (md5 `e4bf6724…`); all 10 PNGs share the identical 3,787,081-byte size (suspect duplicate exports).
+- 4 overlapping screenshot scripts; `scripts/capture_screenshots_headless.py` redundant.
+
+## 7. Security
+
+- 🟡 **Secret in git history**: the E4 API key (`7abb651d…`) was removed from code (commits `705b663`, `dea3ae7`; current `e4_helper.py:28` uses `os.getenv('E4_API_KEY')`) but **remains in git history** → recommend **rotating the key**, not just deleting the file.
+- 🟡 **No dependency lock / audit**: pinned ranges only; no `pip-audit`/lock file → non-reproducible builds, unscanned CVEs.
+- ⚪ Direct BLE/serial access requires elevated OS permissions (document, don't sandbox-break).
+
+## 8. Hotspot Ranking (where to spend effort first)
+
+| Rank | File | LOC | Why |
+|------|------|-----|-----|
+| 1 | `helper/e4_helper.py` | 678 | Windows EXE path, orphan processes, 20% cov, drives broken E4 path |
+| 2 | `helper/muse_helper.py` | 707 | 0% cov, Windows shell calls, hardcoded packet sizes |
+| 3 | `ui/streamsense_ui.py` | 771 | monolith, style duplication, fake metrics |
+| 4 | `helper/serial_helper.py` | 846 | largest file, 0% cov, BGAPI complexity |
+| 5 | `data_processor.py` | 608 | broken-on-import + orphaned |
