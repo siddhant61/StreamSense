@@ -19,6 +19,12 @@ bitstring==4.4.0
 pylsl==1.18.2
 mne==1.12.1
 
+# Platform web backend (FastAPI API + WebSocket) — needed to run core/api tests
+fastapi==0.136.3
+uvicorn==0.48.0
+httpx==0.28.1
+pydantic==2.13.4
+
 # Test tooling
 pytest==9.0.3
 pytest-cov==7.1.0
