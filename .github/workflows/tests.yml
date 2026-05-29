@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
         # The pinned dev stack (numpy 2.4 / pandas 3.0 / scipy 1.17) ships wheels for
         # 3.11+ only — there is no cp310 wheel for these versions, so 3.10 is excluded.
         python-version: ["3.11", "3.12"]
