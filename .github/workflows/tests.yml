@@ -37,8 +37,11 @@ jobs:
           python -m pip install -r requirements-dev.txt
 
       - name: Unit tests + coverage (excludes process-spawning integration tests)
+        # Use `python -m pytest` (not bare `pytest`) so the interpreter is the one pip
+        # installed the plugins into — otherwise the runner's pytest may lack pytest-cov
+        # and abort with a usage error (exit 4) on --cov.
         run: |
-          pytest -m "not integration" \
+          python -m pytest -m "not integration" \
             --cov=streamer --cov=recorder --cov=helper --cov=viewer --cov=data_processor \
             --cov-report=term-missing --cov-report=xml
 
@@ -46,7 +49,7 @@ jobs:
         # Run WITHOUT coverage: coverage + multiprocessing deadlocks on this interpreter.
         # The autouse reaper fixture in tests/conftest.py terminates stray child processes
         # after each test, so the session exits cleanly (no atexit join hang).
-        run: timeout 240 pytest -m "integration"
+        run: timeout 240 python -m pytest -m "integration"
 
       - name: Upload coverage.xml
         if: always()
