@@ -61,6 +61,13 @@ button.rec.stop { background: var(--warn); }
 .skeleton { width: 100%; max-width: 320px; aspect-ratio: 1; border-radius: 8px;
   border: 1px solid var(--line); display: block; margin: 0 auto; }
 
+.import-row { display: flex; gap: 8px; margin: 8px 0; }
+.import-row input { flex: 1; background: #0b0f14; border: 1px solid var(--line);
+  color: var(--fg); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+.e4 { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.e4 td { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.e4 td:first-child { font-weight: 600; }
+
 .log { background: #0b0f14; border-radius: 8px; padding: 10px; height: 280px;
   overflow: auto; font-size: 12px; white-space: pre-wrap; color: var(--muted); }
 

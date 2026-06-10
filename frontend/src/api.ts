@@ -54,10 +54,19 @@ async function jpost<T>(path: string, body?: unknown): Promise<T> {
   return res.json();
 }
 
+export interface E4Summary {
+  source: string;
+  start_time: number | null;
+  signals: Record<string, { sample_rate: number; channels: number; n: number; duration: number }>;
+  ibi_count: number;
+  tags: number[];
+}
+
 export const api = {
   status: (): Promise<SystemStatus> => jget("/api/status"),
   streams: (): Promise<{ streams: string[] }> => jget("/api/streams"),
   discover: (types?: string[]): Promise<Device[]> => jpost("/api/discover", { types }),
+  importE4: (path: string): Promise<E4Summary> => jpost("/api/import/e4", { path }),
   connect: (id: string) => jpost(`/api/devices/${encodeURIComponent(id)}/connect`),
   disconnect: (id: string) => jpost(`/api/devices/${encodeURIComponent(id)}/disconnect`),
   startRecording: () => jpost("/api/recording/start"),

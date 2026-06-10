@@ -157,7 +157,7 @@ class E4ImportDriver(DeviceDriver):
     live = False
 
     def available(self) -> Tuple[bool, str]:
-        return False, "E4 real-time streaming withdrawn by Empatica; offline import only (PR-3)"
+        return False, "E4 real-time streaming withdrawn by Empatica; use offline import (POST /api/import/e4)"
 
     def discover(self) -> List[DeviceInfo]:
         return []
