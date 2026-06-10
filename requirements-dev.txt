@@ -1,0 +1,26 @@
+# Development / CI dependency set for StreamSense.
+#
+# This is the subset required to RUN THE TEST SUITE in a headless CI environment.
+# It deliberately omits the hardware / GUI packages from requirements.txt that cannot
+# be installed on a stock Linux CI runner (pybluez, pygatt, muselsl, psychopy, vispy,
+# pywifi, wmi). Tests that need those skip gracefully (see tests/mocks + importorskip).
+#
+# Pinned to a known-good, test-passing set. NOTE: these are numpy 2.x / pandas 3.x,
+# which is *newer* than requirements.txt allows (numpy<2.0, pandas<3.0). The suite
+# passes here; the requirements.txt pins should be reconciled (see audit roadmap).
+
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+h5py==3.16.0
+matplotlib==3.10.9
+seaborn==0.13.2
+bitstring==4.4.0
+pylsl==1.18.2
+mne==1.12.1
+
+# Test tooling
+pytest==9.0.3
+pytest-cov==7.1.0
+pytest-timeout==2.4.0
+coverage==7.14.1

@@ -255,9 +255,12 @@ class StreamSenseController(QObject):
                     raise Exception("Connection timeout")
 
             elif 'E4' in device_info.device_type:
+                # StreamE4.__init__ signature is (e4, root_output_folder,
+                # synchronized_start_time). The previous device_id=/output_path=
+                # kwargs did not exist and raised TypeError on every E4 connect.
                 streamer = StreamE4(
-                    device_id=device_info.address,
-                    output_path=Path(output_folder),
+                    e4=device_info.address,
+                    root_output_folder=output_folder,
                     synchronized_start_time=self.synchronized_start_time
                 )
 

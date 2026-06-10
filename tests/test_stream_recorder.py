@@ -10,6 +10,9 @@ pytest.importorskip("pandas")
 
 from recorder.stream_recorder import StreamRecorder
 
+# Spawns real background workers; excluded from coverage runs. See .coveragerc.
+pytestmark = pytest.mark.integration
+
 
 def test_stream_recorder_signals_start(tmp_path, monkeypatch):
     recorder = StreamRecorder(str(tmp_path))

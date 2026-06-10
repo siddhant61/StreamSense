@@ -11,7 +11,10 @@ from pathlib import Path
 import threading
 import time
 import userpaths
-import wmi
+try:
+    import wmi  # Windows-only; used to detect the Empatica BLE server process.
+except ImportError:
+    wmi = None
 import logging
 from pylsl import local_clock
 
@@ -110,10 +113,15 @@ def connect_muse_devices(state: AppState):
                 # Call start_streaming directly - no need for Thread wrapper
                 # Each StreamMuse creates its own Process internally
                 for i, streamer in enumerate(streamers):
-                    streamer.start_streaming()
-                    streamer.connected_event.wait()
-                    if i == 0:
-                        time.sleep(5)  # Delay for 5 seconds after the first device
+                    # start_streaming() already blocks until connected (or times out)
+                    # and returns a bool. The previous connected_event.wait() with no
+                    # timeout would hang forever when a device failed to connect.
+                    if streamer.start_streaming():
+                        if i == 0:
+                            time.sleep(5)  # Delay for 5 seconds after the first device
+                    else:
+                        print(f"{streamer.device_name}: failed to start streaming; skipping.\n")
+                        logger.warning(f"{streamer.device_name}: start_streaming() returned False.")
 
                 print(f"{len(state.muse_streamers)} Muse streaming process(es) running.\n")
                 logger.info(f"{len(state.muse_streamers)} Muse streaming process(es) running.\n")
@@ -126,6 +134,14 @@ def connect_e4_devices(state: AppState):
     """Discover E4 devices and start streaming threads, updating the shared state."""
 
     e4_reg: Dict[str, str] = {}
+
+    if wmi is None:
+        # The Empatica BLE server is a Windows executable; without wmi we cannot
+        # detect it. Skip the E4 flow gracefully instead of crashing on non-Windows.
+        print("E4 streaming requires Windows (EmpaticaBLEServer.exe + wmi). Skipping E4.\n")
+        logger.warning("wmi unavailable; skipping E4 device flow (non-Windows platform).")
+        return e4_reg, state.e4_streamers
+
     devices = FindDevices()
 
     e4s = devices.find_empatica()
@@ -179,8 +195,11 @@ def connect_e4_devices(state: AppState):
             # Call start_streaming directly - no need for Thread wrapper
             # Each StreamE4 creates its own Process internally
             for i, streamer in enumerate(streamers):
-                streamer.start_streaming()
-                streamer.connected_event.wait()
+                # Use the bool return; the prior unconditional connected_event.wait()
+                # hung forever on a failed connection.
+                if not streamer.start_streaming():
+                    print(f"{streamer.device_name}: failed to start streaming; skipping.\n")
+                    logger.warning(f"{streamer.device_name}: start_streaming() returned False.")
 
         print(f"{len(state.e4_streamers)} E4 streaming process(es) running.\n")
         logger.info(f"{len(state.e4_streamers)} E4 streaming process(es) running.\n")
@@ -287,8 +306,12 @@ def start_event_logger_process(output_folder):
         script_path = os.path.join(os.path.dirname(sys.argv[0]), 'event_logger.py')
         command = [sys.executable, script_path, '--output_folder', output_folder, '--start_time', str(synchronized_start_time)]
 
-        # Open a new console window and run the event_logger script
-        subprocess.Popen(["start", "cmd", "/k"] + command, shell=True)
+        # Open a new console window and run the event_logger script.
+        if sys.platform == "win32":
+            subprocess.Popen(["start", "cmd", "/k"] + command, shell=True)
+        else:
+            # No portable "new terminal" on POSIX; launch detached in its own session.
+            subprocess.Popen(command, start_new_session=True)
     except Exception as e:
         print(e)
 

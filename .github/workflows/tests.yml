@@ -1,0 +1,73 @@
+name: tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: pytest (ubuntu, py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The pinned dev stack (numpy 2.4 / pandas 3.0 / scipy 1.17) ships wheels for
+        # 3.11+ only — there is no cp310 wheel for these versions, so 3.10 is excluded.
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dev/test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # CI-installable test stack only (hardware/GUI deps are skipped in tests).
+          python -m pip install -r requirements-dev.txt
+
+      - name: Unit tests + coverage (excludes process-spawning integration tests)
+        # Use `python -m pytest` (not bare `pytest`) so the interpreter is the one pip
+        # installed the plugins into — otherwise the runner's pytest may lack pytest-cov
+        # and abort with a usage error (exit 4) on --cov.
+        run: |
+          python -m pytest -m "not integration" \
+            --cov=streamer --cov=recorder --cov=helper --cov=viewer --cov=data_processor \
+            --cov-report=term-missing --cov-report=xml
+
+      - name: Integration tests (pass/fail only; spawn real processes)
+        # Run WITHOUT coverage: coverage + multiprocessing deadlocks on this interpreter.
+        # The autouse reaper fixture in tests/conftest.py terminates stray child processes
+        # after each test, so the session exits cleanly (no atexit join hang).
+        run: timeout 240 python -m pytest -m "integration"
+
+      - name: Upload coverage.xml
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: coverage.xml
+          if-no-files-found: ignore
+
+  security:
+    name: pip-audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: pip-audit (advisory; does not fail the build)
+        run: |
+          python -m pip install --upgrade pip pip-audit
+          pip-audit -r requirements-dev.txt || true

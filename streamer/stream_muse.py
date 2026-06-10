@@ -247,8 +247,20 @@ class StreamMuse(BaseStreamer):
 
                         # Schedule the removal of the timestamp from the cache after the interval
                         removal_delay = 1 / sampling_rate
-                        removal_timer = threading.Timer(removal_delay, recent_data_cache[data_type].remove,
-                                                        args=[lsl_timestamp])
+
+                        def _safe_remove(cache, ts):
+                            # Guard against the timestamp already being gone to avoid
+                            # ValueError races between concurrent eviction timers.
+                            try:
+                                cache.remove(ts)
+                            except ValueError:
+                                pass
+
+                        removal_timer = threading.Timer(
+                            removal_delay, _safe_remove,
+                            args=[recent_data_cache[data_type], lsl_timestamp])
+                        # Daemonize so pending eviction timers can never block process shutdown.
+                        removal_timer.daemon = True
                         removal_timer.start()
                         # Calculate the corrected timestamp
                         corrected_timestamp = sample_timestamp
@@ -306,8 +318,14 @@ class StreamMuse(BaseStreamer):
 
 
 
-                    # Starting the connection monitor in a separate thread
-                    connection_monitor_thread = threading.Thread(target=self._monitor_connection(muse, CHECK_FREQUENCY))
+                    # Starting the connection monitor in a separate thread.
+                    # NOTE: pass the method + args; previously the method was *called*
+                    # inline (target=self._monitor_connection(...)) which blocked here
+                    # and passed None as the thread target.
+                    connection_monitor_thread = threading.Thread(
+                        target=self._monitor_connection,
+                        args=(muse, CHECK_FREQUENCY),
+                        daemon=True)
                     connection_monitor_thread.start()
 
                     while not self.stop_signal.is_set():
