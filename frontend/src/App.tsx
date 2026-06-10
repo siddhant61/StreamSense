@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   api, connectWebSocket,
   type SystemStatus, type WsEvent, type JointsPayload, type LogPayload,
@@ -40,7 +40,6 @@ export default function App() {
     }
   }, []);
 
-  const wsRef = useRef<WebSocket | null>(null);
   useEffect(() => {
     refresh();
     refreshStreams();
@@ -69,7 +68,6 @@ export default function App() {
       setOnline(false);
       pushLog("websocket closed");
     };
-    wsRef.current = ws;
     const streamPoll = setInterval(refreshStreams, 4000);
     return () => {
       clearInterval(streamPoll);

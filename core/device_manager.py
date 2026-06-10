@@ -153,11 +153,14 @@ class DeviceManager:
         return True
 
     def disconnect_all(self) -> None:
-        self._stop_flag.set()  # halt any in-flight reconnect loops
-        if self.recording.active:
-            self.stop_recording()
-        for device_id in list(self._streamers.keys()):
-            self.disconnect(device_id)
+        self._stop_flag.set()  # halt any in-flight reconnect loops for the teardown
+        try:
+            if self.recording.active:
+                self.stop_recording()
+            for device_id in list(self._streamers.keys()):
+                self.disconnect(device_id)
+        finally:
+            self._stop_flag.clear()  # teardown done; future reconnects may proceed
 
     def reconnect(self, device_id: str, max_attempts: int = 5,
                   sleep_fn: Callable[[float], None] = time.sleep) -> bool:
@@ -166,10 +169,9 @@ class DeviceManager:
         Replaces fixed-delay retry loops: waits base*factor**attempt (capped, jittered)
         between attempts and aborts promptly if the manager is shutting down.
         """
-        # A reconnect is a fresh intent to connect: clear any stop set by a prior
-        # disconnect_all() so the retry loop isn't aborted before it starts. A concurrent
-        # disconnect_all() during the loop will re-set the flag and abort it.
-        self._stop_flag.clear()
+        # reconnect() stays purely stop-aware; ownership of the stop flag lives in
+        # disconnect_all(), which holds it only for the duration of a teardown and clears
+        # it on completion. This avoids a reconnect clobbering an in-progress stop.
         return retry_with_backoff(
             lambda: self.connect(device_id),
             max_attempts=max_attempts, backoff=self.backoff,

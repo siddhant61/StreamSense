@@ -34,19 +34,29 @@ export interface SystemStatus {
   driver_availability: Record<string, DriverAvailability>;
 }
 
+async function detail(res: Response): Promise<string> {
+  return (await res.json().catch(() => ({} as { detail?: string }))).detail ?? res.statusText;
+}
+
+async function jget<T>(path: string): Promise<T> {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(await detail(res));
+  return res.json();
+}
+
 async function jpost<T>(path: string, body?: unknown): Promise<T> {
   const res = await fetch(path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
   });
-  if (!res.ok) throw new Error((await res.json()).detail ?? res.statusText);
+  if (!res.ok) throw new Error(await detail(res));
   return res.json();
 }
 
 export const api = {
-  status: (): Promise<SystemStatus> => fetch("/api/status").then((r) => r.json()),
-  streams: (): Promise<{ streams: string[] }> => fetch("/api/streams").then((r) => r.json()),
+  status: (): Promise<SystemStatus> => jget("/api/status"),
+  streams: (): Promise<{ streams: string[] }> => jget("/api/streams"),
   discover: (types?: string[]): Promise<Device[]> => jpost("/api/discover", { types }),
   connect: (id: string) => jpost(`/api/devices/${encodeURIComponent(id)}/connect`),
   disconnect: (id: string) => jpost(`/api/devices/${encodeURIComponent(id)}/disconnect`),
