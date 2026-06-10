@@ -66,8 +66,8 @@ core + API import and test cleanly in a headless CI with no devices installed.
 
 ## PR series
 
-1. **Foundation (this PR):** `core/` device manager + drivers (Muse/BITalino real, Kinect/E4 declared) + FastAPI API + headless tests + web frontend scaffold.
-2. **Kinect streamer:** `pyk4a` joints/IMU → LSL, `.mkv` + sync markers, recorder sidecar.
+1. **Foundation (done, PR #22):** `core/` device manager + drivers (Muse/BITalino real, Kinect/E4 declared) + FastAPI API + headless tests + web frontend scaffold.
+2. **Kinect streamer (in progress):** `StreamKinect` (BaseStreamer) — body-tracking joints (32×8=256 ch) + IMU → LSL, RGB/depth → `.mkv` sidecar, per-frame `SYNC` markers on the LSL clock for post-hoc alignment. All hardware calls isolated behind an injectable `KinectBackend`; loop + shaping + specs unit-tested headless, `PyK4ABackend` (pyk4a + pykinect_azure body tracking) awaits on-device verification.
 3. **E4 importer:** parse E4 Connect archives → align into session dataset.
 4. **Acquisition optimization:** event/queue handshakes (remove `time.sleep` sync), reconnect/backoff, unified clock, real signal-quality.
 5. **Frontend build-out:** device cards, signal quality, stream monitor, Kinect preview, session manager.

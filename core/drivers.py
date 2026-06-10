@@ -110,19 +110,40 @@ class BitalinoDriver(DeviceDriver):
 
 
 class KinectDriver(DeviceDriver):
-    """Placeholder until PR-2 implements the pyk4a streamer."""
+    """Azure Kinect: body-tracking joints + IMU over LSL, RGB/depth to an .mkv sidecar."""
 
     device_type = DeviceType.KINECT
     live = True
 
     def available(self) -> Tuple[bool, str]:
-        ok, reason = _module_importable("pyk4a")
-        if not ok:
-            return False, reason
-        return False, "Kinect streamer not yet implemented (planned in PR-2)"
+        return _module_importable("pyk4a")
 
     def discover(self) -> List[DeviceInfo]:
-        return []
+        try:
+            from pyk4a import connected_device_count  # lazy
+            count = connected_device_count()
+        except Exception as exc:
+            logger.warning("Kinect discovery failed: %s", exc)
+            return []
+        out: List[DeviceInfo] = []
+        for i in range(count):
+            out.append(DeviceInfo(
+                id=f"kinect:{i}", name=f"Azure Kinect {i}",
+                type=DeviceType.KINECT, address=str(i),
+                detail="body-tracking + IMU + .mkv",
+            ))
+        return out
+
+    def create_streamer(self, device: DeviceInfo, output_folder: str, sync_time: float):
+        from streamer.stream_kinect import StreamKinect  # lazy
+        try:
+            device_id = int(device.address)
+        except (TypeError, ValueError):
+            device_id = 0
+        return StreamKinect(
+            device_name=device.name, root_output_folder=output_folder,
+            synchronized_start_time=sync_time, device_id=device_id,
+        )
 
 
 class E4ImportDriver(DeviceDriver):
