@@ -46,6 +46,7 @@ async function jpost<T>(path: string, body?: unknown): Promise<T> {
 
 export const api = {
   status: (): Promise<SystemStatus> => fetch("/api/status").then((r) => r.json()),
+  streams: (): Promise<{ streams: string[] }> => fetch("/api/streams").then((r) => r.json()),
   discover: (types?: string[]): Promise<Device[]> => jpost("/api/discover", { types }),
   connect: (id: string) => jpost(`/api/devices/${encodeURIComponent(id)}/connect`),
   disconnect: (id: string) => jpost(`/api/devices/${encodeURIComponent(id)}/disconnect`),
@@ -54,10 +55,31 @@ export const api = {
 };
 
 // Live event stream over WebSocket.
+export type WsEventType = "status" | "device_update" | "recording" | "log" | "joints";
+
 export interface WsEvent {
-  type: "status" | "device_update" | "recording" | "log";
+  type: WsEventType;
   payload: unknown;
   ts: number;
+}
+
+export interface JointsPayload {
+  device_id: string;
+  points: [number, number, number][]; // [x, y, confidence] per joint
+}
+
+export interface LogPayload {
+  level: string;
+  message: string;
+}
+
+// Map a 0..1 quality (or null) to a label + colour for the UI.
+export function qualityView(q: number | null): { label: string; color: string; pct: number } {
+  if (q == null) return { label: "unknown", color: "var(--muted)", pct: 0 };
+  const pct = Math.round(q * 100);
+  if (q >= 0.8) return { label: "good", color: "var(--ok)", pct };
+  if (q >= 0.5) return { label: "fair", color: "var(--warn)", pct };
+  return { label: "poor", color: "var(--off)", pct };
 }
 
 export function connectWebSocket(onEvent: (e: WsEvent) => void): WebSocket {

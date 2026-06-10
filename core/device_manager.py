@@ -186,6 +186,16 @@ class DeviceManager:
         device.signal_quality = score.value
         self._emit_device(device)
 
+    def broadcast_joints(self, device_id: str, sample) -> None:
+        """Project a Kinect JOINTS sample to 2D points and emit a ``joints`` event.
+
+        A live forwarder (reading the *_JOINTS LSL stream) calls this so the web UI can
+        render a skeleton preview without raw high-rate data on the socket.
+        """
+        from streamer.kinect_support import project_skeleton_sample  # lazy
+        self._emit("joints", {"device_id": device_id,
+                              "points": project_skeleton_sample(sample)})
+
     def assess_device(self, device_id: str, samples, *, expected_rate=None,
                       actual_rate=None, amplitude_range=None) -> QualityScore:
         """Compute a real signal-quality score from recent samples and apply it."""
