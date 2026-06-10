@@ -142,7 +142,11 @@ class StreamKinect(BaseStreamer):
         self._backend_factory = backend_factory or (
             lambda: PyK4ABackend(device_id=device_id, camera_fps=camera_fps)
         )
-        self._specs = stream_specs(device_name, camera_fps)
+        specs = stream_specs(device_name, camera_fps)
+        if not enable_body_tracking:
+            # Without body tracking there is no skeleton — don't advertise a JOINTS stream.
+            specs = [s for s in specs if s.key != "joints"]
+        self._specs = specs
         self._outlets: Dict[str, Any] = {}
 
     @property
@@ -157,8 +161,6 @@ class StreamKinect(BaseStreamer):
         import pylsl  # lazy
         self._outlets = {}
         for spec in self._specs:
-            if not self.enable_body_tracking and spec.key == "joints":
-                continue
             info = pylsl.StreamInfo(
                 spec.name, spec.stype, spec.channel_count,
                 spec.nominal_srate, spec.channel_format, spec.source_id,
@@ -206,8 +208,8 @@ class StreamKinect(BaseStreamer):
             self._setup_lsl_outlets()
             self.queue.put("connected")
             self._run_loop(backend, self._outlets, local_clock, self.stop_signal.is_set)
-        except Exception as exc:
-            logger.error("Kinect streaming error: %s", exc)
+        except Exception:
+            logger.exception("Kinect streaming error")
             try:
                 self.queue.put("error")
             except Exception:
@@ -215,5 +217,5 @@ class StreamKinect(BaseStreamer):
         finally:
             try:
                 backend.stop()
-            except Exception as exc:
-                logger.error("Kinect backend stop error: %s", exc)
+            except Exception:
+                logger.exception("Kinect backend stop error")

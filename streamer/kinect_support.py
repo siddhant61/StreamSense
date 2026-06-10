@@ -30,15 +30,28 @@ IMU_CHANNELS = 6                             # acc xyz + gyro xyz
 EMPTY_JOINTS_SAMPLE: List[float] = [0.0] * JOINTS_TOTAL
 
 
-def _seq(value: Any, n: int) -> List[float]:
-    """Coerce position/orientation-like values to a fixed-length float list."""
+_VEC3_ATTRS = ("x", "y", "z")
+_QUAT_ATTRS = ("w", "x", "y", "z")
+
+
+def _coerce_vector(value: Any, attrs: Sequence[str]) -> List[float]:
+    """Coerce a position/orientation-like value to a fixed-length float list.
+
+    Tolerant of both representations the Kinect stacks use: index access
+    (numpy arrays / tuples, e.g. pyk4a) and attribute access (SDK structs exposing
+    ``.x/.y/.z`` or ``.w/.x/.y/.z``, e.g. pykinect_azure). Missing components -> 0.0.
+    """
     if value is None:
-        return [0.0] * n
+        return [0.0] * len(attrs)
     out: List[float] = []
-    for i in range(n):
+    for i, attr in enumerate(attrs):
         try:
-            out.append(float(value[i]))
-        except (TypeError, KeyError, IndexError, ValueError):
+            component = value[i]
+        except (TypeError, KeyError, IndexError):
+            component = getattr(value, attr, None)
+        try:
+            out.append(float(component))
+        except (TypeError, ValueError):
             out.append(0.0)
     return out
 
@@ -52,7 +65,7 @@ def _joint_to_channels(joint: Any) -> List[float]:
     position = getattr(joint, "position", None)
     orientation = getattr(joint, "orientation", None)
     confidence = getattr(joint, "confidence_level", getattr(joint, "confidence", 0))
-    chans = _seq(position, 3) + _seq(orientation, 4)
+    chans = _coerce_vector(position, _VEC3_ATTRS) + _coerce_vector(orientation, _QUAT_ATTRS)
     try:
         chans.append(float(confidence))
     except (TypeError, ValueError):
@@ -83,7 +96,7 @@ def imu_to_sample(imu: Any) -> List[float]:
         return [0.0] * IMU_CHANNELS
     acc = getattr(imu, "acc", getattr(imu, "acc_sample", None))
     gyro = getattr(imu, "gyro", getattr(imu, "gyro_sample", None))
-    return _seq(acc, 3) + _seq(gyro, 3)
+    return _coerce_vector(acc, _VEC3_ATTRS) + _coerce_vector(gyro, _VEC3_ATTRS)
 
 
 @dataclass

@@ -40,6 +40,37 @@ def test_imu_shaping():
     assert imu_to_sample(None) == [0.0] * IMU_CHANNELS
 
 
+class _Vec3:
+    def __init__(self, x, y, z):
+        self.x, self.y, self.z = x, y, z
+
+
+class _Quat:
+    def __init__(self, w, x, y, z):
+        self.w, self.x, self.y, self.z = w, x, y, z
+
+
+class _AttrJoint:
+    """Joint whose position/orientation are attribute structs (no indexing) — the
+    representation the Body Tracking SDK (pykinect_azure) uses."""
+    def __init__(self):
+        self.position = _Vec3(1, 2, 3)
+        self.orientation = _Quat(0.1, 0.2, 0.3, 0.4)
+        self.confidence_level = 2
+
+
+def test_skeleton_shaping_with_attribute_structs():
+    s = skeleton_to_sample([_AttrJoint()])
+    assert s[:8] == [1.0, 2.0, 3.0, 0.1, 0.2, 0.3, 0.4, 2.0]
+
+
+def test_imu_shaping_with_attribute_structs():
+    class _Imu:
+        acc = _Vec3(0.1, 0.2, 0.3)
+        gyro = _Vec3(1.0, 2.0, 3.0)
+    assert imu_to_sample(_Imu()) == [0.1, 0.2, 0.3, 1.0, 2.0, 3.0]
+
+
 def test_stream_specs_shapes_and_names():
     specs = {s.key: s for s in stream_specs("Kinect")}
     assert set(specs) == {"joints", "imu", "sync"}

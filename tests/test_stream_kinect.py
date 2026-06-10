@@ -77,6 +77,12 @@ def test_stream_names_and_video_path():
     assert s.video_path.endswith("K.mkv")
 
 
+def test_body_tracking_disabled_omits_joints_stream():
+    s = StreamKinect(device_name="K", root_output_folder="/tmp/k", enable_body_tracking=False)
+    assert s.stream_names == ["K_IMU", "K_SYNC"]
+    assert all(spec.key != "joints" for spec in s._specs)
+
+
 def test_driver_creates_streamer_with_sync_time():
     from core.drivers import KinectDriver
     from core.models import DeviceInfo, DeviceType
