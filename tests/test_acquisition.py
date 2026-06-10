@@ -123,6 +123,18 @@ def test_manager_reconnect_with_backoff(monkeypatch):
     assert m.devices["muse:AA"].state == ConnectionState.CONNECTED
 
 
+def test_reconnect_succeeds_after_disconnect_all():
+    # disconnect_all() holds the stop flag only for the teardown and clears it on
+    # completion, so a later reconnect() proceeds (regression for the flag leaking).
+    m = make_manager()
+    m.discover()
+    m.disconnect_all()
+    assert not m._stop_flag.is_set()  # cleared on completion
+    ok = m.reconnect("muse:AA", sleep_fn=lambda d: None)
+    assert ok is True
+    assert m.devices["muse:AA"].state == ConnectionState.CONNECTED
+
+
 def test_manager_assess_device_sets_quality_and_emits():
     events = []
     m = make_manager()

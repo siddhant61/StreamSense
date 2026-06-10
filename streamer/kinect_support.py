@@ -99,6 +99,33 @@ def imu_to_sample(imu: Any) -> List[float]:
     return _coerce_vector(acc, _VEC3_ATTRS) + _coerce_vector(gyro, _VEC3_ATTRS)
 
 
+# Skeleton bone connectivity (parent_idx, child_idx) over JOINT_NAMES order, for 2D preview.
+BONES = [
+    (0, 1), (1, 2), (2, 3), (3, 26), (26, 27),            # spine + head
+    (27, 28), (28, 29), (27, 30), (30, 31),               # face
+    (2, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (7, 10),       # left arm
+    (2, 11), (11, 12), (12, 13), (13, 14), (14, 15), (15, 16), (14, 17),  # right arm
+    (0, 18), (18, 19), (19, 20), (20, 21),                # left leg
+    (0, 22), (22, 23), (23, 24), (24, 25),                # right leg
+]
+
+
+def project_skeleton_sample(sample: Sequence[float]) -> List[List[float]]:
+    """A 256-float JOINTS sample -> 32 ``[x, y, confidence]`` points (frontal plane).
+
+    Uses the JOINT_CHANNELS layout (px,py,pz,qw,qx,qy,qz,conf): takes world x/y and the
+    confidence so a UI can draw the skeleton. Tolerant of short samples (pads zeros).
+    """
+    points: List[List[float]] = []
+    for j in range(JOINT_COUNT):
+        base = j * JOINT_CHANNELS
+        if base + JOINT_CHANNELS <= len(sample):
+            points.append([float(sample[base]), float(sample[base + 1]), float(sample[base + 7])])
+        else:
+            points.append([0.0, 0.0, 0.0])
+    return points
+
+
 @dataclass
 class StreamSpec:
     key: str                      # internal handle: "joints" | "imu" | "sync"

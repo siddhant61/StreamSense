@@ -1,126 +1,148 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   api, connectWebSocket,
-  type Device, type SystemStatus, type WsEvent,
+  type SystemStatus, type WsEvent, type JointsPayload, type LogPayload,
 } from "./api";
-
-const DEVICE_ICON: Record<string, string> = {
-  muse: "🧠", bitalino: "💓", kinect: "🎥", e4: "⌚",
-};
+import type { Point } from "./skeleton";
+import { DeviceCard } from "./components/DeviceCard";
+import { ModalityPanel } from "./components/ModalityPanel";
+import { StreamMonitor } from "./components/StreamMonitor";
+import { SessionBar } from "./components/SessionBar";
+import { SkeletonCanvas } from "./components/SkeletonCanvas";
+import { ActivityLog } from "./components/ActivityLog";
 
 export default function App() {
   const [status, setStatus] = useState<SystemStatus | null>(null);
+  const [streams, setStreams] = useState<string[]>([]);
+  const [joints, setJoints] = useState<Point[] | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [online, setOnline] = useState(false);
 
-  const refresh = useCallback(async () => {
-    try { setStatus(await api.status()); } catch (e) { pushLog(`status error: ${e}`); }
+  const pushLog = useCallback((line: string) => {
+    setLog((l) => [`${new Date().toLocaleTimeString()}  ${line}`, ...l].slice(0, 200));
   }, []);
 
-  const pushLog = (line: string) =>
-    setLog((l) => [`${new Date().toLocaleTimeString()}  ${line}`, ...l].slice(0, 100));
+  const refresh = useCallback(async () => {
+    try {
+      setStatus(await api.status());
+    } catch (e) {
+      pushLog(`status error: ${e}`);
+    }
+  }, [pushLog]);
+
+  const refreshStreams = useCallback(async () => {
+    try {
+      const r = await api.streams();
+      setStreams(r.streams);
+    } catch {
+      /* transient */
+    }
+  }, []);
 
   useEffect(() => {
     refresh();
+    refreshStreams();
     const ws = connectWebSocket((e: WsEvent) => {
-      if (e.type === "status") setStatus(e.payload as SystemStatus);
-      else if (e.type === "device_update") refresh();
-      else if (e.type === "recording") refresh();
-      else if (e.type === "log") {
-        const p = e.payload as { level: string; message: string };
-        pushLog(`[${p.level}] ${p.message}`);
+      switch (e.type) {
+        case "status":
+          setStatus(e.payload as SystemStatus);
+          setOnline(true);
+          break;
+        case "device_update":
+        case "recording":
+          refresh();
+          break;
+        case "joints":
+          setJoints((e.payload as JointsPayload).points);
+          break;
+        case "log": {
+          const p = e.payload as LogPayload;
+          pushLog(`[${p.level}] ${p.message}`);
+          break;
+        }
       }
     });
-    ws.onclose = () => pushLog("websocket closed");
-    return () => ws.close();
-  }, [refresh]);
+    ws.onopen = () => setOnline(true);
+    ws.onclose = () => {
+      setOnline(false);
+      pushLog("websocket closed");
+    };
+    const streamPoll = setInterval(refreshStreams, 4000);
+    return () => {
+      clearInterval(streamPoll);
+      ws.close();
+    };
+  }, [refresh, refreshStreams, pushLog]);
 
   const run = async (label: string, fn: () => Promise<unknown>) => {
     setBusy(true);
-    try { await fn(); pushLog(label); } catch (e) { pushLog(`${label} failed: ${e}`); }
-    finally { setBusy(false); await refresh(); }
+    try {
+      await fn();
+      pushLog(label);
+    } catch (e) {
+      pushLog(`${label} failed: ${e}`);
+    } finally {
+      setBusy(false);
+      await refresh();
+      await refreshStreams();
+    }
   };
 
-  const rec = status?.recording;
+  const devices = status?.devices ?? [];
+  const recording = status?.recording ?? { active: false, session_id: null, output_folder: null, started_at: null };
+  const hasKinect = devices.some((d) => d.type === "kinect");
 
   return (
     <div className="app">
       <header>
         <h1>🧠 StreamSense</h1>
         <span className="subtitle">Multi-Device Recording Platform</span>
+        <span className={`conn ${online ? "up" : "down"}`}>{online ? "● live" : "○ offline"}</span>
       </header>
 
       <section className="controls">
         <button disabled={busy} onClick={() => run("discover", () => api.discover())}>
           🔍 Discover devices
         </button>
-        {rec?.active ? (
-          <button className="rec stop" disabled={busy}
-            onClick={() => run("stop recording", api.stopRecording)}>
-            ⏹ Stop recording
-          </button>
-        ) : (
-          <button className="rec start" disabled={busy}
-            onClick={() => run("start recording", api.startRecording)}>
-            🔴 Start recording
-          </button>
-        )}
-        {rec?.active && <span className="session">● {rec.session_id}</span>}
+        <SessionBar
+          recording={recording}
+          busy={busy}
+          onStart={() => run("start recording", api.startRecording)}
+          onStop={() => run("stop recording", api.stopRecording)}
+        />
       </section>
 
       <section className="grid">
         <div className="panel">
-          <h2>Devices</h2>
-          {(status?.devices ?? []).length === 0 && <p className="muted">No devices yet — discover.</p>}
-          {(status?.devices ?? []).map((d) => (
-            <DeviceCard key={d.id} d={d} busy={busy}
+          <h2>Devices <span className="count">{devices.length}</span></h2>
+          {devices.length === 0 && <p className="muted">No devices yet — discover.</p>}
+          {devices.map((d) => (
+            <DeviceCard
+              key={d.id}
+              d={d}
+              busy={busy}
               onConnect={() => run(`connect ${d.name}`, () => api.connect(d.id))}
-              onDisconnect={() => run(`disconnect ${d.name}`, () => api.disconnect(d.id))} />
+              onDisconnect={() => run(`disconnect ${d.name}`, () => api.disconnect(d.id))}
+            />
           ))}
         </div>
 
-        <div className="panel">
-          <h2>Modalities</h2>
-          {Object.entries(status?.driver_availability ?? {}).map(([t, a]) => (
-            <div key={t} className="modality">
-              <span>{DEVICE_ICON[t] ?? "📟"} {t}</span>
-              <span className={a.available ? "ok" : "off"}>
-                {a.available ? "available" : (a.live ? "unavailable" : "import-only")}
-              </span>
-              {!a.available && <small className="muted">{a.reason}</small>}
+        <div className="col">
+          <ModalityPanel availability={status?.driver_availability ?? {}} />
+          <StreamMonitor streams={streams} />
+        </div>
+
+        <div className="col">
+          {hasKinect && (
+            <div className="panel">
+              <h2>Kinect preview</h2>
+              <SkeletonCanvas points={joints} />
             </div>
-          ))}
-        </div>
-
-        <div className="panel">
-          <h2>Activity</h2>
-          <pre className="log">{log.join("\n")}</pre>
+          )}
+          <ActivityLog lines={log} />
         </div>
       </section>
-    </div>
-  );
-}
-
-function DeviceCard({ d, busy, onConnect, onDisconnect }: {
-  d: Device; busy: boolean; onConnect: () => void; onDisconnect: () => void;
-}) {
-  const connected = d.state === "connected";
-  return (
-    <div className={`device ${d.state}`}>
-      <div className="device-head">
-        <span>{DEVICE_ICON[d.type] ?? "📟"} <strong>{d.name}</strong></span>
-        <span className={`badge ${d.state}`}>{d.state}</span>
-      </div>
-      <div className="device-meta">
-        <span className="muted">{d.address}</span>
-        <span>SQ: {d.signal_quality == null ? "—" : `${Math.round(d.signal_quality * 100)}%`}</span>
-      </div>
-      {connected ? (
-        <button disabled={busy} onClick={onDisconnect}>Disconnect</button>
-      ) : (
-        <button disabled={busy} onClick={onConnect}>Connect</button>
-      )}
-      {d.detail && <small className="muted">{d.detail}</small>}
     </div>
   );
 }
