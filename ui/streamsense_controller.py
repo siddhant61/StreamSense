@@ -247,7 +247,9 @@ class StreamSenseController(QObject):
                     self.muse_streamers[device_name] = streamer
                     device_info.streamer = streamer
                     device_info.connected = True
-                    self.device_connected.emit(device_name, True, 92)  # Signal quality ~92%
+                    # Quality unknown until measured (0 = unknown). Real per-stream SQI
+                    # is computed by core.signal_quality in the web platform.
+                    self.device_connected.emit(device_name, True, 0)
                     self.status_message.emit(f"✓ {device_name} connected")
                     logger.info(f"Successfully connected to Muse: {device_name}")
                     return True
@@ -268,7 +270,8 @@ class StreamSenseController(QObject):
                     self.e4_streamers[device_name] = streamer
                     device_info.streamer = streamer
                     device_info.connected = True
-                    self.device_connected.emit(device_name, True, 87)  # Signal quality ~87%
+                    # Quality unknown until measured (0 = unknown); see core.signal_quality.
+                    self.device_connected.emit(device_name, True, 0)
                     self.status_message.emit(f"✓ {device_name} connected")
                     logger.info(f"Successfully connected to E4: {device_name}")
                     return True
@@ -295,7 +298,8 @@ class StreamSenseController(QObject):
                     self.bitalino_streamers[device_name] = streamer
                     device_info.streamer = streamer
                     device_info.connected = True
-                    self.device_connected.emit(device_name, True, 85)  # Signal quality ~85%
+                    # Quality unknown until measured (0 = unknown); see core.signal_quality.
+                    self.device_connected.emit(device_name, True, 0)
                     self.status_message.emit(f"✓ {device_name} connected")
                     logger.info(f"Successfully connected to BITalino: {device_name}")
                     return True
