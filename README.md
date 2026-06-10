@@ -2,20 +2,24 @@
 
 # 🧠 StreamSense
 
-### Multi-Device Physiological Recording Platform
+### A unified web platform for synchronized multi-modal human-signal capture
 
-*Synchronized recording and analysis of physiological signals from multiple devices*
+*Brainwaves, body motion, and wearable biosignals — discovered, streamed, and recorded on one timeline, from one browser.*
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/siddhant61/StreamSense)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![LSL](https://img.shields.io/badge/streaming-Lab%20Streaming%20Layer-orange.svg)](https://labstreaminglayer.readthedocs.io/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/UI-React%20+%20TS-61DAFB.svg?logo=react&logoColor=white)](https://react.dev/)
+[![LSL](https://img.shields.io/badge/bus-Lab%20Streaming%20Layer-orange.svg)](https://labstreaminglayer.readthedocs.io/)
+[![Tests](https://img.shields.io/badge/tests-~190%20passing-3fb950.svg)](#-testing--ci)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-[Features](#-features) •
-[Screenshots](#-screenshots) •
+[Overview](#-overview) •
+[Devices](#-supported-modalities) •
+[Screens](#-the-dashboard) •
+[Architecture](#-architecture) •
 [Quick Start](#-quick-start) •
-[Documentation](#-documentation) •
-[Architecture](#-architecture)
+[Testing](#-testing--ci) •
+[Roadmap](#-roadmap--future-direction)
 
 </div>
 
@@ -23,457 +27,236 @@
 
 ## 📖 Overview
 
-**StreamSense** is a professional multi-device physiological recording platform designed for social neuroscience research. It enables synchronized data acquisition from multiple participants and devices simultaneously, with microsecond-precision timestamps for accurate cross-device correlation analysis.
+**StreamSense** turns a heterogeneous research rig — an EEG headband, a multi-sensor
+biosignal board, a depth camera with body tracking, and a wrist wearable — into a single,
+coherent recording system. Every live device publishes to the
+[**Lab Streaming Layer (LSL)**](https://labstreaminglayer.readthedocs.io/) bus on one
+synchronized clock, a recorder captures the session, and a modern web dashboard drives the
+whole thing: discover → connect → monitor signal quality → record.
 
-### Key Capabilities
+It is built as a **framework-agnostic core** (`DeviceManager` + device drivers, fully
+unit-tested with **no hardware**) wrapped by a **FastAPI + WebSocket** API and a
+**React + TypeScript** front end. Hardware SDKs are imported lazily, so the entire backend
+and its ~190-test suite run green in a headless CI with no devices attached.
 
-- 🔗 **Multi-Device Synchronization** - Record from multiple people simultaneously with LSL timestamps
-- 🎯 **Multi-Vendor Support** - Muse (EEG), Empatica E4 (wrist), BITalino (multi-sensor)
-- 💻 **Professional UI** - Beautiful PyQt5 dashboard for easy device management
-- 📊 **Real-Time Streaming** - Live LSL stream monitoring and visualization
-- 🔄 **Robust Architecture** - Process-based isolation, automatic reconnection, crash recovery
-- 📈 **Analysis-Ready Output** - MNE format for EEG, pandas DataFrames for other signals
+> **Why it exists.** Multi-person, multi-device physiological studies (social neuroscience,
+> meditation, ensemble performance) need *time-aligned* data across vendors that don't talk
+> to each other. StreamSense is the conductor that puts them on one timeline.
 
-### Use Cases
+<div align="center">
+<img src="docs/screenshots/dashboard.svg" alt="StreamSense dashboard — device cards with live signal quality, modality availability, active LSL streams, E4 import, Kinect skeleton preview, and a recording session in progress" width="100%">
+<br><em>The operator dashboard: live device cards with real signal-quality, active streams, Kinect body preview, E4 import, and a recording session in progress.</em>
+</div>
 
-- 👥 **Social Neuroscience** - Measure physiological synchrony between people (couples, teams, groups)
-- 🧘 **Meditation Research** - Multi-person brain synchronization during meditation
-- 🎵 **Music Studies** - Physiological coordination in musical ensembles
-- 💑 **Relationship Research** - Heart rate and brain wave synchronization in couples
-- 🏥 **Clinical Applications** - Multi-modal physiological monitoring
+---
+
+## 🎛 Supported modalities
+
+| Modality | Device | Signals | Mode | Transport |
+|---|---|---|---|---|
+| 🧠 **EEG / PPG / motion** | **Muse S** | EEG ×4, PPG, ACC, GYRO | **live** | BLE → LSL |
+| 💓 **Cardiac / EDA / EMG** | **BITalino** | ECG, EDA, EMG, ACC (≤1 kHz) | **live** | BLE / serial → LSL |
+| 🎥 **Body motion + depth** | **Azure Kinect** | 32-joint skeleton + IMU → LSL; RGB-D → `.mkv` | **live** | `pyk4a` + Body Tracking SDK |
+| ⌚ **Wrist biosignals** | **Empatica E4** | BVP, EDA, HR, IBI, TEMP, ACC, tags | **offline import** | E4 Connect archive |
+
+> **An honest note on the E4.** Empatica withdrew the E4's real-time streaming server, so
+> live E4 capture is no longer possible. StreamSense imports a recorded **E4 Connect
+> session** (folder or `.zip`) and aligns it post-hoc by absolute UTC timestamps — the
+> truthful path, surfaced clearly in the UI rather than pretended away.
 
 ---
 
 ## ✨ Features
 
-### Device Support
-
-| Device | Sensors | Sampling Rates | Connection |
-|--------|---------|----------------|------------|
-| **Muse 2/S** | EEG (4ch), PPG, ACC, GYRO | 256Hz EEG, 64Hz PPG | Bluetooth LE |
-| **Empatica E4** | BVP, GSR, TEMP, ACC | 64Hz BVP, 4Hz GSR | WiFi/BLE Server |
-| **BITalino** | ECG, EDA, EMG, EEG, ACC | Up to 1000Hz | Bluetooth/Serial |
-
-### Core Features
-
-✅ **Professional UI Dashboard**
-- Device discovery and management
-- One-click connect/disconnect
-- Real-time status monitoring
-- Signal quality indicators
-- Recording controls with live timer
-
-✅ **Multi-Device Recording**
-- Synchronized timestamps across all devices (LSL)
-- Individual device processes for crash isolation
-- Automatic reconnection with exponential backoff
-- Intelligent data interpolation for brief disconnections
-
-✅ **Lab Streaming Layer (LSL) Integration**
-- Industry-standard protocol for physiological data
-- Network time protocol synchronization (microsecond precision)
-- Compatible with all major analysis tools (MNE, EEGLAB, etc.)
-- XDF format for multi-stream recordings
-
-✅ **Extensible Architecture**
-- BaseStreamer abstract class for easy device addition
-- Process-based isolation for reliability
-- Clean MVC pattern (UI ↔ Controller ↔ Core)
-- Comprehensive documentation and guides
+- **One control surface** — discover, connect/disconnect, record, and monitor every device
+  from a browser; live updates pushed over a WebSocket (no polling for status).
+- **Real signal quality** — a genuine SQI (`0..1` → *good / fair / poor*, `null` when
+  unknown) computed from the data (finite fraction, flatline/liveness, saturation headroom,
+  sample-rate ratio). **No fabricated numbers.**
+- **Kinect body preview** — the 32-joint skeleton rendered live on a canvas; RGB-D video is
+  recorded to an `.mkv` sidecar with per-frame `SYNC` markers on the LSL clock for
+  post-hoc alignment (video stays off the bus by design).
+- **Synchronized acquisition** — a unified `SessionClock` gives every streamer one timebase;
+  `multiprocessing`-isolated device workers; exponential-backoff reconnect.
+- **Session recording** — LSL streams captured together with a live elapsed timer and output
+  path; the Kinect `.mkv` lives alongside.
+- **Offline E4 import** — parse an E4 Connect session into an aligned dataset, exposed via
+  `POST /api/import/e4` and an Import panel (path confined to an allowlisted root).
+- **Built to be trusted** — framework-agnostic core, lazy hardware imports, ~190 unit +
+  integration tests, and CI on Python 3.11 / 3.12.
 
 ---
 
-## 📸 Screenshots
+## 🏗 Architecture
 
-### Professional UI Dashboard
-*Beautiful dark-themed interface for device management and recording*
+```mermaid
+flowchart TD
+    subgraph Browser["🌐 Web dashboard — React + TypeScript"]
+        UI["Device cards · signal quality · stream monitor<br/>Kinect skeleton · session bar · E4 import"]
+    end
+    UI -- "REST /api/*" --> API
+    API -- "WebSocket /ws (status · device · recording · log · joints)" --> UI
 
-![Initial State](docs/screenshots/01_initial_state.png)
-*Clean initial state ready for device discovery*
+    subgraph Backend["⚙️ FastAPI + WebSocket"]
+        API["api/app.py"]
+    end
+    API --> DM
 
----
+    subgraph Core["🧩 core/ — framework-agnostic, hardware-free, unit-tested"]
+        DM["DeviceManager<br/>discover · connect · record · status · event bus"]
+        CK["SessionClock"]:::s
+        BK["ExponentialBackoff / reconnect"]:::s
+        SQ["signal_quality (SQI)"]:::s
+        DM --- CK --- BK --- SQ
+    end
 
-![Devices Discovered](docs/screenshots/02_devices_discovered.png)
-*Multiple devices discovered and ready to connect*
+    DM -- "drivers (lazy HW imports)" --> D1 & D2 & D3 & D4
 
----
+    D1["MuseDriver"] --> S1["StreamMuse"]
+    D2["BitalinoDriver"] --> S2["StreamBioTalino"]
+    D3["KinectDriver"] --> S3["StreamKinect"]
+    D4["E4ImportDriver"] --> IMP["importer/e4_import"]
 
-![Device Connected](docs/screenshots/03_device_connected.png)
-*Muse headband connected with signal quality indicator*
+    S1 & S2 & S3 -- "LSL" --> LSL(("Lab Streaming Layer"))
+    LSL --> REC["recorder/<br/>StreamRecorder"]
+    S3 -. ".mkv + SYNC markers" .-> REC
+    IMP -. "offline, UTC-aligned" .-> REC
 
----
+    classDef s fill:#1a212b,stroke:#3fb950,color:#e6edf3;
+```
 
-![Multiple Devices](docs/screenshots/04_multiple_devices.png)
-*Multiple devices streaming simultaneously*
-
----
-
-![LSL Streams](docs/screenshots/05_lsl_streams_active.png)
-*Live LSL streams from all connected devices*
-
----
-
-![Recording Active](docs/screenshots/06_recording_active.png)
-*Recording session in progress with live duration timer*
-
----
-
-![Full Overview](docs/screenshots/09_full_window_overview.png)
-*Complete UI showing all features in action*
+**Design principle:** `core/` imports neither FastAPI nor any device SDK at module load.
+Drivers import `muselsl` / `pygatt` / `bitalino` / `pyk4a` *inside* methods and report
+`available()`, so the core and API import and test cleanly with zero hardware present.
 
 ---
 
 ## 🚀 Quick Start
 
-### Installation
+**Requirements:** Python 3.11+ and Node 18+. (Live capture additionally needs the relevant
+device SDKs/hardware; the platform runs and is fully testable without them.)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/siddhant61/StreamSense.git
-   cd StreamSense
-   ```
-
-2. **Create Python environment** (Python 3.8+ required)
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Launch the UI
+### 1 · Backend (FastAPI + WebSocket)
 
 ```bash
-python ui/streamsense_ui.py
+python -m pip install -r requirements-dev.txt      # API + test stack
+uvicorn api.app:app --reload --port 8000
+# REST at http://localhost:8000/api/*  ·  WebSocket at ws://localhost:8000/ws
 ```
 
-### Basic Workflow
-
-1. **Discover Devices** - Click "🔍 Discover Devices"
-2. **Connect** - Click "Connect" on any device card
-3. **Monitor Streams** - Watch live streams appear in the right panel
-4. **Record** - Click "● Start Recording" to begin
-5. **Stop** - Click "■ Stop Recording" when finished
-
-**Output Location**: `Documents/StreamSense/[timestamp]/`
-- `RawData/` - HDF5 files with raw sensor data
-- `Dataset/` - Processed data (MNE format for EEG, pandas for others)
-
----
-
-## 📚 Documentation
-
-Comprehensive guides are available in the `docs/` directory:
-
-- **[UI Quick Start Guide](docs/UI_QUICK_START.md)** - Step-by-step UI usage with job demo script
-- **[Multi-Device Synchronization Guide](docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md)** - Analysis techniques for synchrony studies
-- **[Device Support Roadmap](docs/DEVICE_SUPPORT_ROADMAP.md)** - Planned device expansions
-- **[Concurrency Guidelines](CONCURRENCY_GUIDELINES.md)** - Architecture decisions and patterns
-- **[BaseStreamer API](streamer/README.md)** - Adding new devices
-- **[Dependency Management](DEPENDENCY_MANAGEMENT.md)** - Installation troubleshooting
-
----
-
-## 🏗️ Architecture
-
-### System Overview
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    StreamSense UI (PyQt5)                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   Device     │  │   Recording  │  │   Stream     │     │
-│  │   Controls   │  │   Controls   │  │   Monitor    │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-└───────────────────────────┬─────────────────────────────────┘
-                            │ Qt Signals/Slots
-┌───────────────────────────▼─────────────────────────────────┐
-│             StreamSenseController (Business Logic)          │
-│  • Device Discovery  • Connection Management  • Recording   │
-└───────────────────────────┬─────────────────────────────────┘
-                            │ Direct API Calls
-┌───────────────────────────▼─────────────────────────────────┐
-│                    Core Components                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │  FindDevices │  │ BaseStreamer │  │StreamRecorder│     │
-│  │   (Scanner)  │  │  (Abstract)  │  │   (LSL→HDF5) │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│         │                  │                    │           │
-│         │        ┌─────────▼─────────┐         │           │
-│         │        │    Streamers      │         │           │
-│         │        ├───────────────────┤         │           │
-│         │        │  StreamMuse       │         │           │
-│         │        │  StreamE4         │         │           │
-│         │        │  StreamBioTalino  │         │           │
-│         │        └─────────┬─────────┘         │           │
-└─────────┼──────────────────┼───────────────────┼───────────┘
-          │                  │                   │
-          │                  ▼                   │
-          │      Lab Streaming Layer (LSL)      │
-          │     Network Time Synchronization    │
-          │                  │                   │
-          │                  ▼                   ▼
-          ▼         ┌────────────────┐  ┌────────────────┐
-  ┌──────────────┐  │  Muse Devices  │  │ XDF Recordings │
-  │   Empatica   │  │  E4 Devices    │  │ HDF5 Raw Data  │
-  │  BLE Server  │  │  BITalino      │  │ Pickle Datasets│
-  └──────────────┘  └────────────────┘  └────────────────┘
-```
-
-### Key Design Patterns
-
-**1. BaseStreamer Architecture**
-- Abstract base class for all device streamers
-- Process-based isolation (multiprocessing.Process)
-- Standardized lifecycle: start → stream → stop
-- Event-based synchronization (multiprocessing.Event)
-
-**2. MVC Pattern**
-- **View**: PyQt5 UI (`streamsense_ui.py`)
-- **Controller**: Business logic (`streamsense_controller.py`)
-- **Model**: Core components (streamers, recorder, finder)
-
-**3. Thread Safety**
-- Qt signals for cross-thread communication
-- Background threads for blocking operations (discovery, connection)
-- Main thread reserved for UI updates
-
-**4. Process Isolation**
-- Each device runs in separate Process
-- Crash in one device doesn't affect others
-- True parallelism for CPU-intensive operations
-
----
-
-## 💻 Command-Line Interface
-
-For advanced users, StreamSense also provides a powerful CLI:
+### 2 · Frontend (Vite + React)
 
 ```bash
-python main.py
+cd frontend
+npm install
+npm run dev        # http://localhost:5173  (proxies /api and /ws to :8000)
 ```
 
-### CLI Commands
+Open **http://localhost:5173**, hit **Discover devices**, connect, and record.
+
+### Offline E4 import
 
 ```bash
-> menu          # Interactive menu mode
-> stream --dev muse   # Stream from Muse devices
-> stream --dev e4     # Stream from E4 devices
-> view --data eeg     # View EEG streams
-> record              # Start recording
-> stop                # Stop all streams
+# Confine server-side imports to a trusted base directory:
+export STREAMSENSE_IMPORT_ROOT="$HOME/data"
+curl -X POST localhost:8000/api/import/e4 -H 'Content-Type: application/json' \
+     -d '{"path": "'"$HOME"'/data/E4/2026-06-10_session"}'
 ```
 
-**Menu Options:**
-1. Connect and stream Muse devices
-2. View all active LSL streams
-3. Connect and stream E4 devices
-4. Start recording all streams
-5. Run visual oddball paradigm
-6. Start event logger console
-7. Stop all active LSL streams
-
 ---
 
-## 🔬 Research Applications
+## 🧪 Testing & CI
 
-### Example: Measuring Couple's Heart Synchrony
+The whole backend is verifiable headless — **no devices, no display**.
 
-```python
-import pyxdf
-import numpy as np
-from scipy import signal
-
-# Load synchronized recording
-streams, header = pyxdf.load_xdf('recording.xdf')
-
-# Extract PPG for both participants
-participant_a = [s for s in streams if 'Muse-A_PPG' in s['info']['name'][0]][0]
-participant_b = [s for s in streams if 'Muse-B_PPG' in s['info']['name'][0]][0]
-
-# Compute cross-correlation
-correlation = signal.correlate(ppg_a, ppg_b, mode='full')
-lags = signal.correlation_lags(len(ppg_a), len(ppg_b), mode='full')
-
-# Find peak synchrony
-peak_lag = lags[np.argmax(correlation)]
-print(f"Peak synchrony at lag: {peak_lag} samples ({peak_lag/64:.2f} seconds)")
+```bash
+# Unit + coverage — same surface as CI:
+python -m pytest -m "not integration" \
+  --cov=core --cov=api --cov=importer \
+  --cov=streamer --cov=recorder --cov=helper --cov=viewer --cov=data_processor
+python -m pytest -m "integration"                                 # process-spawning
+cd frontend && npm run build                                      # tsc (strict) + vite
 ```
 
-See [`docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md`](docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md) for complete examples.
+- **~190 tests** across `core` (device manager, clock, backoff, SQI), the streamers
+  (incl. mock-backend Kinect loop + sample shaping), the FastAPI REST/WebSocket surface,
+  and the E4 importer (directory **and** `.zip`).
+- **GitHub Actions** runs unit+coverage, integration pass/fail, and an advisory `pip-audit`
+  on **Python 3.11 & 3.12** — invoked via `python -m pytest` so plugin loading is robust.
+- An autouse fixture reaps stray `multiprocessing` workers so the suite always exits cleanly.
 
 ---
 
-## 🛠️ Platform Support
-
-| Platform | Status | Notes |
-|----------|--------|-------|
-| **Windows 10/11** | ✅ Full Support | All features available |
-| **macOS** | ⚠️ Partial | UI works, some device drivers limited |
-| **Linux** | ⚠️ Partial | UI works, E4 server not available |
-
-### Platform-Specific Requirements
-
-**Windows:**
-- Empatica BLE Server (for E4 devices)
-- BLED112 dongle drivers (for Muse devices)
-
-**macOS/Linux:**
-- Core UI and recording features work
-- Muse support via native Bluetooth LE
-- E4 requires Windows or virtual machine
-
----
-
-## 📦 Repository Structure
+## 📁 Project structure
 
 ```
 StreamSense/
-├── ui/                          # Professional UI dashboard
-│   ├── streamsense_ui.py       # PyQt5 interface
-│   └── streamsense_controller.py  # Backend controller
-├── streamer/                    # Device streamers
-│   ├── base_streamer.py        # Abstract base class
-│   ├── stream_muse.py          # Muse headband streamer
-│   ├── stream_e4.py            # Empatica E4 streamer
-│   └── stream_bitalino.py      # BITalino streamer
-├── recorder/                    # Recording logic
-│   └── stream_recorder.py      # LSL → HDF5 recorder
-├── helper/                      # Utilities
-│   ├── find_devices.py         # Device discovery
-│   └── e4_helper.py            # E4-specific helpers
-├── viewer/                      # Stream visualization
-│   └── view_streams.py         # Vispy-based viewer
-├── experiments/                 # Experimental protocols
-│   └── visual_oddball.py       # Visual oddball paradigm
-├── docs/                        # Documentation
-│   ├── UI_QUICK_START.md       # UI usage guide
-│   ├── MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md
-│   ├── DEVICE_SUPPORT_ROADMAP.md
-│   └── screenshots/            # UI screenshots
-├── tests/                       # Test suite
-├── audit/                       # Architecture analysis
-├── main.py                      # CLI entry point
-└── requirements.txt             # Dependencies
+├── core/              # framework-agnostic device manager (no HW/web imports)
+│   ├── device_manager.py   # discover/connect/record/status + event bus
+│   ├── drivers.py          # Muse · BITalino · Kinect · E4 (lazy HW imports)
+│   ├── clock.py            # unified SessionClock
+│   ├── backoff.py          # exponential backoff + reconnect
+│   └── signal_quality.py   # real SQI (no fabricated values)
+├── api/               # FastAPI app: REST /api/* + /ws WebSocket
+├── streamer/          # BaseStreamer + Muse / BITalino / Kinect streamers
+├── recorder/          # LSL session recorder
+├── importer/          # Empatica E4 offline importer (E4 Connect → dataset)
+├── frontend/          # Vite + React + TypeScript dashboard
+│   └── src/components/     # DeviceCard · SignalQuality · StreamMonitor · SessionBar
+│                           # SkeletonCanvas · ModalityPanel · ImportPanel · ActivityLog
+├── tests/             # ~190 headless unit + integration tests
+├── docs/              # design, synchronization guide, device roadmap, screenshots
+└── .github/workflows/ # CI (pytest 3.11/3.12 + pip-audit)
 ```
 
----
-
-## 🧪 Development
-
-### Running Tests
-
-```bash
-pytest
-```
-
-Current test coverage:
-- ✅ BaseStreamer lifecycle (21 tests)
-- ✅ Muse streaming (8 tests)
-- ✅ E4 streaming (19 tests)
-- ✅ Data processing utilities
-
-### Adding New Devices
-
-StreamSense makes it easy to add new devices:
-
-1. **Inherit from BaseStreamer**
-   ```python
-   from streamer.base_streamer import BaseStreamer
-
-   class StreamMyDevice(BaseStreamer):
-       def __init__(self, device_id, synchronized_start_time, root_output_folder):
-           super().__init__(
-               device_name=f"MyDevice_{device_id}",
-               synchronized_start_time=synchronized_start_time,
-               root_output_folder=root_output_folder
-           )
-
-       def _stream_wrapper(self):
-           # Main streaming logic
-           pass
-
-       def _setup_lsl_outlets(self):
-           # Create LSL outlets
-           pass
-   ```
-
-2. **Implement streaming logic** - Connect to device, read samples, push to LSL
-3. **Add to controller** - Update `streamsense_controller.py` discovery and connection
-4. **Write tests** - Ensure reliability
-
-See [`streamer/README.md`](streamer/README.md) for detailed guide.
+📐 Full design notes: [`docs/PLATFORM_V2_DESIGN.md`](docs/PLATFORM_V2_DESIGN.md) ·
+🔗 Sync model: [`docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md`](docs/MULTI_DEVICE_SYNCHRONIZATION_GUIDE.md)
 
 ---
 
-## 🤝 Contributing
+## 🗺 Roadmap & future direction
 
-Contributions are welcome! Areas of interest:
+**Shipped** ✅  Stabilized base · device-manager core + FastAPI/WS · Azure Kinect streamer ·
+acquisition layer (clock + backoff + real SQI) · web dashboard · E4 offline importer.
 
-- 🔌 **New device support** (Polar H10, Emotiv, OpenBCI, etc.)
-- 📊 **Real-time visualization** (signal plots, synchrony graphs)
-- 🧪 **Additional tests** (integration tests, UI tests)
-- 📖 **Documentation** (tutorials, examples, translations)
-- 🐛 **Bug fixes** (especially cross-platform issues)
+**On-device verification** (hardware-bound — the code is structured and mock-tested, awaiting
+a physical rig):
+- [ ] Validate `PyK4ABackend` capture / `.mkv` recording / Body-Tracking-SDK joint shapes.
+- [ ] Live Muse & BITalino connect/stream confirmation on real BLE hardware.
+- [ ] E4 ↔ session fine time-offset calibration from a paired recording.
 
-**How to contribute:**
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📝 Citation
-
-If you use StreamSense in your research, please cite:
-
-```bibtex
-@software{streamsense2025,
-  title = {StreamSense: Multi-Device Physiological Recording Platform},
-  author = {StreamSense Team},
-  year = {2025},
-  url = {https://github.com/siddhant61/StreamSense}
-}
-```
+**Next features**
+- [ ] Live **LSL → `joints`** forwarder to feed the skeleton preview with real capture data.
+- [ ] **Session browser & export** — XDF export, per-session metadata, quick replay.
+- [ ] **Real-time SQI streaming** to the UI from an LSL inlet (per-channel quality).
+- [ ] More modalities behind the same driver interface (eye-tracking, ECG belts, audio).
+- [ ] **Dockerized** one-command deploy; optional auth for remote/lab-network operation.
+- [ ] Analysis notebooks (MNE / pandas) over recorded sessions.
 
 ---
 
-## 📄 License
+## 🔬 Research context
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+StreamSense was built for **multi-person, multi-modal physiological research** — measuring
+*synchrony* between people and signals:
+
+- 👥 **Social neuroscience** — physiological coupling across participants
+- 🧘 **Contemplative science** — multi-brain dynamics during shared meditation
+- 🎶 **Ensemble performance** — coordination in musicians/dancers
+- 💑 **Dyadic studies** — cardiac & neural alignment in pairs
 
 ---
+
+## 📜 License
+
+Released under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- **Lab Streaming Layer (LSL)** - Foundation for synchronized streaming
-- **MNE-Python** - EEG analysis tools
-- **PyQt5** - Professional UI framework
-- **Muse LSL** - Muse device integration
-- **Empatica** - E4 device support
-- **BITalino** - Open-source biosignal platform
+Built on the shoulders of [Lab Streaming Layer](https://labstreaminglayer.readthedocs.io/),
+[muse-lsl](https://github.com/alexandrebarachant/muse-lsl),
+[pyk4a](https://github.com/etiennedub/pyk4a),
+[BITalino](https://www.bitalino.com/),
+[FastAPI](https://fastapi.tiangolo.com/), and [React](https://react.dev/).
 
----
-
-## 📬 Contact & Support
-
-- **Issues**: [GitHub Issues](https://github.com/siddhant61/StreamSense/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/siddhant61/StreamSense/discussions)
-- **Documentation**: [`docs/`](docs/)
-
----
-
-<div align="center">
-
-**Built with ❤️ for social neuroscience research**
-
-⭐ **Star this repository** if you find it useful! ⭐
-
-[⬆ Back to Top](#-streamsense)
-
-</div>
+<div align="center"><sub>Crafted with care for honest, reproducible science. 🌊</sub></div>

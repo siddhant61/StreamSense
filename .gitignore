@@ -81,7 +81,8 @@ Thumbs.db
 Desktop.ini
 
 # Local data / artifacts
-Logs/*.log
+Logs/*
+!Logs/.gitkeep
 *.h5
 *.hdf5
 *.sqlite

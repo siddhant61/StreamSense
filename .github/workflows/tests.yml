@@ -42,6 +42,7 @@ jobs:
         # and abort with a usage error (exit 4) on --cov.
         run: |
           python -m pytest -m "not integration" \
+            --cov=core --cov=api --cov=importer \
             --cov=streamer --cov=recorder --cov=helper --cov=viewer --cov=data_processor \
             --cov-report=term-missing --cov-report=xml
 
