@@ -170,7 +170,10 @@ curl -X POST localhost:8000/api/import/e4 -H 'Content-Type: application/json' \
 The whole backend is verifiable headless — **no devices, no display**.
 
 ```bash
-python -m pytest -m "not integration" --cov=core --cov=streamer   # unit + coverage
+# Unit + coverage — same surface as CI:
+python -m pytest -m "not integration" \
+  --cov=core --cov=api --cov=importer \
+  --cov=streamer --cov=recorder --cov=helper --cov=viewer --cov=data_processor
 python -m pytest -m "integration"                                 # process-spawning
 cd frontend && npm run build                                      # tsc (strict) + vite
 ```
