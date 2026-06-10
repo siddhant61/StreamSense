@@ -21,6 +21,10 @@ class DiscoverRequest(BaseModel):
     types: Optional[List[str]] = None
 
 
+class E4ImportRequest(BaseModel):
+    path: str
+
+
 def create_app(manager: Optional[DeviceManager] = None) -> FastAPI:
     app = FastAPI(title="StreamSense Platform API", version="2.0.0-dev")
     app.state.manager = manager or DeviceManager()
@@ -72,6 +76,21 @@ def create_app(manager: Optional[DeviceManager] = None) -> FastAPI:
     @app.get("/api/streams")
     def streams():
         return {"streams": mgr().list_streams()}
+
+    @app.post("/api/import/e4")
+    def import_e4(req: E4ImportRequest):
+        """Import an E4 Connect session (directory or .zip) and return its summary.
+
+        The E4 is offline-only (Empatica withdrew live streaming); this aligns a recorded
+        session by absolute UTC timestamps.
+        """
+        from importer.e4_import import load_session  # lazy
+        try:
+            return load_session(req.path).summary()
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail=f"E4 import failed: {exc}")
 
     @app.websocket("/ws")
     async def ws(websocket: WebSocket):

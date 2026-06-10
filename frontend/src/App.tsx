@@ -10,6 +10,7 @@ import { StreamMonitor } from "./components/StreamMonitor";
 import { SessionBar } from "./components/SessionBar";
 import { SkeletonCanvas } from "./components/SkeletonCanvas";
 import { ActivityLog } from "./components/ActivityLog";
+import { ImportPanel } from "./components/ImportPanel";
 
 export default function App() {
   const [status, setStatus] = useState<SystemStatus | null>(null);
@@ -131,6 +132,7 @@ export default function App() {
         <div className="col">
           <ModalityPanel availability={status?.driver_availability ?? {}} />
           <StreamMonitor streams={streams} />
+          <ImportPanel />
         </div>
 
         <div className="col">
