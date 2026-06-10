@@ -57,7 +57,8 @@ def test_recording_endpoints():
     assert r2.json()["recording"]["active"] is False
 
 
-def test_import_e4_endpoint(tmp_path):
+def test_import_e4_endpoint(tmp_path, monkeypatch):
+    monkeypatch.setenv("STREAMSENSE_IMPORT_ROOT", str(tmp_path))
     (tmp_path / "BVP.csv").write_text("1551434400.0\n64.0\n-0.1\n0.2\n")
     (tmp_path / "tags.csv").write_text("1551434412.0\n")
     c = _client()
@@ -68,10 +69,19 @@ def test_import_e4_endpoint(tmp_path):
     assert body["tags"] == [1551434412.0]
 
 
-def test_import_e4_missing_path_returns_404():
+def test_import_e4_missing_path_returns_404(tmp_path, monkeypatch):
+    monkeypatch.setenv("STREAMSENSE_IMPORT_ROOT", str(tmp_path))
     c = _client()
-    r = c.post("/api/import/e4", json={"path": "/no/such/e4/session"})
+    r = c.post("/api/import/e4", json={"path": str(tmp_path / "missing")})
     assert r.status_code == 404
+
+
+def test_import_e4_path_outside_root_rejected(tmp_path, monkeypatch):
+    # Path traversal / arbitrary file read must be refused.
+    monkeypatch.setenv("STREAMSENSE_IMPORT_ROOT", str(tmp_path))
+    c = _client()
+    r = c.post("/api/import/e4", json={"path": "/etc"})
+    assert r.status_code == 403
 
 
 def test_status_endpoint_shape():

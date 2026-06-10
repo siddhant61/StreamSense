@@ -101,6 +101,9 @@ def parse_signal_rows(name: str, rows: Sequence[Row]) -> E4Signal:
         if not row or all(str(c).strip() == "" for c in row):
             continue
         if channels > 1:
+            if len(row) < channels:
+                raise ValueError(
+                    f"{name}: sample row has {len(row)} columns, expected {channels}")
             samples.append([_to_float(c) for c in row[:channels]])
         else:
             samples.append(_to_float(row[0]))

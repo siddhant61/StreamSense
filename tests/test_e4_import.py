@@ -44,6 +44,13 @@ def test_parse_signal_too_short_raises():
         parse_signal_rows("HR", [["100.0"]])
 
 
+def test_parse_acc_ragged_row_raises():
+    # A multi-channel row with too few columns must fail fast, not produce a short sample.
+    rows = [["100", "100", "100"], ["32", "32", "32"], ["1", "2", "3"], ["4", "5"]]
+    with pytest.raises(ValueError):
+        parse_signal_rows("ACC", rows)
+
+
 def test_parse_ibi_rows_to_absolute_times():
     rows = [["1551434400.0", "IBI"], ["1.5", "0.82"], ["3.0", "0.79"]]
     ibi = parse_ibi_rows(rows)

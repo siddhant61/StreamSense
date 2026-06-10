@@ -8,7 +8,9 @@ DeviceManager events into the asyncio loop via ``loop.call_soon_threadsafe``.
 from __future__ import annotations
 
 import asyncio
+import os
 import time
+from pathlib import Path
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -23,6 +25,25 @@ class DiscoverRequest(BaseModel):
 
 class E4ImportRequest(BaseModel):
     path: str
+
+
+def _import_root() -> Path:
+    """Allowlisted base directory for E4 imports (STREAMSENSE_IMPORT_ROOT, else $HOME)."""
+    return Path(os.environ.get("STREAMSENSE_IMPORT_ROOT", str(Path.home()))).resolve()
+
+
+def _validate_import_path(raw: str) -> Path:
+    """Resolve and confine an import path within the allowlisted root.
+
+    Prevents a client from making the server read arbitrary host files via the import
+    endpoint (path traversal / data exfiltration).
+    """
+    root = _import_root()
+    resolved = Path(raw).resolve()
+    if not resolved.is_relative_to(root):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail=f"import path must be within {root}")
+    return resolved
 
 
 def create_app(manager: Optional[DeviceManager] = None) -> FastAPI:
@@ -84,9 +105,10 @@ def create_app(manager: Optional[DeviceManager] = None) -> FastAPI:
         The E4 is offline-only (Empatica withdrew live streaming); this aligns a recorded
         session by absolute UTC timestamps.
         """
+        path = _validate_import_path(req.path)  # confine to the allowlisted root
         from importer.e4_import import load_session  # lazy
         try:
-            return load_session(req.path).summary()
+            return load_session(str(path)).summary()
         except FileNotFoundError as exc:
             raise HTTPException(status_code=404, detail=str(exc))
         except Exception as exc:
