@@ -18,6 +18,9 @@ from .models import (
     DeviceType, ConnectionState, DeviceInfo, RecordingState, SystemStatus,
 )
 from .drivers import DeviceDriver, default_drivers
+from .clock import SessionClock
+from .backoff import ExponentialBackoff, retry_with_backoff
+from .signal_quality import assess, QualityScore
 
 logger = logging.getLogger("core.device_manager")
 
@@ -26,15 +29,6 @@ Listener = Callable[[dict], None]
 
 class DeviceManagerError(Exception):
     pass
-
-
-def _now_clock() -> float:
-    """Synchronized session clock; prefer pylsl.local_clock, fall back to time.time."""
-    try:
-        from pylsl import local_clock  # lazy
-        return local_clock()
-    except Exception:
-        return time.time()
 
 
 class DeviceManager:
@@ -54,7 +48,11 @@ class DeviceManager:
         self.recording = RecordingState()
         self._lock = threading.RLock()
         self._listeners: List[Listener] = []
-        self.sync_time = _now_clock()
+        # One reference clock per session; streamers stamp against its epoch.
+        self.clock = SessionClock()
+        self.sync_time = self.clock.epoch
+        self.backoff = ExponentialBackoff()
+        self._stop_flag = threading.Event()
 
     # ----- events ------------------------------------------------------------
     def add_listener(self, cb: Listener) -> None:
@@ -155,10 +153,42 @@ class DeviceManager:
         return True
 
     def disconnect_all(self) -> None:
+        self._stop_flag.set()  # halt any in-flight reconnect loops
         if self.recording.active:
             self.stop_recording()
         for device_id in list(self._streamers.keys()):
             self.disconnect(device_id)
+
+    def reconnect(self, device_id: str, max_attempts: int = 5,
+                  sleep_fn: Callable[[float], None] = time.sleep) -> bool:
+        """Reconnect a device with exponential backoff (stop-aware).
+
+        Replaces fixed-delay retry loops: waits base*factor**attempt (capped, jittered)
+        between attempts and aborts promptly if the manager is shutting down.
+        """
+        return retry_with_backoff(
+            lambda: self.connect(device_id),
+            max_attempts=max_attempts, backoff=self.backoff,
+            should_stop=self._stop_flag.is_set, sleep=sleep_fn,
+            on_retry=lambda n, d: self._emit("log", {
+                "level": "info",
+                "message": f"reconnect {device_id}: attempt {n}, next in {d:.1f}s"}),
+        )
+
+    # ----- signal quality ----------------------------------------------------
+    def update_signal_quality(self, device_id: str, score: QualityScore) -> None:
+        """Set a device's signal quality from a computed score and notify listeners."""
+        device = self._require_device(device_id)
+        device.signal_quality = score.value
+        self._emit_device(device)
+
+    def assess_device(self, device_id: str, samples, *, expected_rate=None,
+                      actual_rate=None, amplitude_range=None) -> QualityScore:
+        """Compute a real signal-quality score from recent samples and apply it."""
+        score = assess(samples, expected_rate=expected_rate, actual_rate=actual_rate,
+                       amplitude_range=amplitude_range)
+        self.update_signal_quality(device_id, score)
+        return score
 
     # ----- recording ---------------------------------------------------------
     def start_recording(self, timeout: int = 10) -> bool:

@@ -13,6 +13,9 @@ from .models import (
     SystemStatus,
 )
 from .device_manager import DeviceManager, DeviceManagerError
+from .clock import SessionClock
+from .backoff import ExponentialBackoff, retry_with_backoff
+from .signal_quality import assess, QualityScore
 
 __all__ = [
     "DeviceType",
@@ -22,4 +25,9 @@ __all__ = [
     "SystemStatus",
     "DeviceManager",
     "DeviceManagerError",
+    "SessionClock",
+    "ExponentialBackoff",
+    "retry_with_backoff",
+    "assess",
+    "QualityScore",
 ]

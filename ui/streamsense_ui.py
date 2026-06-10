@@ -589,8 +589,8 @@ class StreamSenseUI(QMainWindow):
                 card
             )
 
-    def update_device_status(self, device_name: str, connected: bool, signal_quality: int = 85):
-        """Update device connection status."""
+    def update_device_status(self, device_name: str, connected: bool, signal_quality: int = 0):
+        """Update device connection status. signal_quality 0 = unknown/unmeasured."""
         if device_name in self.devices:
             self.devices[device_name].set_connected(connected, signal_quality)
 
