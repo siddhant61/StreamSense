@@ -127,6 +127,11 @@ def test_quality_ragged_rows_lower_the_score_instead_of_raising():
     assert 0.9 < s.detail["per_channel"][1] < 1.0     # one missing value of 100 -> 0.99
 
 
+def test_quality_non_indexable_rows_do_not_raise():
+    s = assess([{"x": 1.0, "y": 2.0}] * 20)   # dict samples: not rows we can index
+    assert s.value == 0.0 and s.label == "poor"
+
+
 def test_quality_unknown_for_rows_without_channels():
     # Nothing to judge is "unknown" (None) — never a made-up number.
     s = assess([[] for _ in range(20)])

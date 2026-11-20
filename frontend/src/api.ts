@@ -130,12 +130,13 @@ export function connectWebSocket(
     const sock = new WebSocket(`${proto}://${location.host}/ws`);
     current = sock;
     sock.onopen = () => {
-      attempt = 0;
       if (up !== true) { up = true; onState?.(true); }
     };
     sock.onmessage = (m) => {
       let event: WsEvent;
+      if (closed) return;
       try { event = JSON.parse(m.data); } catch { return; } // ignore a malformed frame
+      attempt = 0; // backoff resets only once the server actually speaks, not on bare accept
       onEvent(event);
     };
     sock.onclose = () => {

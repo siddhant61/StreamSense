@@ -77,6 +77,7 @@ button.rec.stop { background: var(--warn); }
 /* Reflow down to 320px: long paths and reasons wrap instead of widening the page. */
 .grid > *, .col > *, .import-row input { min-width: 0; }
 .panel, .device, .modality { overflow-wrap: anywhere; }
+.badge, .e4 td:first-child { overflow-wrap: normal; flex-shrink: 0; white-space: nowrap; }
 @media (max-width: 480px) { .app { padding: 12px; } }
 
 @media (prefers-reduced-motion: reduce) {

@@ -44,7 +44,7 @@ export default function App() {
   useEffect(() => {
     refresh();
     refreshStreams();
-    let wasDown = false;
+    let everUp = false;
     const live = connectWebSocket((e: WsEvent) => {
       switch (e.type) {
         case "status":
@@ -67,10 +67,10 @@ export default function App() {
     }, (up) => {
       setOnline(up);
       if (up) {
-        if (wasDown) pushLog("websocket reconnected");
+        if (everUp) pushLog("websocket reconnected");
+        everUp = true;
         refreshStreams();
       } else {
-        wasDown = true;
         pushLog("websocket closed");
       }
     });

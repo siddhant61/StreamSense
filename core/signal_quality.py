@@ -82,7 +82,11 @@ def _as_channels(samples: Sequence[Any]) -> List[List[float]]:
         for s in samples:
             width = _size(s)
             for i in range(n):
-                channels[i].append(_to_float(s[i]) if i < width else float("nan"))
+                try:
+                    value = s[i] if i < width else float("nan")
+                except (KeyError, IndexError, TypeError):  # not an indexable row
+                    value = float("nan")
+                channels[i].append(_to_float(value))
         return channels
     return [[_to_float(s) for s in samples]]
 
