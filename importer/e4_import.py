@@ -160,8 +160,16 @@ def _gather_csvs(path: str) -> Dict[str, str]:
 
 
 def load_session(path: str) -> E4Session:
-    """Load an E4 Connect session from a directory or `.zip`."""
+    """Load an E4 Connect session from a directory or `.zip`.
+
+    Raises ``FileNotFoundError`` when the path is neither, and ``ValueError`` when it holds
+    none of the E4 Connect files — a wrong folder must not look like a successful import of
+    an empty session.
+    """
     csvs = _gather_csvs(path)
+    if not any(name in csvs for name in (*SIGNAL_FILES, "IBI", "TAGS")):
+        expected = ", ".join(f"{name}.csv" for name in SIGNAL_FILES) + ", IBI.csv, tags.csv"
+        raise ValueError(f"no E4 Connect files found in {path} (expected any of: {expected})")
     session = E4Session(source=str(path))
     for name in SIGNAL_FILES:
         if name in csvs:

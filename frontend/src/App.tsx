@@ -44,7 +44,8 @@ export default function App() {
   useEffect(() => {
     refresh();
     refreshStreams();
-    const ws = connectWebSocket((e: WsEvent) => {
+    let wasDown = false;
+    const live = connectWebSocket((e: WsEvent) => {
       switch (e.type) {
         case "status":
           setStatus(e.payload as SystemStatus);
@@ -63,16 +64,20 @@ export default function App() {
           break;
         }
       }
+    }, (up) => {
+      setOnline(up);
+      if (up) {
+        if (wasDown) pushLog("websocket reconnected");
+        refreshStreams();
+      } else {
+        wasDown = true;
+        pushLog("websocket closed");
+      }
     });
-    ws.onopen = () => setOnline(true);
-    ws.onclose = () => {
-      setOnline(false);
-      pushLog("websocket closed");
-    };
     const streamPoll = setInterval(refreshStreams, 4000);
     return () => {
       clearInterval(streamPoll);
-      ws.close();
+      live.close();
     };
   }, [refresh, refreshStreams, pushLog]);
 
@@ -99,9 +104,10 @@ export default function App() {
       <header>
         <h1>🧠 StreamSense</h1>
         <span className="subtitle">Multi-Device Recording Platform</span>
-        <span className={`conn ${online ? "up" : "down"}`}>{online ? "● live" : "○ offline"}</span>
+        <span className={`conn ${online ? "up" : "down"}`} role="status">{online ? "● live" : "○ offline"}</span>
       </header>
 
+      <main>
       <section className="controls">
         <button disabled={busy} onClick={() => run("discover", () => api.discover())}>
           🔍 Discover devices
@@ -145,6 +151,7 @@ export default function App() {
           <ActivityLog lines={log} />
         </div>
       </section>
+      </main>
     </div>
   );
 }

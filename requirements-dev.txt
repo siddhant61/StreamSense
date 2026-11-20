@@ -22,6 +22,9 @@ mne==1.12.1
 # Platform web backend (FastAPI API + WebSocket) — needed to run core/api tests
 fastapi==0.136.3
 uvicorn==0.48.0
+# uvicorn serves WebSockets only if `websockets` (or `wsproto`) is installed; without it
+# /ws answers 404 and the dashboard never goes live (see tests/test_live_server.py).
+websockets==17.4
 httpx==0.28.1
 pydantic==2.13.4
 

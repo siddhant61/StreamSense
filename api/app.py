@@ -8,6 +8,7 @@ DeviceManager events into the asyncio loop via ``loop.call_soon_threadsafe``.
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 import time
 from pathlib import Path
@@ -17,6 +18,8 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from core import DeviceManager, DeviceManagerError
+
+logger = logging.getLogger("api.app")
 
 
 class DiscoverRequest(BaseModel):
@@ -124,18 +127,51 @@ def create_app(manager: Optional[DeviceManager] = None) -> FastAPI:
             # Called from device/recorder threads -> hop back onto the event loop.
             loop.call_soon_threadsafe(queue.put_nowait, event)
 
-        mgr().add_listener(listener)
-        try:
+        async def pump() -> None:
+            """Forward the initial status, then every manager event, to this client."""
             await websocket.send_json(
                 {"type": "status", "payload": mgr().get_status().to_dict(), "ts": time.time()}
             )
             while True:
-                event = await queue.get()
-                await websocket.send_json(event)
-        except WebSocketDisconnect:
-            pass
+                await websocket.send_json(await queue.get())
+
+        async def drain() -> None:
+            """Read (and ignore) inbound frames until the client goes away.
+
+            The dashboard never sends anything, but the server must keep *receiving*: an
+            ASGI app only learns that a socket closed from ``receive()``. Without this the
+            handler stayed parked on the event queue after the browser left, so its
+            listener was never released and uvicorn's graceful shutdown (Ctrl+C, and every
+            ``--reload``) waited on it forever.
+            """
+            while True:
+                message = await websocket.receive()
+                if message["type"] == "websocket.disconnect":
+                    return
+
+        mgr().add_listener(listener)
+        sender = asyncio.create_task(pump())
+        receiver = asyncio.create_task(drain())
+        try:
+            await asyncio.wait({sender, receiver}, return_when=asyncio.FIRST_COMPLETED)
         finally:
             mgr().remove_listener(listener)
+            client_gone = receiver.done()
+            for task in (sender, receiver):
+                task.cancel()
+            results = await asyncio.gather(sender, receiver, return_exceptions=True)
+            failure = results[0]
+            if (isinstance(failure, Exception)
+                    and not isinstance(failure, (WebSocketDisconnect, asyncio.CancelledError))
+                    and not client_gone):
+                # The pump died on something other than a disconnect (e.g. an event that
+                # is not JSON-serializable). Close so the client reconnects with a fresh
+                # status instead of sitting on a socket that will never speak again.
+                logger.error("websocket event pump failed: %r", failure)
+                try:
+                    await websocket.close(code=1011)
+                except Exception:  # already closed / closing
+                    pass
 
     return app
 

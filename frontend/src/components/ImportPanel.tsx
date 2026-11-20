@@ -29,13 +29,14 @@ export function ImportPanel() {
         <input
           type="text"
           placeholder="/path/to/E4 session"
+          aria-label="E4 session folder or .zip path"
           value={path}
           onChange={(e) => setPath(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && doImport()}
         />
         <button disabled={busy || !path.trim()} onClick={doImport}>Import</button>
       </div>
-      {error && <small className="off">{error}</small>}
+      {error && <small className="off" role="alert">{error}</small>}
       {summary && (
         <table className="e4">
           <tbody>

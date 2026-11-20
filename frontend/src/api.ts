@@ -101,9 +101,56 @@ export function qualityView(q: number | null): { label: string; color: string; p
   return { label: "poor", color: "var(--off)", pct };
 }
 
-export function connectWebSocket(onEvent: (e: WsEvent) => void): WebSocket {
+/** Delay before reconnect attempt `attempt` (0-based): 0.5s, 1s, 2s, 4s, 8s, then capped at 10s. */
+export function reconnectDelay(attempt: number, baseMs = 500, capMs = 10_000): number {
+  return Math.min(capMs, baseMs * 2 ** Math.max(0, attempt));
+}
+
+export interface LiveSocket {
+  close(): void;
+}
+
+/**
+ * Open the event stream and keep it open: when the socket drops (backend restart, network
+ * blip) it reconnects with capped exponential backoff. `onState` fires on each
+ * online/offline transition (once for an initial failure), not on every retry.
+ */
+export function connectWebSocket(
+  onEvent: (e: WsEvent) => void,
+  onState?: (online: boolean) => void,
+): LiveSocket {
   const proto = location.protocol === "https:" ? "wss" : "ws";
-  const ws = new WebSocket(`${proto}://${location.host}/ws`);
-  ws.onmessage = (m) => onEvent(JSON.parse(m.data));
-  return ws;
+  let current: WebSocket | null = null;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let attempt = 0;
+  let up: boolean | null = null;
+  let closed = false;
+
+  const open = () => {
+    const sock = new WebSocket(`${proto}://${location.host}/ws`);
+    current = sock;
+    sock.onopen = () => {
+      attempt = 0;
+      if (up !== true) { up = true; onState?.(true); }
+    };
+    sock.onmessage = (m) => {
+      let event: WsEvent;
+      try { event = JSON.parse(m.data); } catch { return; } // ignore a malformed frame
+      onEvent(event);
+    };
+    sock.onclose = () => {
+      if (closed || current !== sock) return; // deliberate close, or a superseded socket
+      if (up !== false) { up = false; onState?.(false); }
+      timer = setTimeout(open, reconnectDelay(attempt++));
+    };
+  };
+  open();
+
+  return {
+    close() {
+      closed = true;
+      clearTimeout(timer);
+      current?.close();
+    },
+  };
 }

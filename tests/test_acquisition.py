@@ -93,6 +93,55 @@ def test_quality_multichannel():
     assert s.detail["channels"] == 2 and s.value >= 0.8
 
 
+def test_quality_accepts_numpy_buffers():
+    # LSL chunks and streamer buffers are NumPy arrays; `if not samples` on an array
+    # raises "truth value ... is ambiguous", so these used to crash instead of scoring.
+    np = pytest.importorskip("numpy")
+    t = np.arange(200) / 5.0
+
+    one_d = assess(np.sin(t))
+    assert one_d.label == "good" and one_d.detail["channels"] == 1 and one_d.detail["n"] == 200
+
+    two_d = assess(np.column_stack([np.sin(t), np.cos(t), np.sin(2 * t)]))
+    assert two_d.label == "good" and two_d.detail["channels"] == 3
+
+    assert assess(np.sin(t[:3])).value is None          # short buffer -> unknown, not a crash
+    assert assess(np.array([])).value is None           # empty buffer -> unknown, not a crash
+
+
+def test_quality_list_of_numpy_rows_is_multichannel():
+    # A list of array rows is a multi-channel buffer. It used to be read as one channel of
+    # un-floatable values and reported as a fabricated 0.0 / "poor" for a healthy signal.
+    np = pytest.importorskip("numpy")
+    rows = [np.array([math.sin(i), math.cos(i)]) for i in range(100)]
+    s = assess(rows)
+    assert s.detail["channels"] == 2
+    assert s.value is not None and s.value >= 0.8 and s.label == "good"
+
+
+def test_quality_ragged_rows_lower_the_score_instead_of_raising():
+    rows = [[math.sin(i), math.cos(i)] for i in range(99)] + [[0.5]]   # last row lost a channel
+    s = assess(rows)
+    assert s.detail["channels"] == 2
+    assert s.detail["per_channel"][0] == 1.0          # complete channel unaffected
+    assert 0.9 < s.detail["per_channel"][1] < 1.0     # one missing value of 100 -> 0.99
+
+
+def test_quality_unknown_for_rows_without_channels():
+    # Nothing to judge is "unknown" (None) — never a made-up number.
+    s = assess([[] for _ in range(20)])
+    assert s.value is None and s.label == "unknown"
+
+
+def test_manager_assess_device_accepts_numpy_buffer():
+    np = pytest.importorskip("numpy")
+    m = make_manager()
+    m.discover()
+    score = m.assess_device("muse:AA", np.sin(np.arange(200) / 5.0))
+    assert score.label == "good"
+    assert m.devices["muse:AA"].signal_quality == score.value
+
+
 # ----- DeviceManager wiring ------------------------------------------------- #
 def test_manager_uses_session_clock_epoch_as_sync_time():
     m = make_manager()

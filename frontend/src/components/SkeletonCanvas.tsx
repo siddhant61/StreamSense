@@ -29,7 +29,8 @@ export function SkeletonCanvas({ points }: { points: Point[] | null }) {
     ctx.lineWidth = 2;
     for (const [a, b] of BONES) {
       const pa = sp[a], pb = sp[b];
-      if (pa.conf > 0 && pb.conf > 0) {
+      // A short or partial frame must not take the whole dashboard down.
+      if (pa && pb && pa.conf > 0 && pb.conf > 0) {
         ctx.beginPath();
         ctx.moveTo(pa.x, pa.y);
         ctx.lineTo(pb.x, pb.y);
@@ -46,5 +47,6 @@ export function SkeletonCanvas({ points }: { points: Point[] | null }) {
     }
   }, [points]);
 
-  return <canvas ref={ref} width={SIZE} height={SIZE} className="skeleton" />;
+  return <canvas ref={ref} width={SIZE} height={SIZE} className="skeleton"
+    role="img" aria-label="Kinect skeleton preview" />;
 }

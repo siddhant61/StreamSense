@@ -41,17 +41,48 @@ def _label(value: Optional[float]) -> str:
     return "poor"
 
 
+def _size(value: Any) -> int:
+    """``len()`` that tolerates ``None`` and scalars (0 when there is no length).
+
+    Buffers arrive as lists, tuples, deques or NumPy arrays; ``if not samples`` is not usable
+    because the truth value of an array is ambiguous and raises.
+    """
+    if value is None or isinstance(value, (str, bytes)):
+        return 0
+    try:
+        return len(value)
+    except TypeError:
+        return 0
+
+
+def _is_row(value: Any) -> bool:
+    """True for a per-sample channel vector (list / tuple / array row), False for a scalar."""
+    if isinstance(value, (str, bytes)):
+        return False
+    try:
+        len(value)
+    except TypeError:
+        return False
+    return True
+
+
 def _as_channels(samples: Sequence[Any]) -> List[List[float]]:
-    """Normalize samples to a list of per-channel float lists."""
-    if not samples:
+    """Normalize samples to a list of per-channel float lists.
+
+    Accepts a 1-D buffer of scalars or a buffer of per-sample rows (2-D array, or a list of
+    lists / tuples / array rows). A row shorter than the first one contributes NaN for its
+    missing channels, so a ragged chunk lowers the score instead of raising.
+    """
+    if _size(samples) == 0:
         return []
     first = samples[0]
-    if isinstance(first, (list, tuple)):
+    if _is_row(first):
         n = len(first)
         channels: List[List[float]] = [[] for _ in range(n)]
         for s in samples:
+            width = _size(s)
             for i in range(n):
-                channels[i].append(_to_float(s[i]))
+                channels[i].append(_to_float(s[i]) if i < width else float("nan"))
         return channels
     return [[_to_float(s) for s in samples]]
 
@@ -98,13 +129,17 @@ def assess(
     amplitude_range: Optional[tuple] = None,
 ) -> QualityScore:
     """Score a rolling buffer of samples. Too few samples -> unknown (None)."""
-    if samples is None or len(samples) < MIN_SAMPLES:
+    n_samples = _size(samples)
+    if n_samples < MIN_SAMPLES:
         return QualityScore(None, "unknown", {"reason": "insufficient samples",
-                                              "n": 0 if not samples else len(samples)})
+                                              "n": n_samples})
 
     channels = _as_channels(samples)
+    if not channels:
+        # Rows with no channels carry no signal to judge: unknown, never a made-up 0.
+        return QualityScore(None, "unknown", {"reason": "no channels", "n": n_samples})
     per_channel = [_channel_quality(ch, amplitude_range) for ch in channels]
-    quality = sum(per_channel) / len(per_channel) if per_channel else 0.0
+    quality = sum(per_channel) / len(per_channel)
 
     rate_ratio = None
     if expected_rate and actual_rate is not None and expected_rate > 0:
@@ -116,7 +151,7 @@ def assess(
         value=quality,
         label=_label(quality),
         detail={
-            "n": len(samples),
+            "n": n_samples,
             "channels": len(channels),
             "per_channel": [round(q, 3) for q in per_channel],
             "rate_ratio": None if rate_ratio is None else round(rate_ratio, 3),

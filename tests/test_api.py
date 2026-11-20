@@ -76,6 +76,17 @@ def test_import_e4_missing_path_returns_404(tmp_path, monkeypatch):
     assert r.status_code == 404
 
 
+def test_import_e4_folder_without_e4_files_returns_400(tmp_path, monkeypatch):
+    # Used to answer 200 with an empty summary, which the UI rendered as a successful
+    # import ("IBI 0 beats / Tags 0").
+    monkeypatch.setenv("STREAMSENSE_IMPORT_ROOT", str(tmp_path))
+    (tmp_path / "notes.txt").write_text("not an E4 export")
+    c = _client()
+    r = c.post("/api/import/e4", json={"path": str(tmp_path)})
+    assert r.status_code == 400
+    assert "no E4 Connect files found" in r.json()["detail"]
+
+
 def test_import_e4_path_outside_root_rejected(tmp_path, monkeypatch):
     # Path traversal / arbitrary file read must be refused.
     monkeypatch.setenv("STREAMSENSE_IMPORT_ROOT", str(tmp_path))

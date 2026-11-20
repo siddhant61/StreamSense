@@ -115,3 +115,37 @@ def test_load_session_summary_shape(tmp_path):
 def test_load_session_bad_path_raises():
     with pytest.raises(FileNotFoundError):
         load_session("/nonexistent/path/to/session")
+
+
+def test_load_session_without_e4_files_raises(tmp_path):
+    # A wrong folder (e.g. the parent of the session) must not import as an empty session.
+    (tmp_path / "notes.txt").write_text("not an E4 export")
+    (tmp_path / "other.csv").write_text("a,b\n1,2\n")
+    with pytest.raises(ValueError, match="no E4 Connect files found"):
+        load_session(str(tmp_path))
+
+
+def test_load_session_zip_without_e4_files_raises(tmp_path):
+    zip_path = tmp_path / "wrong.zip"
+    with zipfile.ZipFile(zip_path, "w") as zf:
+        zf.writestr("readme.txt", "nothing here")
+    with pytest.raises(ValueError, match="no E4 Connect files found"):
+        load_session(str(zip_path))
+
+
+def test_load_session_accepts_partial_export(tmp_path):
+    # One recognised file is enough: partial exports stay importable.
+    (tmp_path / "tags.csv").write_text("1551434412.0\n")
+    s = load_session(str(tmp_path))
+    assert s.signals == {} and s.tags == [1551434412.0]
+
+
+def test_load_session_from_zip_with_nested_folder(tmp_path):
+    # E4 archives re-zipped from a folder keep the folder prefix on every member.
+    _write_session(tmp_path)
+    zip_path = tmp_path / "nested.zip"
+    with zipfile.ZipFile(zip_path, "w") as zf:
+        for name in ["BVP.csv", "ACC.csv", "EDA.csv", "IBI.csv", "tags.csv"]:
+            zf.write(tmp_path / name, arcname=f"1551434400_A01234/{name}")
+    s = load_session(str(zip_path))
+    assert set(s.signals) == {"BVP", "ACC", "EDA"}
